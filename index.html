@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgroFin | Control de cultivos</title>
+    <style>
+        :root { --ink:#19342b; --muted:#5e6f66; --paper:#f7f8f2; --white:#fff; --line:#dfe7dc; --leaf:#397557; --deep:#163d31; --gold:#e5a83d; --warning:#d4882d; --danger:#c75b49; --danger-soft:#fff1ee; }
+        * { box-sizing:border-box; }
+        body { margin:0; color:var(--ink); background:var(--paper); font-family:'Trebuchet MS',sans-serif; }
+        h1,h2,h3,p,button,input,select { letter-spacing:0.01em; }
+        h1,h2,h3 { line-height:1.25; }
+        p { line-height:1.7; }
+        button,input,select { font:inherit; }
+        button { cursor:pointer; }
+        .brand-mark { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; overflow:hidden; background:linear-gradient(135deg,#f4d07a,#d99a25); border:2px solid rgba(17,49,40,0.12); box-shadow:0 8px 18px rgba(25,52,43,0.15); }
+        .brand-mark img { width:100%; height:100%; object-fit:cover; display:block; }
+        .shell { min-height:100vh; display:flex; }
+        .app-shell { display:none; }
+        .app-shell.ready { display:flex; }
+        .auth-screen { min-height:100vh; display:grid; place-items:center; padding:24px; background:linear-gradient(135deg,#edf4e7 0%,#f8f6ec 58%,#dbe9dc 100%); }
+        .auth-screen.hidden { display:none; }
+        .public-landing { max-width: 1120px; width: 100%; display:grid; grid-template-columns: 1.2fr 0.8fr; gap:28px; align-items:center; padding: 24px 24px 8px; }
+        .public-copy { padding: 12px 8px; }
+        .public-copy h2 { margin:0 0 14px; font-size: clamp(2rem, 3.5vw, 3.5rem); line-height: 1.08; letter-spacing: 0.02em; color: var(--deep); }
+        .public-copy p { margin:0 0 12px; color: var(--muted); font-size: 1.08rem; line-height: 1.8; }
+        .public-links { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+        .public-links a { color: var(--leaf); font-weight:700; text-decoration:none; }
+        .auth-box { width:100%; max-width:460px; padding:34px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 20px 50px #19342b1a; }
+        .auth-brand { display:flex; align-items:center; gap:10px; margin-bottom:24px; font-size:25px; font-weight:700; }
+        .auth-title { margin-bottom:10px; font-size:28px; line-height:1.25; letter-spacing:0.02em; }
+        .auth-switch { margin-top:20px; color:var(--muted); font-size:13px; text-align:center; }
+        .auth-switch button { border:0; background:none; color:var(--leaf); font-weight:700; }
+        .social-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+        .social-row button { border:1px solid var(--line); border-radius:7px; padding:10px; background:#fff; color:var(--ink); font-weight:700; }
+        .auth-error { min-height:18px; color:var(--muted); font-size:13px; }
+        .auth-error.has-error { color:var(--danger); }
+        aside { width:246px; padding:28px 18px; background:var(--deep); color:#eef5e9; display:flex; flex-direction:column; flex-shrink:0; }
+        .brand { display:flex; align-items:center; gap:10px; padding:0 12px 36px; font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; }
+        nav { display:grid; gap:6px; }
+        .nav-btn { border:0; background:transparent; color:#b8c9be; padding:12px; border-radius:9px; text-align:left; display:flex; align-items:center; gap:12px; font-weight:600; }
+        .nav-btn:hover,.nav-btn.active { color:#fff; background:#2a5a47; }
+        .nav-icon { width:22px; text-align:center; font-size:18px; }
+        .offline { margin-top:auto; padding:15px 12px; border:1px solid #3c6754; border-radius:10px; color:#d6e5d6; font-size:12px; line-height:1.45; }
+        .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#76c58a; margin-right:7px; }
+        main { width:100%; max-width:1440px; padding:32px 42px 60px; }
+        .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:30px; }
+        .topbar > div:first-child { min-width:0; }
+        h1,h2,h3,p { margin-top:0; }
+        h1,h2,h3 { font-family:'Trebuchet MS',sans-serif; }
+        h1 { margin-bottom:6px; font-size:31px; letter-spacing:0; }
+        .eyebrow { color:var(--leaf); font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+        .subtle { color:var(--muted); margin-bottom:0; }
+        .profile { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; flex-wrap:wrap; justify-content:flex-end; }
+        .avatar { display:grid; place-items:center; width:36px; height:36px; border-radius:50%; color:#fff; background:var(--leaf); font-weight:700; }
+        .view { display:none; animation:rise .35s ease both; }
+        .view.active { display:block; }
+        @keyframes rise { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+        .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+        .metric,.panel,.crop-card { background:var(--white); border:1px solid var(--line); border-radius:10px; }
+        .metric { padding:19px; position:relative; overflow:hidden; }
+        .metric:after { content:''; position:absolute; right:-20px; bottom:-28px; width:85px; height:85px; border-radius:50%; background:#edf4e8; }
+        .metric-label { color:var(--muted); font-size:13px; font-weight:600; }
+        .metric-value { margin:10px 0 4px; font:700 25px 'Trebuchet MS',sans-serif; }
+        .metric-note { font-size:12px; color:var(--leaf); }
+        .grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr); gap:20px; }
+        .panel { padding:24px; }
+        .panel-head { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+        .panel h2 { font-size:18px; margin-bottom:0; }
+        .link-btn { border:0; background:none; color:var(--leaf); font-weight:700; font-size:13px; }
+        .crop-list { display:grid; gap:11px; }
+        .crop-card { display:flex; align-items:center; justify-content:space-between; padding:16px; }
+        .crop-left { display:flex; gap:12px; align-items:center; }
+        .crop-icon { display:grid; place-items:center; width:42px; height:42px; border-radius:10px; background:#eef5e9; font-size:21px; }
+        .crop-card strong { display:block; margin-bottom:4px; }
+        .crop-card small { color:var(--muted); }
+        .crop-result { text-align:right; }
+        .crop-result strong { color:var(--leaf); }
+        .empty { padding:30px 10px; color:var(--muted); text-align:center; font-size:14px; }
+        .bars { display:grid; gap:18px; }
+        .bar-row { display:grid; gap:7px; }
+        .bar-meta { display:flex; justify-content:space-between; font-size:13px; }
+        .bar-meta span:last-child { color:var(--muted); }
+        .bar-track { height:9px; background:#edf1e9; border-radius:6px; overflow:hidden; }
+        .bar-fill { height:100%; border-radius:6px; background:var(--gold); }
+        form { display:grid; gap:18px; }
+        .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+        label { display:grid; gap:7px; min-width:0; color:var(--muted); font-size:13px; font-weight:600; line-height:1.35; }
+        label span { display:inline; font-weight:400; }
+        input,select { width:100%; padding:11px 12px; color:var(--ink); border:1px solid var(--line); border-radius:7px; background:#fcfdf9; outline:none; }
+        input:focus,select:focus { border-color:var(--leaf); box-shadow:0 0 0 3px #e3efe3; }
+        .form-actions { display:flex; justify-content:flex-end; gap:10px; padding-top:4px; }
+        .primary { border:0; border-radius:7px; padding:12px 17px; color:#fff; background:var(--leaf); font-weight:700; }
+        .primary:hover { background:var(--deep); }
+        .secondary { border:1px solid var(--line); border-radius:7px; padding:11px 16px; color:var(--ink); background:#fff; font-weight:700; }
+        .section-title { margin:0 0 18px; font-size:22px; }
+        .hint { color:var(--muted); font-size:13px; margin:-8px 0 10px; }
+        .history-table { width:100%; border-collapse:collapse; font-size:13px; }
+        th { color:var(--muted); font-size:11px; text-align:left; text-transform:uppercase; letter-spacing:.5px; }
+        th,td { padding:14px 10px; border-bottom:1px solid var(--line); }
+        td:last-child,th:last-child { text-align:right; }
+        .tag { display:inline-block; padding:5px 8px; color:var(--leaf); background:#edf5eb; border-radius:5px; font-size:11px; font-weight:700; }
+        .delete { border:0; background:transparent; color:var(--danger); font-weight:700; }
+        .notice { display:none; margin-bottom:20px; padding:12px 15px; color:var(--deep); background:#e9f4e5; border:1px solid #cce2c6; border-radius:8px; font-size:13px; }
+        .notice.show { display:block; }
+        .report-tools { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) auto; gap:12px; align-items:end; margin-bottom:22px; }
+        .report-actions { display:flex; gap:8px; }
+        .report-actions button { white-space:nowrap; }
+        .chart { display:grid; gap:15px; margin-top:22px; }
+        .chart-row { display:grid; grid-template-columns:minmax(110px,145px) minmax(80px,1fr) 90px; gap:10px; align-items:center; font-size:12px; }
+        .chart-track { height:22px; background:#edf1e9; border-radius:5px; overflow:hidden; }
+        .chart-fill { height:100%; min-width:2px; background:var(--leaf); border-radius:5px; }
+        .chart-value { color:var(--muted); text-align:right; }
+        .connection { color:var(--muted); font-size:12px; margin-top:4px; }
+        .connection.offline .dot { background:var(--gold); }
+        .profile-form { max-width:720px; }
+        .profile-card { display:flex; align-items:center; gap:14px; padding:18px; margin-bottom:24px; background:#f4f8ef; border:1px solid var(--line); border-radius:8px; }
+        .profile-card .avatar { width:48px; height:48px; }
+        .profile-card strong { display:block; margin-bottom:3px; }
+        .profile-card small { color:var(--muted); }
+        .status-error { color:var(--muted); background:var(--danger-soft); border-color:#f0c9c1; }
+        .status-error.has-error { color:var(--danger); }
+        .loading { color:var(--muted); padding:30px 10px; text-align:center; }
+        @media print { aside,.topbar,.report-tools,.form-actions,.link-btn,.delete,.notice { display:none !important; } main { padding:0; } .view { display:none !important; } #reportes { display:block !important; } .panel { border:0; } }
+        @media (max-width:800px) { aside { width:68px; padding:20px 8px; } .brand { padding:0 7px 28px; } .brand-name,.nav-label,.offline { display:none; } .nav-btn { justify-content:center; padding:12px 8px; } main { padding:24px 18px 40px; } .metrics { grid-template-columns:repeat(2,1fr); } .grid,.form-grid,.report-tools { grid-template-columns:1fr; } .topbar { gap:15px; } .profile span { display:none; } }
+        @media (max-width:480px) { h1 { font-size:25px; } .metrics { gap:9px; } .metric { padding:14px; } .metric-value { font-size:20px; } .panel { padding:17px; } .history-table { min-width:570px; } .table-wrap { overflow:auto; } .auth-box { padding:24px 20px; } .chart-row { grid-template-columns:1fr; gap:5px; } .chart-value { text-align:left; } }
+    </style>
+</head>
+<body>
+<section id="auth-screen" class="auth-screen">
+    <div class="public-landing">
+        <div class="public-copy">
+            <h2>AgroFin</h2>
+            <p>AgroFin ayuda a productores y agricultores a controlar cultivos, costos, ventas, utilidad y reportes financieros en un solo lugar.</p>
+            <p>La plataforma facilita el seguimiento de cada siembra, el gasto operativo y la rentabilidad real del negocio agrícola para tomar decisiones más inteligentes.</p>
+            <div class="public-links">
+                <a href="/privacy">Política de privacidad</a>
+                <a href="/terms">Términos</a>
+            </div>
+        </div>
+        <div class="auth-box">
+            <div class="auth-brand"><span class="brand-mark"><img src="{{ url_for('static', filename='logo-agrofin.svg') }}" alt="Logo AgroFin"></span><span>AgroFin</span></div>
+            <h1 id="auth-title" class="auth-title">Bienvenido de nuevo</h1>
+            <p id="auth-subtitle" class="subtle">Inicia sesión para entrar a tu panel.</p>
+            <form id="login-form"><label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label><label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label><p id="login-error" class="auth-error"></p><button class="primary" type="submit">Iniciar sesión</button></form>
+            <form id="register-form" style="display:none"><div class="form-grid"><label>Nombre completo<input name="name" autocomplete="name" required></label><label>Correo electrónico<input name="email" type="email" autocomplete="email" required></label><label>Contraseña<input name="password" type="password" minlength="8" autocomplete="new-password" required></label><label>País<select name="country" required><option>Nicaragua</option><option>Honduras</option><option>El Salvador</option><option>Guatemala</option><option>Costa Rica</option><option>Panamá</option><option>México</option></select></label><label>Zona horaria<select name="timezone" required><option value="America/Managua">Centroamérica</option><option value="America/Mexico_City">México centro</option><option value="America/Panama">Panamá</option></select></label></div><p id="register-error" class="auth-error"></p><button class="primary" type="submit">Crear cuenta</button></form>
+            <div class="social-row"><button type="button" data-social="Google">G Google</button><button type="button" data-social="Facebook">f Facebook</button></div>
+            <p class="auth-switch"><span id="auth-switch-copy">¿Aún no tienes cuenta?</span> <button id="auth-switch" type="button">Registrarme</button></p>
+            <p class="auth-switch"><a href="/privacy">Política de privacidad</a> · <a href="/terms">Términos</a></p>
+        </div>
+    </div>
+</section>
+<div id="app-shell" class="app-shell shell">
+    <aside>
+        <div class="brand"><span class="brand-mark"><img src="{{ url_for('static', filename='logo-agrofin.svg') }}" alt="Logo AgroFin"></span><span class="brand-name">AgroFin</span></div>
+        <nav>
+            <button class="nav-btn active" data-view="inicio"><span class="nav-icon">⌂</span><span class="nav-label">Inicio</span></button>
+            <button class="nav-btn" data-view="cultivo"><span class="nav-icon">♧</span><span class="nav-label">Registrar cultivo</span></button>
+            <button class="nav-btn" data-view="movimiento"><span class="nav-icon">＋</span><span class="nav-label">Registrar movimiento</span></button>
+            <button class="nav-btn" data-view="resultados"><span class="nav-icon">◒</span><span class="nav-label">Resultados y análisis</span></button>
+            <button class="nav-btn" data-view="reportes"><span class="nav-icon">▥</span><span class="nav-label">Reportes</span></button>
+            <button class="nav-btn" data-view="historial"><span class="nav-icon">▤</span><span class="nav-label">Historial</span></button>
+            <button class="nav-btn" data-view="perfil"><span class="nav-icon">◉</span><span class="nav-label">Mi perfil</span></button>
+        </nav>
+        <div class="offline"><span class="dot"></span><strong>Modo sin conexión</strong><br>Datos guardados en este dispositivo</div>
+    </aside>
+    <main>
+        <div class="topbar"><div><div class="eyebrow">Panel del agricultor</div><h1 id="greeting">Buenos días, productor</h1><p class="subtle">Tu campo, tus números, tus decisiones.</p><div id="connection" class="connection"><span class="dot"></span><span>Comprobando conexión...</span></div></div><div class="profile"><span id="account-name">Mi cuenta</span><div id="account-avatar" class="avatar">PA</div><button id="logout" class="secondary" type="button">Salir</button></div></div>
+        <div id="notice" class="notice"></div>
+        <section id="inicio" class="view active">
+            <div class="metrics">
+                <div class="metric"><div class="metric-label">Cultivos activos</div><div class="metric-value" id="metric-crops">0</div><div class="metric-note">registrados</div></div>
+                <div class="metric"><div class="metric-label">Costo de producción</div><div class="metric-value" id="metric-cost">C$ 0</div><div class="metric-note">todos los cultivos</div></div>
+                <div class="metric"><div class="metric-label">Ingresos por ventas</div><div class="metric-value" id="metric-income">C$ 0</div><div class="metric-note">ventas registradas</div></div>
+                <div class="metric"><div class="metric-label">Utilidad estimada</div><div class="metric-value" id="metric-profit">C$ 0</div><div class="metric-note">ingresos - costos</div></div>
+            </div>
+            <div class="grid">
+                <div class="panel"><div class="panel-head"><h2>Mis cultivos</h2><button class="link-btn" data-go="cultivo">+ Agregar cultivo</button></div><div id="crop-list" class="crop-list"></div></div>
+                <div class="panel"><div class="panel-head"><h2>Distribución de gastos</h2></div><div id="expense-bars" class="bars"></div></div>
+            </div>
+        </section>
+        <section id="cultivo" class="view"><div class="panel"><h2 class="section-title">Registrar cultivo</h2><p class="hint">Organiza cada siembra para conocer su rendimiento real.</p><form id="crop-form"><div class="form-grid"><label>Nombre del cultivo<select name="name" required><option value="">Selecciona una opción</option><option>Maíz</option><option>Frijol</option><option>Tomate</option><option>Cebolla</option><option>Zanahoria</option><option>Papa</option><option>Chiltoma</option><option>Otro</option></select></label><label>Tipo de cultivo<select name="type" required><option value="">Selecciona una opción</option><option>Granos básicos</option><option>Hortalizas</option></select></label><label>Fecha de siembra<input type="date" name="date" required></label><label>Área sembrada<input type="number" name="area" min="0" step="0.01" placeholder="Ej. 2.5" required></label><label>Unidad de área<select name="areaUnit"><option>manzanas</option><option>hectáreas</option></select></label><label>Cantidad de semillas<input type="number" name="seeds" min="0" step="0.01" placeholder="Ej. 25"></label></div><div class="form-actions"><button type="reset" class="secondary">Limpiar</button><button class="primary">Guardar cultivo</button></div></form></div></section>
+        <section id="movimiento" class="view"><div class="panel"><h2 class="section-title">Registrar movimiento</h2><p class="hint">Anota compras, gastos, cosechas y ventas conforme ocurren.</p><form id="movement-form"><div class="form-grid"><label>Tipo de registro<select name="kind" required><option value="expense">Gasto</option><option value="purchase">Compra de insumos</option><option value="production">Producción obtenida</option><option value="sale">Venta</option></select></label><label>Cultivo<select name="crop" id="movement-crop" required><option value="">Selecciona un cultivo</option></select></label><label>Concepto<input name="concept" placeholder="Ej. Fertilizante, mano de obra..." required></label><label>Fecha<input type="date" name="date" required></label><label>Tipo de gasto<select name="category"><option>Semillas</option><option>Fertilizantes</option><option>Productos para cultivo</option><option>Mano de obra</option><option>Transporte</option><option>Otros</option></select></label><label>Monto / cantidad<input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required></label><label>Unidad<select name="unit"><option>córdobas</option><option>quintales</option><option>kilogramos</option><option>unidades</option></select></label><label>Precio de venta por unidad<input type="number" name="price" min="0" step="0.01" placeholder="Solo para ventas"></label></div><div class="form-actions"><button type="reset" class="secondary">Limpiar</button><button class="primary">Guardar registro</button></div></form></div></section>
+        <section id="resultados" class="view"><div class="panel"><h2 class="section-title">Resultados y análisis</h2><p class="hint">Una lectura rápida de la salud financiera de tu producción.</p><div class="metrics"><div class="metric"><div class="metric-label">Costo por unidad</div><div class="metric-value" id="analysis-unit">C$ 0</div><div class="metric-note">por quintal producido</div></div><div class="metric"><div class="metric-label">Margen de ganancia</div><div class="metric-value" id="analysis-margin">0%</div><div class="metric-note">sobre ingresos</div></div></div><div id="analysis-copy" class="empty">Registra producción y ventas para ver un análisis más detallado.</div></div></section>
+        <section id="reportes" class="view"><div class="panel"><div class="panel-head"><div><h2>Reportes personalizados</h2><p class="hint">Filtra tus resultados por cultivo y período.</p></div><div class="report-actions"><button class="secondary" id="export-csv">Exportar CSV</button><button class="primary" id="export-pdf">Imprimir / PDF</button></div></div><div class="report-tools"><label>Cultivo<select id="report-crop"><option value="all">Todos los cultivos</option></select></label><label>Desde<input id="report-from" type="date"></label><label>Hasta<input id="report-to" type="date"></label><button class="secondary" id="report-reset">Restablecer</button></div><div class="metrics"><div class="metric"><div class="metric-label">Costos filtrados</div><div class="metric-value" id="report-cost">C$ 0</div></div><div class="metric"><div class="metric-label">Ingresos filtrados</div><div class="metric-value" id="report-income">C$ 0</div></div><div class="metric"><div class="metric-label">Utilidad</div><div class="metric-value" id="report-profit">C$ 0</div></div><div class="metric"><div class="metric-label">Producción</div><div class="metric-value" id="report-production">0</div><div class="metric-note">unidades registradas</div></div></div><h3>Costos por categoría</h3><div id="report-chart" class="chart"></div></div></section>
+        <section id="historial" class="view"><div class="panel"><div class="panel-head"><h2>Historial de registros</h2><button class="link-btn" id="clear-data">Borrar datos</button></div><div class="table-wrap"><table class="history-table"><thead><tr><th>Fecha</th><th>Registro</th><th>Cultivo</th><th>Concepto</th><th>Valor</th><th></th></tr></thead><tbody id="history-body"></tbody></table></div></div></section>
+        <section id="perfil" class="view"><div class="panel"><h2 class="section-title">Mi perfil</h2><p class="hint">Actualiza tus datos y la zona horaria de tu cuenta.</p><div class="profile-card"><div id="profile-avatar" class="avatar">PA</div><div><strong id="profile-summary">Tu perfil</strong><small id="profile-email"></small></div></div><form id="profile-form" class="profile-form"><div class="form-grid"><label>Nombre completo<input name="name" maxlength="80" autocomplete="name" required></label><label>Correo electrónico<input name="email" type="email" maxlength="160" autocomplete="email" required></label><label>Teléfono <span>(opcional)</span><input name="phone" maxlength="30" autocomplete="tel"></label><label>País<select name="country" required><option>Nicaragua</option><option>Honduras</option><option>El Salvador</option><option>Guatemala</option><option>Costa Rica</option><option>Panamá</option><option>México</option></select></label><label>Zona horaria<select name="timezone" required><option value="America/Managua">Centroamérica</option><option value="America/Mexico_City">México centro</option><option value="America/Panama">Panamá</option></select></label></div><div class="form-actions"><button class="primary">Guardar cambios</button></div></form></div></section>
+    </main>
+</div>
+<script>
+    const storeKey = 'agrofin-data';
+    let state;
+    try { state = JSON.parse(localStorage.getItem(storeKey) || '{"crops":[],"movements":[]}'); } catch { state = { crops: [], movements: [] }; }
+    state.crops = Array.isArray(state.crops) ? state.crops : [];
+    state.movements = Array.isArray(state.movements) ? state.movements : [];
+    state.profile = state.profile && typeof state.profile === 'object' ? state.profile : null;
+    const money = value => 'C$ ' + Number(value || 0).toLocaleString('es-NI', { maximumFractionDigits: 0 });
+    const save = () => localStorage.setItem(storeKey, JSON.stringify(state));
+    const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[character]));
+    const apiRequest = async (url, options = {}) => { const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 8000); try { const response = await fetch(url, { headers: { 'Content-Type': 'application/json', ...options.headers }, signal: controller.signal, ...options }); const body = response.status === 204 ? null : await response.json(); if (!response.ok) throw new Error(body?.error?.message || 'No se pudo completar la solicitud.'); return body; } catch (error) { if (error.name === 'AbortError') throw new Error('El servidor tardó demasiado en responder.'); throw error; } finally { clearTimeout(timeout); } };
+    const syncFromApi = async () => { if (!navigator.onLine) return; try { const [profile, crops, movements] = await Promise.all([apiRequest('/api/perfil'), apiRequest('/api/cultivos'), apiRequest('/api/movimientos')]); state.profile = profile || state.profile; state.crops = crops; state.movements = movements; save(); render(); } catch (error) { console.warn('Sincronización API:', error.message); } };
+    const showAuthenticatedUser = user => { state.profile = user; document.querySelector('#auth-screen').classList.add('hidden'); document.querySelector('#app-shell').classList.add('ready'); document.querySelector('#account-name').textContent = user.name; document.querySelector('#account-avatar').textContent = user.name.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase(); const hour = Number(new Intl.DateTimeFormat('en', { hour:'numeric', hour12:false, timeZone:user.timezone }).format(new Date())); const greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches'; document.querySelector('#greeting').textContent = `${greeting}, ${user.name}`; document.querySelector('#profile-form [name="name"]').value = user.name; document.querySelector('#profile-form [name="email"]').value = user.email; document.querySelector('#profile-form [name="phone"]').value = user.phone || ''; document.querySelector('#profile-form [name="country"]').value = user.country; document.querySelector('#profile-form [name="timezone"]').value = user.timezone; syncFromApi(); };
+    const showAuthError = (id, message) => {
+        const el = document.querySelector(id);
+        el.textContent = message;
+        el.classList.toggle('has-error', Boolean(message));
+    };
+    const setAuthMode = register => { document.querySelector('#login-form').style.display = register ? 'none' : 'grid'; document.querySelector('#register-form').style.display = register ? 'grid' : 'none'; document.querySelector('#auth-title').textContent = register ? 'Crea tu cuenta' : 'Bienvenido de nuevo'; document.querySelector('#auth-subtitle').textContent = register ? 'Regístrate para guardar tus datos y entrar a tu panel.' : 'Inicia sesión para entrar a tu panel.'; document.querySelector('#auth-switch-copy').textContent = register ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?'; document.querySelector('#auth-switch').textContent = register ? 'Iniciar sesión' : 'Registrarme'; };
+    const today = () => new Date().toISOString().slice(0, 10);
+    const showNotice = text => { const el = document.querySelector('#notice'); el.textContent = text; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3000); };
+    const go = view => { document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === view)); document.querySelectorAll('.nav-btn').forEach(el => el.classList.toggle('active', el.dataset.view === view)); window.scrollTo(0, 0); };
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => go(btn.dataset.view)));
+    document.querySelectorAll('[data-go]').forEach(btn => btn.addEventListener('click', () => go(btn.dataset.go)));
+    document.querySelector('#auth-switch').addEventListener('click', () => setAuthMode(document.querySelector('#register-form').style.display === 'none'));
+    document.querySelector('#login-form').addEventListener('submit', async event => { event.preventDefault(); showAuthError('#login-error', ''); try { const user = await apiRequest('/api/auth/login', { method:'POST', body:JSON.stringify(Object.fromEntries(new FormData(event.target))) }); showAuthenticatedUser(user); } catch (error) { showAuthError('#login-error', error.message); } });
+    document.querySelector('#register-form').addEventListener('submit', async event => { event.preventDefault(); showAuthError('#register-error', ''); try { const user = await apiRequest('/api/auth/register', { method:'POST', body:JSON.stringify(Object.fromEntries(new FormData(event.target))) }); showAuthenticatedUser(user); } catch (error) { showAuthError('#register-error', error.message); } });
+    document.querySelectorAll('[data-social]').forEach(button => button.addEventListener('click', () => {
+        if (button.dataset.social === 'Google') {
+            window.location.href = '/auth/google/login';
+            return;
+        }
+        showAuthError('#login-error', `La conexión con ${button.dataset.social} necesita configurar sus credenciales OAuth.`);
+    }));
+    document.querySelector('#logout').addEventListener('click', async () => { await apiRequest('/api/auth/logout', { method:'POST' }); document.querySelector('#app-shell').classList.remove('ready'); document.querySelector('#auth-screen').classList.remove('hidden'); setAuthMode(false); });
+    const filteredMovements = () => { const crop = document.querySelector('#report-crop').value; const from = document.querySelector('#report-from').value; const to = document.querySelector('#report-to').value; return state.movements.filter(m => (crop === 'all' || m.crop === crop) && (!from || m.date >= from) && (!to || m.date <= to)); };
+    function renderReport() {
+        const movements = filteredMovements();
+        const expenses = movements.filter(m => m.kind === 'expense' || m.kind === 'purchase');
+        const cost = expenses.reduce((sum, m) => sum + Number(m.amount), 0);
+        const income = movements.filter(m => m.kind === 'sale').reduce((sum, m) => sum + Number(m.amount) * Number(m.price || 0), 0);
+        const production = movements.filter(m => m.kind === 'production').reduce((sum, m) => sum + Number(m.amount), 0);
+        document.querySelector('#report-cost').textContent = money(cost);
+        document.querySelector('#report-income').textContent = money(income);
+        document.querySelector('#report-profit').textContent = money(income - cost);
+        document.querySelector('#report-production').textContent = production.toLocaleString('es-NI');
+        const categories = ['Semillas', 'Fertilizantes', 'Productos para cultivo', 'Mano de obra', 'Transporte', 'Otros'];
+        document.querySelector('#report-chart').innerHTML = categories.map(category => { const value = expenses.filter(m => m.category === category).reduce((sum, m) => sum + Number(m.amount), 0); const width = cost ? value / cost * 100 : 0; return `<div class="chart-row"><span>${category}</span><div class="chart-track"><div class="chart-fill" style="width:${width}%"></div></div><span class="chart-value">${money(value)}</span></div>`; }).join('');
+    }
+    function exportCsv() {
+        const rows = [['Fecha', 'Tipo', 'Cultivo', 'Concepto', 'Cantidad', 'Unidad', 'Precio', 'Valor']];
+        filteredMovements().forEach(m => rows.push([m.date, m.kind, m.crop, m.concept, m.amount, m.unit, m.price || 0, m.kind === 'sale' ? Number(m.amount) * Number(m.price || 0) : m.amount]));
+        const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+        const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); link.download = 'agrofin-reporte.csv'; link.click(); URL.revokeObjectURL(link.href); showNotice('Reporte CSV descargado.');
+    }
+    function render() {
+        const expenses = state.movements.filter(m => m.kind === 'expense' || m.kind === 'purchase');
+        const cost = expenses.reduce((sum, m) => sum + Number(m.amount), 0);
+        const income = state.movements.filter(m => m.kind === 'sale').reduce((sum, m) => sum + Number(m.amount) * Number(m.price || 0), 0);
+        const production = state.movements.filter(m => m.kind === 'production').reduce((sum, m) => sum + Number(m.amount), 0);
+        const profit = income - cost;
+        document.querySelector('#metric-crops').textContent = state.crops.length;
+        document.querySelector('#metric-cost').textContent = money(cost);
+        document.querySelector('#metric-income').textContent = money(income);
+        document.querySelector('#metric-profit').textContent = money(profit);
+        const list = document.querySelector('#crop-list');
+        list.innerHTML = state.crops.length ? state.crops.map(c => `<div class="crop-card"><div class="crop-left"><div class="crop-icon">${c.name === 'Maíz' ? '🌽' : '🌱'}</div><div><strong>${escapeHTML(c.name)}</strong><small>${escapeHTML(c.type)} · ${escapeHTML(c.area)} ${escapeHTML(c.areaUnit)}</small></div></div><div class="crop-result"><strong>${money(state.movements.filter(m => m.crop === c.name && m.kind === 'sale').reduce((s,m) => s + Number(m.amount) * Number(m.price || 0), 0))}</strong><small> ingresos</small></div></div>`).join('') : '<div class="empty">Aún no tienes cultivos registrados.<br>Comienza con tu primera siembra.</div>';
+        const categories = ['Semillas', 'Fertilizantes', 'Productos para cultivo', 'Mano de obra', 'Transporte', 'Otros'];
+        document.querySelector('#expense-bars').innerHTML = categories.map(cat => { const value = expenses.filter(m => m.category === cat).reduce((s,m) => s + Number(m.amount), 0); const width = cost ? Math.max(3, value / cost * 100) : 3; return `<div class="bar-row"><div class="bar-meta"><span>${cat}</span><span>${money(value)}</span></div><div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div></div>`; }).join('');
+        document.querySelector('#analysis-unit').textContent = money(production ? cost / production : 0);
+        document.querySelector('#analysis-margin').textContent = income ? Math.round(profit / income * 100) + '%' : '0%';
+        document.querySelector('#analysis-copy').textContent = income ? `Tu utilidad estimada es de ${money(profit)}. ${profit >= 0 ? 'La producción está generando un resultado positivo.' : 'Revisa tus costos y precio de venta para mejorar el resultado.'}` : 'Registra producción y ventas para ver un análisis más detallado.';
+        document.querySelector('#movement-crop').innerHTML = '<option value="">Selecciona un cultivo</option>' + state.crops.map(c => `<option>${escapeHTML(c.name)}</option>`).join('');
+        document.querySelector('#report-crop').innerHTML = '<option value="all">Todos los cultivos</option>' + state.crops.map(c => `<option>${escapeHTML(c.name)}</option>`).join('');
+        document.querySelector('#history-body').innerHTML = state.movements.length ? state.movements.slice().reverse().map((m, i) => `<tr><td>${escapeHTML(m.date)}</td><td><span class="tag">${m.kind === 'sale' ? 'Venta' : m.kind === 'production' ? 'Producción' : m.kind === 'purchase' ? 'Compra' : 'Gasto'}</span></td><td>${escapeHTML(m.crop)}</td><td>${escapeHTML(m.concept)}</td><td>${m.kind === 'sale' ? money(Number(m.amount) * Number(m.price || 0)) : m.unit === 'córdobas' ? money(m.amount) : `${escapeHTML(m.amount)} ${escapeHTML(m.unit)}`}</td><td><button class="delete" data-delete="${state.movements.length - 1 - i}">Eliminar</button></td></tr>`).join('') : '<tr><td colspan="6" class="empty">No hay registros todavía.</td></tr>';
+        const profile = state.profile;
+        document.querySelector('#profile-summary').textContent = profile?.name || 'Aún no hay un perfil registrado';
+        document.querySelector('#profile-email').textContent = profile ? `${profile.email}${profile.phone ? ` · ${profile.phone}` : ''} · ${profile.country || ''}` : 'Completa el formulario para comenzar.';
+        document.querySelector('#profile-avatar').textContent = profile?.name ? profile.name.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() : 'PA';
+        document.querySelectorAll('[data-delete]').forEach(btn => btn.addEventListener('click', () => { state.movements.splice(Number(btn.dataset.delete), 1); save(); render(); }));
+        renderReport();
+    }
+    document.querySelector('#crop-form').addEventListener('submit', async event => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); try { const created = await apiRequest('/api/cultivos', { method: 'POST', body: JSON.stringify(data) }); state.crops.push(created); save(); showNotice('Cultivo sincronizado con el servidor.'); } catch (error) { state.crops.push(data); save(); showNotice(navigator.onLine ? error.message : 'Sin conexión: cultivo guardado localmente.'); } event.target.reset(); render(); go('inicio'); });
+    document.querySelector('#movement-form').addEventListener('submit', async event => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); try { const created = await apiRequest('/api/movimientos', { method: 'POST', body: JSON.stringify(data) }); state.movements.push(created); save(); showNotice('Registro sincronizado con el servidor.'); } catch (error) { state.movements.push(data); save(); showNotice(navigator.onLine ? error.message : 'Sin conexión: registro guardado localmente.'); } event.target.reset(); render(); go('inicio'); });
+    document.querySelector('#profile-form').addEventListener('submit', async event => { event.preventDefault(); const button = event.target.querySelector('button.primary'); button.disabled = true; const data = Object.fromEntries(new FormData(event.target)); try { state.profile = await apiRequest('/api/perfil', { method: 'PUT', body: JSON.stringify(data) }); showNotice('Perfil guardado correctamente.'); } catch (error) { if (!navigator.onLine) { state.profile = data; showNotice('Sin conexión: perfil guardado en este dispositivo.'); } else { showNotice(error.message); } } finally { button.disabled = false; save(); render(); } });
+    document.querySelector('#crop-form [name="date"]').value = today();
+    document.querySelector('#movement-form [name="date"]').value = today();
+    document.querySelectorAll('#report-crop,#report-from,#report-to').forEach(control => control.addEventListener('change', renderReport));
+    document.querySelector('#report-reset').addEventListener('click', () => { document.querySelector('#report-crop').value = 'all'; document.querySelector('#report-from').value = ''; document.querySelector('#report-to').value = ''; renderReport(); });
+    document.querySelector('#export-csv').addEventListener('click', exportCsv);
+    document.querySelector('#export-pdf').addEventListener('click', () => { go('reportes'); window.print(); });
+    const updateConnection = () => { const online = navigator.onLine; const el = document.querySelector('#connection'); el.classList.toggle('offline', !online); el.querySelector('span:last-child').textContent = online ? 'Con conexión · datos locales guardados' : 'Sin conexión · datos locales disponibles'; };
+    window.addEventListener('online', updateConnection); window.addEventListener('offline', updateConnection); updateConnection();
+    window.addEventListener('online', syncFromApi);
+    document.querySelector('#clear-data').addEventListener('click', () => { if (confirm('¿Borrar todos los datos guardados en este dispositivo?')) { state.crops.length = 0; state.movements.length = 0; save(); render(); showNotice('Historial borrado.'); } });
+    render();
+    apiRequest('/api/auth/me').then(user => { if (user) showAuthenticatedUser(user); }).catch(() => { setAuthMode(false); });
+</script>
+</body>
+</html>
