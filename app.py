@@ -381,12 +381,10 @@ def health():
 
 @app.get('/googleca945794cfdc0b13.html')
 def google_verification():
-    return send_file('googleca945794cfdc0b13.html', mimetype='text/html')
-
-
-@app.get('/googleca945794cfdc0b13 (1).html')
-def google_verification_alt():
-    return send_file('googleca945794cfdc0b13 (1).html', mimetype='text/html')
+    verification_file = os.path.join(app.root_path, 'googleca945794cfdc0b13.html')
+    if not os.path.exists(verification_file):
+        return error('Archivo de verificación no disponible.', 404)
+    return send_file(verification_file, mimetype='text/html')
 
 
 @app.get('/robots.txt')
