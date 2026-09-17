@@ -384,6 +384,11 @@ def google_verification():
     return send_file('googleca945794cfdc0b13.html', mimetype='text/html')
 
 
+@app.get('/googleca945794cfdc0b13 (1).html')
+def google_verification_alt():
+    return send_file('googleca945794cfdc0b13 (1).html', mimetype='text/html')
+
+
 @app.get('/robots.txt')
 def robots_txt():
     return send_file('robots.txt', mimetype='text/plain')
