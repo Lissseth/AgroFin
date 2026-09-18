@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: agrofin
+    name: agrofin-web
     runtime: docker
     plan: free
     branch: main
@@ -16,13 +16,13 @@ services:
       - key: PORT
         value: "10000"
       - key: PUBLIC_URL
-        value: "https://agrofin.onrender.com"
+        value: "https://agrofin-web.onrender.com"
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
         sync: false
       - key: GOOGLE_REDIRECT_URI
-        value: "https://agrofin.onrender.com/auth/google/callback"
+        value: "https://agrofin-web.onrender.com/auth/google/callback"
       - key: DEFAULT_COUNTRY
         value: "Nicaragua"
       - key: DEFAULT_TIMEZONE

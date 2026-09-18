@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://agrofin.onrender.com/sitemap.xml
+Sitemap: https://agrofin-web.onrender.com/sitemap.xml
