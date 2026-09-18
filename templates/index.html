@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgroFin | Gestión agrícola</title>
+  <style>
+    :root {
+      --bg: #f4f9f3;
+      --card: #ffffff;
+      --text: #1d2d22;
+      --muted: #587063;
+      --primary: #1d6f42;
+      --primary-dark: #134a2d;
+      --accent: #dfeee4;
+      --border: #d8e7dc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: #fff;
+      padding: 18px 24px;
+    }
+    nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+    }
+    .links a {
+      color: #eafaf0;
+      text-decoration: none;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 20px 72px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1.1;
+      margin: 0 0 16px;
+    }
+    .lead {
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      max-width: 620px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .button.secondary {
+      background: var(--card);
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 10px 28px rgba(20, 74, 45, 0.08);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 30px;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 16px;
+    }
+    .stat strong {
+      display: block;
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      color: var(--primary-dark);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 36px;
+    }
+    .feature {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 20px;
+    }
+    .feature h3 {
+      margin-top: 0;
+      color: var(--primary-dark);
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 12px 20px 40px;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 860px) {
+      .hero, .grid, .stats {
+        grid-template-columns: 1fr;
+      }
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="brand">AgroFin</div>
+      <div class="links">
+        <a href="/privacy">Privacidad</a>
+        <a href="/terms">Términos</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Controla tus cultivos y finanzas con claridad</h1>
+        <p class="lead">
+          AgroFin ayuda a productores a llevar el registro de siembras, gastos, ventas,
+          inventario y ganancias para tomar decisiones más rápidas y seguras.
+        </p>
+        <div class="actions">
+          <a class="button" href="/">Abrir panel</a>
+          <a class="button secondary" href="/privacy">Ver política</a>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Resumen agrícola</h2>
+        <div class="stats">
+          <div class="stat">
+            <strong>12</strong>
+            cultivos
+          </div>
+          <div class="stat">
+            <strong>$8.4k</strong>
+            ingresos
+          </div>
+          <div class="stat">
+            <strong>28%</strong>
+            margen
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="feature">
+        <h3>Seguimiento de cultivos</h3>
+        <p>Registra siembras, superficie, semillas y fechas para comparar resultados por temporada.</p>
+      </article>
+      <article class="feature">
+        <h3>Control financiero</h3>
+        <p>Organiza gastos, compras, producción y ventas para entender costos reales y utilidades.</p>
+      </article>
+      <article class="feature">
+        <h3>Reportes y análisis</h3>
+        <p>Consulta indicadores financieros y de producción con una vista clara para cada parcela o cultivo.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    AgroFin © 2026 · <a href="/privacy" style="color: var(--primary);">Política de privacidad</a>
+  </footer>
+</body>
+</html>

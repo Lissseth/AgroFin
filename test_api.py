@@ -66,6 +66,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(app.sql_query('SELECT * FROM usuarios WHERE email=?', backend='postgres'), 'SELECT * FROM usuarios WHERE email=%s')
         self.assertEqual(app.sql_query('INSERT INTO usuarios (name,email) VALUES (?,?)', backend='postgres'), 'INSERT INTO usuarios (name,email) VALUES (%s,%s)')
 
+    def test_public_pages_are_available(self):
+        self.assertEqual(self.client.get('/').status_code, 200)
+        self.assertEqual(self.client.get('/privacy').status_code, 200)
+        self.assertEqual(self.client.get('/terms').status_code, 200)
+
     def test_google_oauth_entry_requires_configuration(self):
         response = self.client.get('/auth/google/login')
         self.assertEqual(response.status_code, 400)
