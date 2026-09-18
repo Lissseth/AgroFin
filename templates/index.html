@@ -3,215 +3,774 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AgroFin | Gestión agrícola</title>
+  <title>AgroFin | Panel del productor</title>
   <style>
     :root {
-      --bg: #f4f9f3;
+      --bg: #f3f8f2;
+      --bg-alt: #ebf5e8;
       --card: #ffffff;
-      --text: #1d2d22;
-      --muted: #587063;
-      --primary: #1d6f42;
-      --primary-dark: #134a2d;
-      --accent: #dfeee4;
-      --border: #d8e7dc;
+      --text: #153d2d;
+      --muted: #5c7369;
+      --primary: #1e7b4d;
+      --primary-dark: #164f39;
+      --accent: #dbeee3;
+      --danger: #b93f3f;
+      --warning: #d8a630;
+      --border: #d8e8d9;
+      --shadow: 0 18px 30px rgba(16, 60, 35, 0.08);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: var(--bg);
+      background: linear-gradient(180deg, var(--bg) 0%, #edf5ee 100%);
       color: var(--text);
-      line-height: 1.6;
+    }
+    a { color: var(--primary-dark); }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
     }
     header {
       background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-      color: #fff;
-      padding: 18px 24px;
+      color: white;
+      box-shadow: 0 8px 18px rgba(18, 66, 41, 0.18);
     }
-    nav {
-      max-width: 1100px;
+    .topbar {
+      max-width: 1200px;
       margin: 0 auto;
+      padding: 20px 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 20px;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
     }
     .brand {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       font-weight: 700;
       letter-spacing: 0.04em;
     }
-    .links {
+    .nav-links {
       display: flex;
-      gap: 18px;
+      align-items: center;
+      gap: 14px;
       flex-wrap: wrap;
-      font-size: 0.95rem;
     }
-    .links a {
-      color: #eafaf0;
+    .nav-links a, .nav-links button {
+      color: white;
       text-decoration: none;
-    }
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 48px 20px 72px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.92rem;
     }
     .hero {
+      padding: 40px 0 18px;
+    }
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .auth-shell {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-      align-items: center;
-      gap: 30px;
-      margin-bottom: 40px;
+      gap: 24px;
+      align-items: stretch;
     }
-    h1 {
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      line-height: 1.1;
-      margin: 0 0 16px;
+    .auth-panel {
+      background: linear-gradient(180deg, #f9fdf9, #ecf7ee);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
     }
-    .lead {
-      font-size: 1.08rem;
-      color: var(--muted);
-      margin-bottom: 24px;
-      max-width: 620px;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
+    .auth-panel h2, .panel-title {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.6rem;
+      color: var(--primary-dark);
     }
     .button {
       display: inline-block;
-      padding: 12px 22px;
-      border-radius: 999px;
       background: var(--primary);
       color: white;
-      text-decoration: none;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
       font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
     }
     .button.secondary {
-      background: var(--card);
-      color: var(--primary);
-      border: 1px solid var(--border);
-    }
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 26px;
-      box-shadow: 0 10px 28px rgba(20, 74, 45, 0.08);
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 30px;
-    }
-    .stat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 16px;
-    }
-    .stat strong {
-      display: block;
-      font-size: 1.6rem;
-      margin-bottom: 6px;
+      background: #fff;
       color: var(--primary-dark);
+      border: 1px solid var(--border);
     }
-    .grid {
+    .button.danger {
+      background: var(--danger);
+    }
+    .button.google {
+      background: #fff;
+      color: #1f2937;
+      border: 1px solid #d8dde4;
+      width: 100%;
+    }
+    .feature-list {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 22px;
-      margin-top: 36px;
+      gap: 20px;
+      margin-top: 24px;
     }
     .feature {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 22px 20px;
+      padding: 18px;
     }
     .feature h3 {
-      margin-top: 0;
+      margin: 0 0 8px;
+      color: var(--primary-dark);
+      font-size: 1.1rem;
+    }
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    form {
+      display: grid;
+      gap: 12px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      color: var(--text);
+      font-size: 0.96rem;
+    }
+    .message {
+      display: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-top: 10px;
+    }
+    .message.error { display: block; background: #fdeaea; color: #8f2b2b; }
+    .message.success { display: block; background: #eaf8ee; color: #1c623f; }
+    .dashboard {
+      display: none;
+      padding-top: 20px;
+    }
+    .dashboard.visible { display: block; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin: 20px 0 24px;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 700;
       color: var(--primary-dark);
     }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.93rem;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      color: var(--primary-dark);
+      background: #f8fbf8;
+    }
+    .mini-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mini-actions button {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 7px 9px;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
     footer {
       text-align: center;
       color: var(--muted);
-      padding: 12px 20px 40px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
+      padding: 18px 0 30px;
     }
-    @media (max-width: 860px) {
-      .hero, .grid, .stats {
+    @media (max-width: 880px) {
+      .auth-shell, .two-col, .stats, .feature-list {
         grid-template-columns: 1fr;
       }
-      nav {
-        flex-direction: column;
-        align-items: flex-start;
+      .row {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <nav>
+    <div class="topbar">
       <div class="brand">AgroFin</div>
-      <div class="links">
+      <div class="nav-links">
         <a href="/privacy">Privacidad</a>
         <a href="/terms">Términos</a>
+        <button id="logoutBtn" class="hidden" type="button">Cerrar sesión</button>
       </div>
-    </nav>
+    </div>
   </header>
 
-  <main>
+  <div class="container">
     <section class="hero">
-      <div>
-        <h1>Controla tus cultivos y finanzas con claridad</h1>
-        <p class="lead">
-          AgroFin ayuda a productores a llevar el registro de siembras, gastos, ventas,
-          inventario y ganancias para tomar decisiones más rápidas y seguras.
-        </p>
-        <div class="actions">
-          <a class="button" href="/">Abrir panel</a>
-          <a class="button secondary" href="/privacy">Ver política</a>
+      <div class="hero-card" id="authShell">
+        <div class="auth-shell">
+          <div class="auth-panel">
+            <h2>Control de cultivos, compra y ventas</h2>
+            <p>Registra tus sembrados, entradas y salidas, y genera reportes para tomar decisiones con claridad.</p>
+            <div class="feature-list">
+              <div class="feature">
+                <h3>Cultivos</h3>
+                <p>Seguimiento por parcela, fecha, área, semillas y tipo de cultivo.</p>
+              </div>
+              <div class="feature">
+                <h3>Compras</h3>
+                <p>Controla insumos, fertilizantes, mano de obra y costos directos.</p>
+              </div>
+              <div class="feature">
+                <h3>Ventas</h3>
+                <p>Registra producción, precios y flujo de ingresos por temporada.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-panel">
+            <div id="authTabs" style="display:flex; gap:10px; margin-bottom:18px;">
+              <button class="button secondary" type="button" data-auth-tab="login">Iniciar sesión</button>
+              <button class="button secondary" type="button" data-auth-tab="register">Registrarse</button>
+            </div>
+
+            <div id="loginFormBox">
+              <h2>Acceso</h2>
+              <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                <button class="button" type="submit">Entrar</button>
+              </form>
+            </div>
+
+            <div id="registerFormBox" class="hidden">
+              <h2>Crear cuenta</h2>
+              <form id="registerForm">
+                <input type="text" id="registerName" placeholder="Nombre completo" required>
+                <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="registerPassword" placeholder="Contraseña (mínimo 8)" required>
+                <div class="row">
+                  <input type="text" id="registerCountry" value="Nicaragua" required>
+                  <input type="text" id="registerTimezone" value="America/Managua" required>
+                </div>
+                <button class="button" type="submit">Registrar productor</button>
+              </form>
+            </div>
+
+            <div style="margin-top:16px;">
+              <button id="googleLoginBtn" class="button google" type="button">Continuar con Google</button>
+            </div>
+
+            <div id="authMessage" class="message"></div>
+          </div>
         </div>
       </div>
-      <div class="panel">
-        <h2>Resumen agrícola</h2>
+
+      <div id="dashboard" class="dashboard">
+        <div class="hero-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
+            <div>
+              <p style="margin:0;color:var(--muted);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.06em;">Bienvenido</p>
+              <h2 id="welcomeUser" style="margin:6px 0 0;">Productor</h2>
+            </div>
+            <button id="downloadCsvBtn" class="button secondary" type="button">Exportar CSV</button>
+          </div>
+        </div>
+
         <div class="stats">
           <div class="stat">
-            <strong>12</strong>
-            cultivos
+            <div class="stat-label">Cultivos</div>
+            <div id="totalCultivos" class="stat-value">0</div>
           </div>
           <div class="stat">
-            <strong>$8.4k</strong>
-            ingresos
+            <div class="stat-label">Semillas</div>
+            <div id="totalSemillas" class="stat-value">0</div>
           </div>
           <div class="stat">
-            <strong>28%</strong>
-            margen
+            <div class="stat-label">Ingresos</div>
+            <div id="totalVentas" class="stat-value">$0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Utilidad</div>
+            <div id="utilidadNeta" class="stat-value">$0</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <h3 class="panel-title">Registrar cultivo</h3>
+            <form id="cropForm">
+              <div class="row">
+                <input type="text" id="cropName" placeholder="Nombre del cultivo" required>
+                <input type="text" id="cropType" placeholder="Tipo" required>
+              </div>
+              <div class="row">
+                <input type="date" id="cropDate" required>
+                <input type="number" id="cropArea" step="0.01" min="0" placeholder="Área" required>
+              </div>
+              <div class="row">
+                <input type="text" id="cropUnit" value="manzanas" required>
+                <input type="number" id="cropSeeds" min="0" value="0" required>
+              </div>
+              <button class="button" type="submit">Guardar cultivo</button>
+            </form>
+            <div id="cropMessage" class="message"></div>
+          </div>
+
+          <div class="panel">
+            <h3 class="panel-title">Registrar movimiento</h3>
+            <form id="movementForm">
+              <div class="row">
+                <select id="movementKind" required>
+                  <option value="compra">Compra</option>
+                  <option value="venta">Venta</option>
+                  <option value="gasto">Gasto</option>
+                  <option value="produccion">Producción</option>
+                </select>
+                <input type="text" id="movementCrop" placeholder="Cultivo asociado" required>
+              </div>
+              <div class="row">
+                <input type="text" id="movementConcept" placeholder="Concepto" required>
+                <input type="text" id="movementCategory" placeholder="Categoría" required>
+              </div>
+              <div class="row">
+                <input type="date" id="movementDate" required>
+                <input type="number" id="movementAmount" step="0.01" min="0" placeholder="Cantidad" required>
+              </div>
+              <div class="row">
+                <input type="text" id="movementUnit" value="unidad" required>
+                <input type="number" id="movementPrice" step="0.01" min="0" placeholder="Precio unitario" value="0">
+              </div>
+              <button class="button" type="submit">Guardar movimiento</button>
+            </form>
+            <div id="movementMessage" class="message"></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <h3 class="panel-title">Cultivos</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Área</th>
+                  <th>Semillas</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="cropTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <h3 class="panel-title">Historial</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Cultivo</th>
+                  <th>Concepto</th>
+                  <th>Importe</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="movementTableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
     </section>
+  </div>
 
-    <section class="grid">
-      <article class="feature">
-        <h3>Seguimiento de cultivos</h3>
-        <p>Registra siembras, superficie, semillas y fechas para comparar resultados por temporada.</p>
-      </article>
-      <article class="feature">
-        <h3>Control financiero</h3>
-        <p>Organiza gastos, compras, producción y ventas para entender costos reales y utilidades.</p>
-      </article>
-      <article class="feature">
-        <h3>Reportes y análisis</h3>
-        <p>Consulta indicadores financieros y de producción con una vista clara para cada parcela o cultivo.</p>
-      </article>
-    </section>
-  </main>
+  <footer>AgroFin © 2026 · Producción, compras, ventas e inventario</footer>
 
-  <footer>
-    AgroFin © 2026 · <a href="/privacy" style="color: var(--primary);">Política de privacidad</a>
-  </footer>
+  <script>
+    const state = {
+      user: null,
+      crops: [],
+      movements: []
+    };
+
+    function showMessage(elementId, text, type) {
+      const el = document.getElementById(elementId);
+      el.textContent = text;
+      el.className = 'message ' + type;
+    }
+
+    function formatMoney(value) {
+      const number = Number(value || 0);
+      return new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' }).format(number);
+    }
+
+    async function api(path, options = {}) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        },
+        ...options
+      };
+
+      const response = await fetch(path, config);
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : null;
+
+      if (!response.ok) {
+        const message = (data && data.error && data.error.message) || 'Error al procesar la solicitud.';
+        throw new Error(message);
+      }
+      return data;
+    }
+
+    function setAuthTab(tab) {
+      const loginBox = document.getElementById('loginFormBox');
+      const registerBox = document.getElementById('registerFormBox');
+      const isRegister = tab === 'register';
+      loginBox.classList.toggle('hidden', isRegister);
+      registerBox.classList.toggle('hidden', !isRegister);
+    }
+
+    function renderAuthState() {
+      const authShell = document.getElementById('authShell');
+      const dashboard = document.getElementById('dashboard');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (state.user) {
+        authShell.style.display = 'none';
+        dashboard.classList.add('visible');
+        logoutBtn.classList.remove('hidden');
+        document.getElementById('welcomeUser').textContent = state.user.name || 'Productor';
+      } else {
+        authShell.style.display = 'block';
+        dashboard.classList.remove('visible');
+        logoutBtn.classList.add('hidden');
+      }
+    }
+
+    async function loadProfile() {
+      try {
+        const data = await api('/api/auth/me');
+        state.user = data;
+        renderAuthState();
+        if (state.user) {
+          await Promise.all([loadCrops(), loadMovements()]);
+          renderSummary();
+        }
+      } catch (error) {
+        state.user = null;
+        renderAuthState();
+      }
+    }
+
+    async function loadCrops() {
+      const rows = await api('/api/cultivos');
+      state.crops = rows || [];
+      renderCropTable();
+    }
+
+    async function loadMovements() {
+      const rows = await api('/api/movimientos');
+      state.movements = rows || [];
+      renderMovementTable();
+    }
+
+    function renderSummary() {
+      const totalCultivos = state.crops.length;
+      const totalSemillas = state.crops.reduce((sum, crop) => sum + Number(crop.seeds || 0), 0);
+      const totalVentas = state.movements
+        .filter(item => String(item.kind).toLowerCase() === 'venta')
+        .reduce((sum, item) => sum + Number(item.amount || 0) * Number(item.price || 0), 0);
+      const totalCompras = state.movements
+        .filter(item => ['compra', 'gasto'].includes(String(item.kind).toLowerCase()))
+        .reduce((sum, item) => sum + Number(item.amount || 0) * Number(item.price || 0), 0);
+      const utilidad = totalVentas - totalCompras;
+
+      document.getElementById('totalCultivos').textContent = totalCultivos;
+      document.getElementById('totalSemillas').textContent = totalSemillas;
+      document.getElementById('totalVentas').textContent = formatMoney(totalVentas);
+      document.getElementById('utilidadNeta').textContent = formatMoney(utilidad);
+    }
+
+    function renderCropTable() {
+      const tbody = document.getElementById('cropTableBody');
+      if (!state.crops.length) {
+        tbody.innerHTML = '<tr><td colspan="5">No hay cultivos registrados.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = state.crops.map(crop => `
+        <tr>
+          <td>${crop.name}</td>
+          <td>${crop.type}</td>
+          <td>${crop.area} ${crop.areaUnit}</td>
+          <td>${crop.seeds}</td>
+          <td>
+            <div class="mini-actions">
+              <button type="button" data-delete-crop="${crop.id}">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderMovementTable() {
+      const tbody = document.getElementById('movementTableBody');
+      if (!state.movements.length) {
+        tbody.innerHTML = '<tr><td colspan="5">No hay movimientos.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = state.movements.map(item => {
+        const importe = Number(item.amount || 0) * Number(item.price || 0);
+        return `
+          <tr>
+            <td>${item.kind}</td>
+            <td>${item.crop}</td>
+            <td>${item.concept}</td>
+            <td>${formatMoney(importe)}</td>
+            <td>
+              <div class="mini-actions">
+                <button type="button" data-delete-movement="${item.id}">Eliminar</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    document.querySelectorAll('[data-auth-tab]').forEach(button => {
+      button.addEventListener('click', () => setAuthTab(button.dataset.authTab));
+    });
+
+    document.getElementById('googleLoginBtn').addEventListener('click', () => {
+      window.location.href = '/auth/google/login';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await api('/api/auth/logout', { method: 'POST' });
+        state.user = null;
+        state.crops = [];
+        state.movements = [];
+        renderAuthState();
+        renderCropTable();
+        renderMovementTable();
+      } catch (error) {
+        showMessage('authMessage', error.message, 'error');
+      }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        const payload = {
+          name: document.getElementById('registerName').value,
+          email: document.getElementById('registerEmail').value,
+          password: document.getElementById('registerPassword').value,
+          country: document.getElementById('registerCountry').value,
+          timezone: document.getElementById('registerTimezone').value,
+        };
+        const user = await api('/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        state.user = user;
+        renderAuthState();
+        await Promise.all([loadCrops(), loadMovements()]);
+        renderSummary();
+        showMessage('authMessage', 'Cuenta creada correctamente.', 'success');
+        document.getElementById('registerForm').reset();
+      } catch (error) {
+        showMessage('authMessage', error.message, 'error');
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        const payload = {
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value,
+        };
+        const user = await api('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        state.user = user;
+        renderAuthState();
+        await Promise.all([loadCrops(), loadMovements()]);
+        renderSummary();
+        showMessage('authMessage', 'Sesión iniciada correctamente.', 'success');
+        document.getElementById('loginForm').reset();
+      } catch (error) {
+        showMessage('authMessage', error.message, 'error');
+      }
+    });
+
+    document.getElementById('cropForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        const payload = {
+          name: document.getElementById('cropName').value,
+          type: document.getElementById('cropType').value,
+          date: document.getElementById('cropDate').value,
+          area: Number(document.getElementById('cropArea').value),
+          areaUnit: document.getElementById('cropUnit').value,
+          seeds: Number(document.getElementById('cropSeeds').value || 0),
+        };
+        await api('/api/cultivos', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        document.getElementById('cropForm').reset();
+        showMessage('cropMessage', 'Cultivo guardado correctamente.', 'success');
+        await loadCrops();
+        renderSummary();
+      } catch (error) {
+        showMessage('cropMessage', error.message, 'error');
+      }
+    });
+
+    document.getElementById('movementForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        const payload = {
+          kind: document.getElementById('movementKind').value,
+          crop: document.getElementById('movementCrop').value,
+          concept: document.getElementById('movementConcept').value,
+          date: document.getElementById('movementDate').value,
+          category: document.getElementById('movementCategory').value,
+          amount: Number(document.getElementById('movementAmount').value),
+          unit: document.getElementById('movementUnit').value,
+          price: Number(document.getElementById('movementPrice').value || 0),
+        };
+        await api('/api/movimientos', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        document.getElementById('movementForm').reset();
+        showMessage('movementMessage', 'Movimiento guardado correctamente.', 'success');
+        await loadMovements();
+        renderSummary();
+      } catch (error) {
+        showMessage('movementMessage', error.message, 'error');
+      }
+    });
+
+    document.addEventListener('click', async (event) => {
+      const cropButton = event.target.closest('[data-delete-crop]');
+      if (cropButton) {
+        const cropId = cropButton.getAttribute('data-delete-crop');
+        await api(`/api/cultivos/${cropId}`, { method: 'DELETE' });
+        await loadCrops();
+        renderSummary();
+      }
+
+      const movementButton = event.target.closest('[data-delete-movement]');
+      if (movementButton) {
+        const movementId = movementButton.getAttribute('data-delete-movement');
+        await api(`/api/movimientos/${movementId}`, { method: 'DELETE' });
+        await loadMovements();
+        renderSummary();
+      }
+    });
+
+    document.getElementById('downloadCsvBtn').addEventListener('click', () => {
+      const rows = state.movements.map(item => ({
+        fecha: item.date,
+        tipo: item.kind,
+        cultivo: item.crop,
+        concepto: item.concept,
+        categoria: item.category,
+        cantidad: item.amount,
+        unidad: item.unit,
+        precio: item.price,
+        total: Number(item.amount || 0) * Number(item.price || 0)
+      }));
+
+      const csv = [
+        ['fecha', 'tipo', 'cultivo', 'concepto', 'categoria', 'cantidad', 'unidad', 'precio', 'total'],
+        ...rows.map(row => [row.fecha, row.tipo, row.cultivo, row.concepto, row.categoria, row.cantidad, row.unidad, row.precio, row.total])
+      ].map(row => row.map(value => '"' + String(value).replace(/"/g, '""') + '"').join(',')).join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'agrofin-reporte.csv';
+      anchor.click();
+      URL.revokeObjectURL(url);
+    });
+
+    setAuthTab('login');
+    renderAuthState();
+    loadProfile();
+  </script>
 </body>
 </html>
