@@ -275,6 +275,154 @@
     .message.error { display: block; background: #feeaea; color: #8d2b2b; }
     .message.success { display: block; background: #eaf9f0; color: #1b5f3b; }
 
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      min-width: 240px;
+      max-width: 320px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: white;
+      box-shadow: 0 14px 30px rgba(17, 74, 53, 0.18);
+      opacity: 0;
+      transform: translateX(18px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: auto;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, #1d8f5a, #2ca36a);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, #d95d5d, #e26a5a);
+    }
+
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 8px;
+      padding: 26px 12px;
+      color: var(--muted);
+    }
+
+    .empty-state .empty-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      opacity: 0.9;
+    }
+
+    .empty-state h4 {
+      margin: 0;
+      color: var(--primary-dark);
+      font-size: 1.08rem;
+    }
+
+    .empty-state p {
+      margin: 0;
+      max-width: 320px;
+      font-size: 0.92rem;
+    }
+
+    .empty-state .button {
+      margin-top: 4px;
+    }
+
+    .movement-amount {
+      font-weight: 700;
+    }
+
+    .movement-amount.positive {
+      color: var(--success);
+    }
+
+    .movement-amount.negative {
+      color: var(--danger);
+    }
+
+    .field-hint {
+      display: block;
+      margin-top: 4px;
+      padding: 9px 10px;
+      background: rgba(29, 143, 90, 0.06);
+      color: var(--primary-dark);
+      border: 1px solid rgba(29, 143, 90, 0.12);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .field-hint.warning {
+      background: rgba(243, 186, 82, 0.12);
+      color: #7b5b00;
+      border-color: rgba(243, 186, 82, 0.18);
+    }
+
+    .dashboard-loader {
+      display: none;
+      margin-top: 18px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-loader.visible {
+      display: block;
+    }
+
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, #eef6f0 25%, #f7fbf8 50%, #eef6f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite linear;
+      border-radius: 12px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .skeleton-card {
+      height: 84px;
+      border-radius: 14px;
+    }
+
+    .skeleton-table {
+      height: 150px;
+      border-radius: 14px;
+      margin-top: 8px;
+    }
+
     .dashboard {
       display: none;
       padding-top: 20px;
@@ -423,15 +571,56 @@
         border-radius: 18px;
       }
 
-      table {
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
         display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        width: 100%;
+      }
+
+      tr {
+        background: rgba(255,255,255,0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 8px 20px rgba(17, 74, 53, 0.06);
+      }
+
+      td {
+        border: none;
+        padding: 7px 0;
+      }
+
+      td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.72rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .mini-actions {
+        justify-content: flex-end;
       }
     }
   </style>
 </head>
 <body>
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
   <header>
     <div class="topbar">
       <div class="brand">AgroFin</div>
@@ -515,7 +704,17 @@
           </div>
         </div>
 
-        <div class="stats">
+        <div id="dashboardLoader" class="dashboard-loader visible" aria-live="polite">
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+          </div>
+          <div class="skeleton skeleton-table"></div>
+        </div>
+
+        <div id="statsSection" class="stats" style="display:none;">
           <div class="stat">
             <div class="stat-label">Cultivos</div>
             <div id="totalCultivos" class="stat-value">0</div>
@@ -579,6 +778,7 @@
                 <input type="text" id="movementUnit" value="unidad" required>
                 <input type="number" id="movementPrice" step="0.01" min="0" placeholder="Precio unitario" value="0">
               </div>
+              <div id="movementTypeHint" class="field-hint">Se registrará la operación según el tipo seleccionado y se guardará con los datos habituales del flujo actual.</div>
               <button class="button" type="submit">Guardar movimiento</button>
             </form>
             <div id="movementMessage" class="message"></div>
@@ -637,6 +837,31 @@
       el.className = 'message ' + type;
     }
 
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+      window.setTimeout(() => {
+        toast.classList.remove('show');
+        window.setTimeout(() => toast.remove(), 220);
+      }, 3200);
+    }
+
+    function setSubmitButtonState(formId, isSubmitting, loadingText = 'Guardando...') {
+      const form = document.getElementById(formId);
+      if (!form) return;
+      const button = form.querySelector('button[type="submit"]');
+      if (!button) return;
+      button.disabled = isSubmitting;
+      if (!button.dataset.label) {
+        button.dataset.label = button.textContent.trim();
+      }
+      button.textContent = isSubmitting ? loadingText : button.dataset.label;
+    }
+
     function formatMoney(value) {
       const number = Number(value || 0);
       return new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' }).format(number);
@@ -688,6 +913,7 @@
     }
 
     async function loadProfile() {
+      setDashboardLoading(true);
       try {
         const data = await api('/api/auth/me');
         state.user = data;
@@ -699,6 +925,8 @@
       } catch (error) {
         state.user = null;
         renderAuthState();
+      } finally {
+        setDashboardLoading(false);
       }
     }
 
@@ -712,6 +940,30 @@
       const rows = await api('/api/movimientos');
       state.movements = rows || [];
       renderMovementTable();
+    }
+
+    function setDashboardLoading(isLoading) {
+      const loader = document.getElementById('dashboardLoader');
+      const stats = document.getElementById('statsSection');
+      if (!loader || !stats) return;
+      loader.classList.toggle('visible', isLoading);
+      stats.style.display = isLoading ? 'none' : 'grid';
+    }
+
+    function updateMovementHint() {
+      const kind = document.getElementById('movementKind')?.value || 'compra';
+      const hint = document.getElementById('movementTypeHint');
+      if (!hint) return;
+
+      const messages = {
+        compra: 'Compra: revisa la cantidad, precio y categoría del insumo o material.',
+        venta: 'Venta: valida precio unitario y cantidad antes de guardar.',
+        gasto: 'Gasto: revisa el concepto del gasto para que el costo quede bien categorizado.',
+        produccion: 'Producción: confirma la cantidad y el valor de la producción registrada.'
+      };
+
+      hint.textContent = messages[kind] || messages.compra;
+      hint.classList.toggle('warning', ['gasto', 'venta'].includes(kind));
     }
 
     function renderSummary() {
@@ -734,16 +986,27 @@
     function renderCropTable() {
       const tbody = document.getElementById('cropTableBody');
       if (!state.crops.length) {
-        tbody.innerHTML = '<tr><td colspan="5">No hay cultivos registrados.</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-icon">🌱</div>
+                <h4>Aún no tienes cultivos registrados</h4>
+                <p>Comienza agregando tu primer sembrado para ver tus métricas en este panel.</p>
+                <button type="button" class="button secondary" data-focus-crop-form>Registrar cultivo</button>
+              </div>
+            </td>
+          </tr>
+        `;
         return;
       }
       tbody.innerHTML = state.crops.map(crop => `
         <tr>
-          <td>${crop.name}</td>
-          <td>${crop.type}</td>
-          <td>${crop.area} ${crop.areaUnit}</td>
-          <td>${crop.seeds}</td>
-          <td>
+          <td data-label="Nombre">${crop.name}</td>
+          <td data-label="Tipo">${crop.type}</td>
+          <td data-label="Área">${crop.area} ${crop.areaUnit}</td>
+          <td data-label="Semillas">${crop.seeds}</td>
+          <td data-label="Acción">
             <div class="mini-actions">
               <button type="button" data-delete-crop="${crop.id}">Eliminar</button>
             </div>
@@ -755,18 +1018,29 @@
     function renderMovementTable() {
       const tbody = document.getElementById('movementTableBody');
       if (!state.movements.length) {
-        tbody.innerHTML = '<tr><td colspan="5">No hay movimientos.</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <h4>No hay movimientos registrados</h4>
+                <p>Aquí aparecerán tus compras, ventas, gastos y producción cuando empieces a registrar.</p>
+              </div>
+            </td>
+          </tr>
+        `;
         return;
       }
       tbody.innerHTML = state.movements.map(item => {
         const importe = Number(item.amount || 0) * Number(item.price || 0);
+        const isPositive = ['venta', 'produccion'].includes(String(item.kind || '').toLowerCase());
         return `
           <tr>
-            <td>${item.kind}</td>
-            <td>${item.crop}</td>
-            <td>${item.concept}</td>
-            <td>${formatMoney(importe)}</td>
-            <td>
+            <td data-label="Tipo">${item.kind}</td>
+            <td data-label="Cultivo">${item.crop}</td>
+            <td data-label="Concepto">${item.concept}</td>
+            <td data-label="Importe" class="movement-amount ${isPositive ? 'positive' : 'negative'}">${formatMoney(importe)}</td>
+            <td data-label="Acción">
               <div class="mini-actions">
                 <button type="button" data-delete-movement="${item.id}">Eliminar</button>
               </div>
@@ -779,6 +1053,9 @@
     document.querySelectorAll('[data-auth-tab]').forEach(button => {
       button.addEventListener('click', () => setAuthTab(button.dataset.authTab));
     });
+
+    document.getElementById('movementKind').addEventListener('change', updateMovementHint);
+    updateMovementHint();
 
     document.getElementById('googleLoginBtn').addEventListener('click', () => {
       window.location.href = '/auth/google/login';
@@ -847,6 +1124,7 @@
 
     document.getElementById('cropForm').addEventListener('submit', async (event) => {
       event.preventDefault();
+      setSubmitButtonState('cropForm', true);
       try {
         const payload = {
           name: document.getElementById('cropName').value,
@@ -862,15 +1140,20 @@
         });
         document.getElementById('cropForm').reset();
         showMessage('cropMessage', 'Cultivo guardado correctamente.', 'success');
+        showToast('✅ Cultivo registrado con éxito', 'success');
         await loadCrops();
         renderSummary();
       } catch (error) {
         showMessage('cropMessage', error.message, 'error');
+        showToast(`❌ ${error.message}`, 'error');
+      } finally {
+        setSubmitButtonState('cropForm', false);
       }
     });
 
     document.getElementById('movementForm').addEventListener('submit', async (event) => {
       event.preventDefault();
+      setSubmitButtonState('movementForm', true);
       try {
         const payload = {
           kind: document.getElementById('movementKind').value,
@@ -888,28 +1171,48 @@
         });
         document.getElementById('movementForm').reset();
         showMessage('movementMessage', 'Movimiento guardado correctamente.', 'success');
+        showToast('✅ Movimiento registrado con éxito', 'success');
         await loadMovements();
         renderSummary();
       } catch (error) {
         showMessage('movementMessage', error.message, 'error');
+        showToast(`❌ ${error.message}`, 'error');
+      } finally {
+        setSubmitButtonState('movementForm', false);
       }
     });
 
     document.addEventListener('click', async (event) => {
+      const focusCropButton = event.target.closest('[data-focus-crop-form]');
+      if (focusCropButton) {
+        document.getElementById('cropName').focus();
+        window.scrollTo({ top: document.getElementById('cropForm').offsetTop - 20, behavior: 'smooth' });
+      }
+
       const cropButton = event.target.closest('[data-delete-crop]');
       if (cropButton) {
         const cropId = cropButton.getAttribute('data-delete-crop');
-        await api(`/api/cultivos/${cropId}`, { method: 'DELETE' });
-        await loadCrops();
-        renderSummary();
+        try {
+          await api(`/api/cultivos/${cropId}`, { method: 'DELETE' });
+          await loadCrops();
+          renderSummary();
+          showToast('✅ Cultivo eliminado', 'success');
+        } catch (error) {
+          showToast(`❌ ${error.message}`, 'error');
+        }
       }
 
       const movementButton = event.target.closest('[data-delete-movement]');
       if (movementButton) {
         const movementId = movementButton.getAttribute('data-delete-movement');
-        await api(`/api/movimientos/${movementId}`, { method: 'DELETE' });
-        await loadMovements();
-        renderSummary();
+        try {
+          await api(`/api/movimientos/${movementId}`, { method: 'DELETE' });
+          await loadMovements();
+          renderSummary();
+          showToast('✅ Movimiento eliminado', 'success');
+        } catch (error) {
+          showToast(`❌ ${error.message}`, 'error');
+        }
       }
     });
 
