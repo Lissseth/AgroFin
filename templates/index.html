@@ -1,1322 +1,644 @@
 <!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="AgroFin ayuda a productores a gestionar cultivos, compras, ventas, gastos y reportes financieros con claridad." />
-  <meta name="google-site-verification" content="M1P70MeYtiXFhLR5lFfG5BAYWuEtToShdFO5FqfBsOc" />
-  <title>AgroFin | Panel del productor</title>
+<html lang="es"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260925-05-46ec85d","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YACgEZulLoA,0","Arial Narrow":"YAGyDvJ_4Ts,0","Arial Rounded MT Bold":"YAFcfoaHu-s,0","Arial":"YAGyDvJ_4Ts,0","Avenir Next":"YAFcfmNq6UY,0","Baloo 2":"YADK30bC6HQ,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,1","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAFcfvtOAUY,1","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","Courier Prime":"YAD1aFjegN8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAFdJpU7Kkk,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHQutsX00Q,0","Hanken Grotesk":"YAFcfhwp99E,0","Helvetica Neue":"YAFcf6CtJfI,0","Helvetica":"YAFcf6CtJfI,0","IBM Plex Mono":"YAFdJkmvhGI,0","Impact":"YAFcfnjI7Vk,0","Instrument Serif":"YAHFeOnZNEk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YADK3zbC6RM,0","JetBrains Mono":"YAFdJksXcAk,0","Josefin Sans":"YAFdJjvw9Ps,0","Lato":"YAFdJuFCnaw,0","Libre Baskerville":"YACgEUFdPdA,0","Lobster":"YAD8SnSjSFI,0","Lora":"YACgEXvxf8Q,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YAFdtQi73Xs,0","Nunito":"YAFdJoNRMmU,1","Oleo Script":"YACgEQQ14jI,0","Oswald":"YACgEQY10lw,0","Pacifico":"YADLjORQ1u4,0","Phantom Sans":"YAFdJvgJ5TU,0","Playfair Display":"YAFdJhem5V8,1","Plus Jakarta Sans":"YAGvf3_u0_Q,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YAFdJpYtCxE,1","Raleway":"YAFdJhmxbVQ,1","Roboto Slab":"YAFdJswIKAg,0","Rockwell":"YAFcfyVZnN0,0","Rye":"YACgEdQP21k,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Source Serif 4":"YACgEfdj394,0","Space Grotesk":"YADZ-dYEmhg,0","Space Mono":"YADW1-vpsoc,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","UV Display":"YAEdVfSSpYo,0","UV Sans":"YAFdJvgJ5TU,0","Ubuntu":"YACgERDU--Q,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YAD1aFjegN8,0","ui-sans-serif":"YACkoD1yZN0,0"}}');</script><script src="/_sdk/6542d56fbfe7a3eb.telemetry_sdk.js" integrity="sha512-ECdM0nK7EkwDuOqho2qxgyRQXyBHk9hZqRKMBr+Xsu6zjeHlt+qkO2N2YRiHN7Kg4e1fEHDhjIp4bGJYVypv1g=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroFin — Gestión agrícola</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #edf7ee;
-      --bg-soft: #f9fdf9;
-      --card: rgba(255, 255, 255, 0.94);
-      --card-strong: #ffffff;
-      --text: #153d2d;
-      --muted: #5d7269;
-      --primary: #1d8f5a;
-      --primary-dark: #114a35;
-      --primary-soft: #eaf9f0;
-      --accent: #f3ba52;
-      --danger: #d95d5d;
-      --success: #1d8f5a;
-      --border: rgba(25, 86, 56, 0.12);
-      --shadow: 0 22px 48px rgba(17, 60, 41, 0.12);
-    }
-
-    * { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(27, 139, 82, 0.14), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(243, 186, 82, 0.12), transparent 28%),
-        linear-gradient(180deg, #edf7ee 0%, #f6fbf7 100%);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    a { color: var(--primary-dark); }
-
-    .container {
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 0 18px 40px;
-    }
-
-    header {
-      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-      color: white;
-      box-shadow: 0 10px 24px rgba(17, 74, 53, 0.2);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .topbar {
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 18px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      font-size: clamp(1.6rem, 2vw, 2.1rem);
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand::before {
-      content: "🌾";
-      font-size: 1.4rem;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a,
-    .nav-links button {
-      color: white;
-      text-decoration: none;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 9px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: 0.2s ease;
-    }
-
-    .nav-links a:hover,
-    .nav-links button:hover {
-      background: rgba(255,255,255,0.16);
-      transform: translateY(-1px);
-    }
-
-    .hero {
-      padding: 28px 0 18px;
-    }
-
-    .hero-card {
-      background: rgba(255,255,255,0.72);
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      padding: 28px;
-      box-shadow: 0 26px 60px rgba(17, 74, 53, 0.12);
-      backdrop-filter: blur(8px);
-    }
-
-    .auth-shell {
-      display: grid;
-      grid-template-columns: 1.22fr 0.78fr;
-      gap: 24px;
-      align-items: stretch;
-    }
-
-    .auth-panel {
-      background: linear-gradient(180deg, rgba(250,255,252,0.92), rgba(240,248,242,0.96));
-      border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 26px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
-    }
-
-    .auth-panel::after {
-      content: "";
-      position: absolute;
-      inset: auto -30px -30px auto;
-      width: 140px;
-      height: 140px;
-      background: rgba(29, 143, 90, 0.08);
-      border-radius: 50%;
-    }
-
-    .auth-panel h2,
-    .panel-title {
-      margin-top: 0;
-      margin-bottom: 16px;
-      font-size: clamp(1.35rem, 2vw, 1.9rem);
-      color: var(--primary-dark);
-      line-height: 1.2;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(29, 143, 90, 0.12);
-      color: var(--primary-dark);
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--primary), #2ca36a);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 10px 20px rgba(29, 143, 90, 0.18);
-      transition: 0.2s ease;
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 22px rgba(29, 143, 90, 0.22);
-    }
-
-    .button.secondary {
-      background: white;
-      color: var(--primary-dark);
-      border: 1px solid var(--border);
-      box-shadow: none;
-    }
-
-    .button.google {
-      background: #fff;
-      color: #1f2937;
-      border: 1px solid #dfe5eb;
-      width: 100%;
-      box-shadow: none;
-    }
-
-    .feature-list {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 22px;
-    }
-
-    .feature {
-      background: rgba(255,255,255,0.78);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px 16px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 10px 24px rgba(17, 74, 53, 0.04);
-    }
-
-    .feature:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 18px 30px rgba(17, 74, 53, 0.08);
-    }
-
-    .feature h3 {
-      margin: 0 0 9px;
-      color: var(--primary-dark);
-      font-size: 1.05rem;
-    }
-
-    .feature p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.94rem;
-    }
-
-    form {
-      display: grid;
-      gap: 12px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 13px;
-      border: 1px solid rgba(17, 74, 53, 0.12);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.96);
-      color: var(--text);
-      font-size: 0.96rem;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: rgba(29, 143, 90, 0.45);
-      box-shadow: 0 0 0 4px rgba(29, 143, 90, 0.1);
-    }
-
-    .message {
-      display: none;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      margin-top: 10px;
-    }
-
-    .message.error { display: block; background: #feeaea; color: #8d2b2b; }
-    .message.success { display: block; background: #eaf9f0; color: #1b5f3b; }
-
-    .toast-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
-    }
-
-    .toast {
-      min-width: 240px;
-      max-width: 320px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: white;
-      box-shadow: 0 14px 30px rgba(17, 74, 53, 0.18);
-      opacity: 0;
-      transform: translateX(18px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      pointer-events: auto;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .toast.success {
-      background: linear-gradient(135deg, #1d8f5a, #2ca36a);
-    }
-
-    .toast.error {
-      background: linear-gradient(135deg, #d95d5d, #e26a5a);
-    }
-
-    .empty-state {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      gap: 8px;
-      padding: 26px 12px;
-      color: var(--muted);
-    }
-
-    .empty-state .empty-icon {
-      font-size: 2.2rem;
-      line-height: 1;
-      opacity: 0.9;
-    }
-
-    .empty-state h4 {
-      margin: 0;
-      color: var(--primary-dark);
-      font-size: 1.08rem;
-    }
-
-    .empty-state p {
-      margin: 0;
-      max-width: 320px;
-      font-size: 0.92rem;
-    }
-
-    .empty-state .button {
-      margin-top: 4px;
-    }
-
-    .movement-amount {
-      font-weight: 700;
-    }
-
-    .movement-amount.positive {
-      color: var(--success);
-    }
-
-    .movement-amount.negative {
-      color: var(--danger);
-    }
-
-    .field-hint {
-      display: block;
-      margin-top: 4px;
-      padding: 9px 10px;
-      background: rgba(29, 143, 90, 0.06);
-      color: var(--primary-dark);
-      border: 1px solid rgba(29, 143, 90, 0.12);
-      border-radius: 10px;
-      font-size: 0.82rem;
-      line-height: 1.5;
-    }
-
-    .field-hint.warning {
-      background: rgba(243, 186, 82, 0.12);
-      color: #7b5b00;
-      border-color: rgba(243, 186, 82, 0.18);
-    }
-
-    .dashboard-loader {
-      display: none;
-      margin-top: 18px;
-      background: rgba(255,255,255,0.7);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .dashboard-loader.visible {
-      display: block;
-    }
-
-    .skeleton {
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(90deg, #eef6f0 25%, #f7fbf8 50%, #eef6f0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite linear;
-      border-radius: 12px;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .skeleton-row {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .skeleton-card {
-      height: 84px;
-      border-radius: 14px;
-    }
-
-    .skeleton-table {
-      height: 150px;
-      border-radius: 14px;
-      margin-top: 8px;
-    }
-
-    .dashboard {
-      display: none;
-      padding-top: 20px;
-    }
-
-    .dashboard.visible { display: block; }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-      margin: 18px 0 24px;
-    }
-
-    .stat {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,252,248,0.94));
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px 18px 16px;
-      box-shadow: 0 16px 30px rgba(17, 74, 53, 0.08);
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .stat:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 22px 40px rgba(17, 74, 53, 0.09);
-    }
-
-    .stat::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 6px;
-      background: linear-gradient(180deg, var(--primary), var(--accent));
-    }
-
-    .stat-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      font-size: 1.35rem;
-      background: rgba(29, 143, 90, 0.1);
-      color: var(--primary-dark);
-      flex-shrink: 0;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 0.74rem;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 700;
-    }
-
-    .stat-value {
-      font-size: clamp(1.45rem, 2.2vw, 2rem);
-      font-weight: 800;
-      color: var(--primary-dark);
-      line-height: 1.1;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .panel {
-      background: rgba(255,255,255,0.9);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      font-size: 0.93rem;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px 12px;
-      text-align: left;
-      border-bottom: 1px solid rgba(17, 74, 53, 0.08);
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--primary-dark);
-      background: #f7faf7;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 700;
-    }
-
-    tbody tr {
-      transition: background 0.18s ease, transform 0.18s ease;
-    }
-
-    tbody tr:hover {
-      background: rgba(29, 143, 90, 0.04);
-    }
-
-    .mini-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .mini-actions button {
-      background: rgba(29, 143, 90, 0.06);
-      border: 1px solid rgba(17, 74, 53, 0.08);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 7px 9px;
-      cursor: pointer;
-      transition: 0.2s ease;
-      font-weight: 600;
-    }
-
-    .mini-actions button:hover {
-      background: var(--primary-soft);
-      transform: translateY(-1px);
-    }
-
-    .hidden { display: none; }
-
-    footer {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.92rem;
-      padding: 18px 0 30px;
-    }
-
-    @media (max-width: 980px) {
-      .auth-shell,
-      .two-col,
-      .stats,
-      .feature-list {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-card {
-        padding: 20px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .container,
-      .topbar {
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-
-      .row {
-        grid-template-columns: 1fr;
-      }
-
-      .nav-links {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .topbar {
-        align-items: flex-start;
-      }
-
-      .hero {
-        padding-top: 20px;
-      }
-
-      .auth-panel,
-      .panel,
-      .hero-card {
-        border-radius: 18px;
-      }
-
-      table,
-      thead,
-      tbody,
-      th,
-      td,
-      tr {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      tbody {
-        width: 100%;
-      }
-
-      tr {
-        background: rgba(255,255,255,0.9);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 14px 12px;
-        margin-bottom: 12px;
-        box-shadow: 0 8px 20px rgba(17, 74, 53, 0.06);
-      }
-
-      td {
-        border: none;
-        padding: 7px 0;
-      }
-
-      td::before {
-        content: attr(data-label);
-        display: block;
-        font-size: 0.72rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-
-      .mini-actions {
-        justify-content: flex-end;
-      }
+    :root{
+      --forest:#123f38; --petrol:#123f58; --leaf:#287a50; --emerald:#16835d;
+      --terracotta:#c96542; --cream:#f6f3eb; --warm:#ece9df; --line:#d7e0d5;
+      --ink:#17352e; --muted:#64756d;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--cream)}
+    body{margin:0;min-width:0;color:var(--ink);font-family:"DM Sans",sans-serif;background:var(--cream)}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e7a27f;outline-offset:3px}
+    .app-root{width:100%;min-height:calc(100 * min(var(--vh,1vh),1vh));background:radial-gradient(circle at 95% 5%,#dcebdd 0,transparent 25%),linear-gradient(135deg,#f8f5ee,#edf2e9)}
+    .hidden-view{display:none!important}
+    .screen{display:none}.screen.active{display:block}
+    .login-screen{min-height:calc(100 * min(var(--vh,1vh),1vh));padding:clamp(16px,3vw,40px);display:none;align-items:center}
+    .login-screen.active{display:flex}
+    .login-layout{width:100%;max-width:1160px;margin:auto;overflow:hidden;border:1px solid rgba(215,224,213,.9);border-radius:28px;background:#fffdf9;box-shadow:0 25px 65px rgba(18,63,56,.14)}
+    .login-image{position:relative;min-height:360px;overflow:hidden;background:#164c3e}
+    .login-image img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;opacity:.78}
+    .login-image:after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(10,49,41,.7),rgba(18,63,88,.2))}
+    .login-copy{position:relative;z-index:1;color:white;padding:clamp(30px,4vw,58px);height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+    .login-form{padding:clamp(26px,5vw,64px);max-width:560px;margin:auto;width:100%}
+    .brand-badge{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#6fbd71,#16835d);color:white;box-shadow:0 10px 22px rgba(22,131,93,.25)}
+    .legal-link{color:#296d54;text-decoration:underline;text-underline-offset:3px;font-weight:600;background:none;border:0;padding:0}
+    .legal-link:hover{color:var(--terracotta)}
+    .field{width:100%;border:1px solid #cfdcd1;border-radius:14px;background:#fff;padding:13px 14px;color:var(--ink);transition:.2s}
+    .field:focus{border-color:#26855e;box-shadow:0 0 0 4px rgba(38,133,94,.12)}
+    .primary-btn{border:0;border-radius:14px;padding:13px 18px;background:linear-gradient(120deg,#17684b,#16835d);color:white;font-weight:700;box-shadow:0 12px 22px rgba(22,101,75,.18);transition:.2s}
+    .primary-btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+    .secondary-btn{border:1px solid #b9d2c2;border-radius:14px;padding:13px 18px;background:#eef7ef;color:#18563f;font-weight:700;transition:.2s}
+    .secondary-btn:hover{background:#e1f0e2}
+    .sidebar{background:linear-gradient(180deg,#103e36,#123f38 60%,#0e302c);box-shadow:12px 0 35px rgba(10,45,38,.12)}
+    .side-item{color:#c2d8ce;border:1px solid transparent;transition:.2s}
+    .side-item:hover,.side-item.active{color:#fff;background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.1)}
+    .side-item.active{box-shadow:inset 3px 0 #8dd48a}
+    .topbar{background:rgba(255,253,249,.85);border-color:rgba(210,220,211,.8);backdrop-filter:blur(14px)}
+    .surface{background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,251,247,.91));border:1px solid rgba(212,223,213,.9);box-shadow:0 14px 34px rgba(27,68,57,.07)}
+    .metric{position:relative;overflow:hidden}.metric:after{content:"";position:absolute;width:110px;height:110px;right:-45px;top:-50px;border-radius:50%;background:radial-gradient(circle,rgba(91,176,108,.17),transparent 66%)}
+    .view{display:none;animation:enter .28s ease}.view.active{display:block}
+    .bar-chart{background-image:linear-gradient(to top,rgba(20,79,62,.09) 1px,transparent 1px);background-size:100% 25%}
+    .bar-chart > div > div{transition:height .4s ease}.bar-chart > div:hover > div{filter:brightness(1.12)}
+    .crop-card{overflow:hidden;transition:.2s}.crop-card:hover{transform:translateY(-4px);box-shadow:0 22px 40px rgba(20,70,56,.15)}
+    .crop-card img{transition:.45s}.crop-card:hover img{transform:scale(1.04)}
+    .progress-track{height:9px;border-radius:100px;background:#e4ece4;overflow:hidden}.progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#167b55,#85c96f)}
+    .modal-wrap{display:none}.modal-wrap.open{display:flex}
+    .notice{display:none}.notice.open{display:block}
+    .toast{opacity:0;transform:translateY(18px);pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translateY(0)}
+    .mobile-nav{display:none}
+    .task-done{opacity:.58}.task-done .task-title{text-decoration:line-through}
+    @keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:767px){
+      .login-layout{border-radius:22px}.login-image{min-height:185px}.login-copy{padding:25px}.login-copy p{display:none}
+      .desktop-side{display:none}.desktop-main{margin-left:0}.mobile-nav{display:flex}
+      .main-content{padding:20px 16px 92px}.desktop-search{display:none}
+      .topbar{padding:12px 16px}.data-table-row{align-items:flex-start;flex-direction:column;gap:7px}
+    }
+    @media(min-width:768px) and (max-width:1023px){
+      .desktop-side{width:76px}.desktop-side .side-label,.desktop-side .brand-copy,.desktop-side .help-box{display:none}.desktop-main{margin-left:76px}
+      .desktop-side .side-item{justify-content:center;padding-left:0;padding-right:0}
     }
   </style>
-</head>
-<body>
-  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
-  <header>
-    <div class="topbar">
-      <div class="brand">AgroFin</div>
-      <div class="nav-links">
-        <a href="/privacy">Privacidad</a>
-        <a href="/terms">Términos</a>
-        <button id="logoutBtn" class="hidden" type="button">Cerrar sesión</button>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/6c2ecc939521f244.data_sdk.js" type="text/javascript" integrity="sha512-gRx8s+XsZDN6mSIQu2sivLZysbV0WHhb5kXNUWlgVb5lCMU1foJYukyMEDPv8Tnoocb8iwqB4XdRrWc7oEGzIQ=="></script>
+  <script src="/_sdk/ef0304cb8c7ed696.editing_sdk.js" type="text/javascript" integrity="sha512-kmL9L5Yuj57MQaequKbMA3aGpT/5lBUp10iGA3e3qnmMLs2ZZQ0poCcIfdd5rTgrhEvNPe4HK0ohePW7ZpgAFg=="></script>
+  <script src="/_sdk/ddcab3e45959c817.resizing_sdk.js" type="text/javascript" integrity="sha512-VAviUKfZVzugWBSeULYjSljTX+nb84wc6Zzbx5GQaQgh6X2ISSjXi8eIiCDGdwDh10esJMY0+QFQgUy9NcrTlQ=="></script>
+ </head>
+ <body data-template-id="__page-root" style="background: linear-gradient(135deg, rgb(248, 245, 238), rgb(237, 242, 233));">
+  <div class="app-root">
+   <section id="login-screen" class="login-screen active" aria-label="Acceso a AgroFin">
+    <div class="login-layout grid md:grid-cols-2">
+     <div class="login-image order-2 md:order-1">
+      <img data-template-id="login-hero-image" class="canva-image" loading="lazy" src="https://images.pexels.com/photos/38868127/pexels-photo-38868127.jpeg" alt="Vista aérea de plantaciones verdes cubiertas por neblina al amanecer">
+      <div class="login-copy">
+       <div class="flex items-center gap-3"><img data-template-id="login-logo" class="canva-image h-14 w-auto max-w-[220px] object-contain object-left" loading="lazy" src="canva://MAHWWgBF35k/1" alt="Logotipo AgroFin de control financiero y crecimiento agrícola"><span data-template-id="login-brand" class="canva-text sr-only" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 28px;">AgroFin</span>
+       </div>
+       <h1 data-template-id="login-image-title" class="canva-text mt-10 font-bold leading-tight" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 30px;">Decisiones claras para cada cosecha</h1>
+       <p data-template-id="login-image-copy" class="canva-text mt-4 max-w-md text-base leading-7 text-emerald-50" style="color: rgb(239, 250, 241); font-weight: 400; font-style: normal; font-size: 15px;">Organiza tus cultivos, movimientos y tareas desde una experiencia pensada para el campo.</p>
       </div>
+     </div>
+     <div class="login-form order-1 md:order-2">
+      <header class="flex items-center justify-between gap-3">
+       <p data-template-id="login-copyright-top" class="canva-text text-xs font-semibold text-slate-500" style="color: rgb(100, 117, 109); font-weight: 700; font-style: normal; font-size: 15px;">© AgroFin 2026</p>
+       <div class="flex gap-3 text-xs">
+        <button type="button" class="legal-link" data-legal="privacy">Privacidad</button> <button type="button" class="legal-link" data-legal="terms">Términos</button>
+       </div>
+      </header>
+      <div class="mt-9">
+       <div class="md:hidden flex items-center gap-3"><img data-template-id="mobile-logo" class="canva-image h-12 w-auto max-w-[180px] object-contain object-left" loading="lazy" src="canva://MAHWWgBF35k/1" alt="Logotipo AgroFin de control financiero y crecimiento agrícola">
+       </div>
+       <p data-template-id="login-eyebrow" class="canva-text mt-7 text-sm font-bold uppercase tracking-[.16em] text-[#287a50]" style="color: rgb(40, 122, 80); font-weight: 700; font-style: normal; font-size: 13px;">Gestión agrícola inteligente</p>
+       <h2 data-template-id="login-title" class="canva-text mt-2 font-bold leading-tight" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Bienvenida de nuevo</h2>
+       <p data-template-id="login-copy" class="canva-text mt-3 leading-6 text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Accede a tu resumen financiero y productivo con datos locales de demostración.</p>
+      </div>
+      <form id="login-form" class="mt-7 space-y-5" novalidate="">
+       <div>
+        <label data-template-id="email-label" class="canva-text mb-2 block text-sm font-bold" for="login-email" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Correo electrónico</label> <input id="login-email" class="field" type="email" autocomplete="email">
+       </div>
+       <div class="rounded-xl border border-[#f0d9c9] bg-[#fff8f2] p-3 text-sm leading-5 text-[#804321]">
+        <strong>Acceso seguro de demostración:</strong> este prototipo no solicita ni almacena contraseñas reales.
+       </div>
+       <p id="login-message" class="hidden rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]" role="alert"></p><button data-template-id="login-button" class="canva-button primary-btn w-full" type="submit" style="background: linear-gradient(120deg, rgb(23, 104, 75), rgb(22, 131, 93)); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 15px;">Iniciar sesión</button>
+      </form>
+      <div class="mt-4 flex items-center justify-between gap-4 text-sm">
+       <button type="button" class="legal-link" data-legal="terms">¿Olvidaste tu contraseña?</button> <button type="button" class="legal-link" data-legal="terms">Crear una cuenta</button>
+      </div><button data-template-id="demo-button" id="demo-login" class="canva-button secondary-btn mt-6 w-full" type="button" style="background: rgb(238, 247, 239); color: rgb(24, 86, 63); font-weight: 700; font-style: normal; font-size: 15px;">Continuar con datos de demostración</button>
+      <footer class="mt-8 border-t border-[#e4e8df] pt-5 text-xs leading-5 text-slate-500">
+       <span data-template-id="login-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Prototipo de gestión agrícola.</span>
+       <div class="mt-2 flex gap-4">
+        <button type="button" class="legal-link" data-legal="privacy">Política de privacidad</button> <button type="button" class="legal-link" data-legal="terms">Términos y condiciones</button>
+       </div>
+      </footer>
+     </div>
     </div>
-  </header>
-
-  <div class="container">
-    <section class="hero">
-      <div class="hero-card" id="authShell">
-        <div class="auth-shell">
-          <div class="auth-panel">
-            <h1 style="margin:0 0 10px; font-size: clamp(2rem, 3vw, 2.8rem); color: var(--primary-dark);">AgroFin</h1>
-            <h2 style="margin-top:0;">Control de cultivos, compra y ventas</h2>
-            <p>AgroFin es una plataforma para productores que registran sembrados, compras, ventas, gastos y reportes financieros para tomar decisiones con claridad.</p>
-            <p style="margin-top: 10px;">
-              <a href="/privacy">Política de privacidad</a> · <a href="/terms">Términos</a>
-            </p>
-            <div class="feature-list">
-              <div class="feature">
-                <h3>Cultivos</h3>
-                <p>Seguimiento por parcela, fecha, área, semillas y tipo de cultivo.</p>
-              </div>
-              <div class="feature">
-                <h3>Compras</h3>
-                <p>Controla insumos, fertilizantes, mano de obra y costos directos.</p>
-              </div>
-              <div class="feature">
-                <h3>Ventas</h3>
-                <p>Registra producción, precios y flujo de ingresos por temporada.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="auth-panel">
-            <div id="authTabs" style="display:flex; gap:10px; margin-bottom:18px;">
-              <button class="button secondary" type="button" data-auth-tab="login">Iniciar sesión</button>
-              <button class="button secondary" type="button" data-auth-tab="register">Registrarse</button>
-            </div>
-
-            <div id="loginFormBox">
-              <h2>Acceso</h2>
-              <form id="loginForm">
-                <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-                <input type="password" id="loginPassword" placeholder="Contraseña" required>
-                <button class="button" type="submit">Entrar</button>
-              </form>
-            </div>
-
-            <div id="registerFormBox" class="hidden">
-              <h2>Crear cuenta</h2>
-              <form id="registerForm">
-                <input type="text" id="registerName" placeholder="Nombre completo" required>
-                <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
-                <input type="password" id="registerPassword" placeholder="Contraseña (mínimo 8)" required>
-                <div class="row">
-                  <input type="text" id="registerCountry" value="Nicaragua" required>
-                  <input type="text" id="registerTimezone" value="America/Managua" required>
-                </div>
-                <button class="button" type="submit">Registrar productor</button>
-              </form>
-            </div>
-
-            <div style="margin-top:16px;">
-              <button id="googleLoginBtn" class="button google" type="button">Continuar con Google</button>
-            </div>
-
-            <div id="authMessage" class="message"></div>
-          </div>
-        </div>
+   </section>
+   <section id="app-screen" class="screen" aria-label="Panel AgroFin">
+    <aside class="desktop-side sidebar fixed inset-y-0 left-0 z-30 hidden w-64 flex-col p-5 md:flex">
+     <header class="mb-9 flex items-center gap-3"><img data-template-id="sidebar-logo" class="canva-image h-12 w-auto max-w-[170px] object-contain object-left" loading="lazy" src="canva://MAHWWgBF35k/1" alt="Logotipo AgroFin de control financiero y crecimiento agrícola">
+      <div class="brand-copy">
+       <h1 data-template-id="brand-name" class="canva-text font-bold text-white" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 24px;">AgroFin</h1>
+       <p class="text-xs text-emerald-100/70">Control agrícola</p>
       </div>
-
-      <div id="dashboard" class="dashboard">
-        <div class="hero-card" style="margin-bottom:18px; background:linear-gradient(135deg, rgba(22,101,52,0.96), rgba(33,140,90,0.88)); color:#fff; border-color: rgba(255,255,255,0.12);">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
-            <div>
-              <p style="margin:0;color:rgba(255,255,255,0.8);font-size:0.76rem;text-transform:uppercase;letter-spacing:0.08em;">Bienvenido</p>
-              <h2 id="welcomeUser" style="margin:8px 0 0; color:white; font-size: clamp(1.8rem, 3vw, 2.5rem);">Productor</h2>
-            </div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <span style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.16); border-radius:999px; padding:9px 12px; font-size:0.82rem; font-weight:700;">🌿 Panel activo</span>
-              <button id="downloadCsvBtn" class="button secondary" type="button" style="background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.18); color:#fff; box-shadow:none;">Exportar CSV</button>
-            </div>
-          </div>
+     </header>
+     <nav aria-label="Navegación principal" class="space-y-2">
+      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="tasks" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="clipboard-check" width="19"></i><span class="side-label">Tareas</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
+     </nav>
+     <div class="help-box mt-auto rounded-2xl border border-white/10 bg-white/10 p-4 text-emerald-50">
+      <i data-lucide="circle-help" width="19" class="text-emerald-200"></i>
+      <p class="mt-3 text-sm font-bold">Datos de ejemplo</p>
+      <p class="mt-1 text-xs leading-5 text-emerald-100/70">Todo el contenido es ficticio para este prototipo.</p>
+     </div>
+    </aside>
+    <div class="desktop-main min-w-0 md:ml-64">
+     <header class="topbar sticky top-0 z-20 border-b px-5 py-3 md:px-8">
+      <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+       <div class="desktop-search relative w-full max-w-md">
+        <label class="sr-only" for="global-search">Buscar cultivos, lotes o tareas</label> <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="18"></i> <input id="global-search" class="field py-2 pl-10 text-sm" placeholder="Buscar cultivos, lotes o tareas">
+       </div>
+       <div class="flex items-center gap-2 sm:gap-3">
+        <div class="relative">
+         <button id="notification-button" type="button" aria-label="Ver notificaciones" class="grid h-10 w-10 place-items-center rounded-xl border border-[#d8e2d9] bg-white text-[#1d604a] shadow-sm"><i data-lucide="bell" width="18"></i></button>
+         <aside id="notice-panel" class="notice absolute right-0 top-12 w-72 rounded-2xl border border-[#dce6dd] bg-white p-4 shadow-2xl" aria-label="Notificaciones">
+          <p class="font-bold">Notificaciones</p>
+          <p class="mt-3 rounded-xl bg-[#fff4ea] p-3 text-sm text-[#8b4c25]"><strong>Presupuesto:</strong> Café Las Brisas está cerca del límite mensual.</p>
+          <p class="mt-2 rounded-xl bg-[#edf8ef] p-3 text-sm text-[#286442]"><strong>Tarea pendiente:</strong> Aplicar fertilizante tiene un día de atraso.</p>
+         </aside>
         </div>
-
-        <div id="dashboardLoader" class="dashboard-loader visible" aria-live="polite">
-          <div class="skeleton-row">
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-          </div>
-          <div class="skeleton skeleton-table"></div>
-        </div>
-
-        <div id="statsSection" class="stats" style="display:none;">
-          <div class="stat">
-            <div class="stat-icon">🌾</div>
-            <div>
-              <div class="stat-label">Cultivos</div>
-              <div id="totalCultivos" class="stat-value">0</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">🌱</div>
-            <div>
-              <div class="stat-label">Semillas</div>
-              <div id="totalSemillas" class="stat-value">0</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">💰</div>
-            <div>
-              <div class="stat-label">Ingresos</div>
-              <div id="totalVentas" class="stat-value">$0</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">📈</div>
-            <div>
-              <div class="stat-label">Utilidad</div>
-              <div id="utilidadNeta" class="stat-value">$0</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="panel">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
-              <h3 class="panel-title" style="margin:0;">Registrar cultivo</h3>
-              <span style="display:inline-flex; padding:6px 10px; border-radius:999px; background:rgba(29,143,90,0.08); color:var(--primary-dark); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Nuevo</span>
-            </div>
-            <form id="cropForm">
-              <div class="row">
-                <input type="text" id="cropName" placeholder="Nombre del cultivo" required>
-                <input type="text" id="cropType" placeholder="Tipo" required>
-              </div>
-              <div class="row">
-                <input type="date" id="cropDate" required>
-                <input type="number" id="cropArea" step="0.01" min="0" placeholder="Área" required>
-              </div>
-              <div class="row">
-                <input type="text" id="cropUnit" value="manzanas" required>
-                <input type="number" id="cropSeeds" min="0" value="0" required>
-              </div>
-              <button class="button" type="submit">Guardar cultivo</button>
-            </form>
-            <div id="cropMessage" class="message"></div>
-          </div>
-
-          <div class="panel">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
-              <h3 class="panel-title" style="margin:0;">Registrar movimiento</h3>
-              <span style="display:inline-flex; padding:6px 10px; border-radius:999px; background:rgba(243,186,82,0.12); color:#7b5b00; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Flujo</span>
-            </div>
-            <form id="movementForm">
-              <div class="row">
-                <select id="movementKind" required>
-                  <option value="compra">Compra</option>
-                  <option value="venta">Venta</option>
-                  <option value="gasto">Gasto</option>
-                  <option value="produccion">Producción</option>
-                </select>
-                <input type="text" id="movementCrop" placeholder="Cultivo asociado" required>
-              </div>
-              <div class="row">
-                <input type="text" id="movementConcept" placeholder="Concepto" required>
-                <input type="text" id="movementCategory" placeholder="Categoría" required>
-              </div>
-              <div class="row">
-                <input type="date" id="movementDate" required>
-                <input type="number" id="movementAmount" step="0.01" min="0" placeholder="Cantidad" required>
-              </div>
-              <div class="row">
-                <input type="text" id="movementUnit" value="unidad" required>
-                <input type="number" id="movementPrice" step="0.01" min="0" placeholder="Precio unitario" value="0">
-              </div>
-              <div id="movementTypeHint" class="field-hint">Se registrará la operación según el tipo seleccionado y se guardará con los datos habituales del flujo actual.</div>
-              <button class="button" type="submit">Guardar movimiento</button>
-            </form>
-            <div id="movementMessage" class="message"></div>
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="panel">
-            <h3 class="panel-title">Cultivos</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Tipo</th>
-                  <th>Área</th>
-                  <th>Semillas</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody id="cropTableBody"></tbody>
-            </table>
-          </div>
-
-          <div class="panel">
-            <h3 class="panel-title">Historial</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Cultivo</th>
-                  <th>Concepto</th>
-                  <th>Importe</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody id="movementTableBody"></tbody>
-            </table>
-          </div>
-        </div>
+        <div class="surface flex items-center gap-2 rounded-xl px-2 py-1.5">
+         <div class="grid h-8 w-8 place-items-center rounded-lg bg-[#ddf0df] text-sm font-bold text-[#1f7049]">
+          MR
+         </div>
+         <div class="hidden pr-2 sm:block">
+          <p class="text-sm font-bold">María Rodríguez</p>
+          <p class="text-xs text-slate-500">Productora</p>
+         </div>
+        </div><button id="logout-button" type="button" class="grid h-10 w-10 place-items-center rounded-xl border border-[#d8e2d9] bg-white text-[#476158]" aria-label="Cerrar sesión"><i data-lucide="log-out" width="18"></i></button>
+       </div>
       </div>
-    </section>
+     </header>
+     <main class="main-content mx-auto max-w-7xl px-5 py-7 md:px-8">
+      <section id="dashboard" class="view active">
+       <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <div>
+         <p class="text-sm font-bold text-[#287a50]">Resumen operativo</p>
+         <h2 data-template-id="dashboard-title" class="canva-text mt-1 font-bold" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Buenos días, María</h2>
+         <p data-template-id="dashboard-subtitle" class="canva-text mt-2 text-sm text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Así se mueve tu operación agrícola este septiembre.</p>
+        </div><button data-template-id="movement-button" data-open-movement="" type="button" class="canva-button primary-btn inline-flex items-center gap-2" style="background: linear-gradient(120deg, rgb(23, 104, 75), rgb(22, 131, 93)); color: rgb(255, 255, 255); font-weight: 700;"><i data-lucide="plus" width="18"></i><span data-template-id="movement-button-label" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 15px;">Registrar movimiento</span></button>
+       </div>
+       <div class="mb-6 flex gap-3 rounded-2xl border border-[#efd4bb] bg-[#fff7ed] p-4 text-[#88471f]"><i data-lucide="triangle-alert" class="mt-0.5 shrink-0" width="20"></i>
+        <div>
+         <p class="font-bold">Alerta de presupuesto en Café Las Brisas</p>
+         <p class="mt-1 text-sm">Has utilizado el 86% del presupuesto estimado para fertilización.</p>
+        </div>
+       </div>
+       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="surface metric rounded-2xl p-5">
+         <p class="text-sm text-slate-500">Ingresos del mes</p>
+         <p class="mt-2 text-2xl font-bold">C$ 482,000</p>
+         <p class="mt-2 text-xs font-bold text-[#287a50]">↑ 12% vs. agosto</p>
+        </article>
+        <article class="surface metric rounded-2xl p-5">
+         <p class="text-sm text-slate-500">Egresos del mes</p>
+         <p class="mt-2 text-2xl font-bold">C$ 179,400</p>
+         <p class="mt-2 text-xs font-bold text-[#bd673d]">Dentro del presupuesto</p>
+        </article>
+        <article class="surface metric rounded-2xl p-5">
+         <p class="text-sm text-slate-500">Utilidad estimada</p>
+         <p id="profit-value" class="mt-2 text-2xl font-bold">C$ 302,600</p>
+         <p class="mt-2 text-xs font-bold text-[#287a50]">Margen proyectado: 63%</p>
+        </article>
+        <article class="surface metric rounded-2xl p-5">
+         <p class="text-sm text-slate-500">Producción proyectada</p>
+         <p class="mt-2 text-2xl font-bold">258 qq</p>
+         <p class="mt-2 text-xs font-bold text-[#296b8f]">3 cultivos activos</p>
+        </article>
+       </div>
+       <div class="mt-6 grid gap-6 xl:grid-cols-[1.45fr_.9fr]">
+        <section class="surface rounded-2xl p-5">
+         <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+           <h3 class="font-bold">Flujo de caja</h3>
+           <p class="mt-1 text-sm text-slate-500">Ingresos netos por mes · datos de ejemplo</p>
+          </div><span class="rounded-full bg-[#e7f3e8] px-3 py-1 text-xs font-bold text-[#287a50]">Últimos 6 meses</span>
+         </div>
+         <div class="bar-chart mt-5 flex h-48 items-end justify-between gap-3 rounded-xl px-2 pb-6 pt-3">
+          <div class="flex h-full flex-1 items-end">
+           <div class="w-full rounded-t bg-[#badfc3]" style="height:36%"></div>
+          </div>
+          <div class="flex h-full flex-1 items-end">
+           <div class="w-full rounded-t bg-[#83c592]" style="height:51%"></div>
+          </div>
+          <div class="flex h-full flex-1 items-end">
+           <div class="w-full rounded-t bg-[#479b69]" style="height:42%"></div>
+          </div>
+          <div class="flex h-full flex-1 items-end">
+           <div class="w-full rounded-t bg-[#277b58]" style="height:72%"></div>
+          </div>
+          <div class="flex h-full flex-1 items-end">
+           <div class="w-full rounded-t bg-[#195f48]" style="height:83%"></div>
+          </div>
+          <div class="flex h-full flex-1 items-end">
+           <div class="w-full rounded-t bg-[#123f58]" style="height:67%"></div>
+          </div>
+         </div>
+         <div class="mt-2 flex justify-between px-2 text-xs text-slate-400"><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span>
+         </div>
+        </section>
+        <section class="surface rounded-2xl p-5">
+         <h3 class="font-bold">Avance de cultivos</h3>
+         <p class="mt-1 text-sm text-slate-500">Progreso estimado por etapa productiva</p>
+         <div class="mt-6 space-y-5">
+          <div>
+           <div class="mb-2 flex justify-between text-sm font-semibold"><span>Café · Las Brisas</span><span class="text-[#287a50]">78%</span>
+           </div>
+           <div class="progress-track">
+            <div class="progress-fill" style="width:78%"></div>
+           </div>
+          </div>
+          <div>
+           <div class="mb-2 flex justify-between text-sm font-semibold"><span>Maíz · El Valle</span><span class="text-[#287a50]">54%</span>
+           </div>
+           <div class="progress-track">
+            <div class="progress-fill" style="width:54%"></div>
+           </div>
+          </div>
+          <div>
+           <div class="mb-2 flex justify-between text-sm font-semibold"><span>Hortalizas · Huerto Norte</span><span class="text-[#287a50]">35%</span>
+           </div>
+           <div class="progress-track">
+            <div class="progress-fill" style="width:35%"></div>
+           </div>
+          </div>
+         </div>
+        </section>
+       </div>
+      </section>
+      <section id="crops" class="view">
+       <div class="mb-7">
+        <p class="text-sm font-bold text-[#287a50]">Producción</p>
+        <h2 class="mt-1 text-2xl font-bold">Cultivos y lotes</h2>
+        <p class="mt-2 text-sm text-slate-500">Monitorea cada lote, su etapa y la producción estimada.</p>
+       </div>
+       <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <article class="crop-card surface rounded-2xl" data-searchable="café las brisas"><img data-template-id="coffee-card-image" class="canva-image h-44 w-full object-cover" loading="lazy" src="https://images.pexels.com/photos/7125469/pexels-photo-7125469.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Cerezas de café rojas y verdes creciendo entre hojas">
+         <div class="p-5">
+          <div class="flex justify-between gap-2">
+           <div>
+            <h3 class="font-bold">Café</h3>
+            <p class="mt-1 text-sm text-slate-500">Lote Las Brisas</p>
+           </div><span class="rounded-full bg-[#e8f4ea] px-2 py-1 text-xs font-bold text-[#287a50]">Floración</span>
+          </div>
+          <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+           <div>
+            <p class="text-xs text-slate-500">Área</p>
+            <p class="font-bold">12.5 ha</p>
+           </div>
+           <div>
+            <p class="text-xs text-slate-500">Producción</p>
+            <p class="font-bold">180 qq</p>
+           </div>
+          </div><button type="button" data-view-target="crop-detail" class="mt-5 inline-flex items-center gap-2 font-bold text-[#216a4b]">Ver detalle <i data-lucide="arrow-right" width="16"></i></button>
+         </div>
+        </article>
+        <article class="crop-card surface rounded-2xl" data-searchable="maíz el valle"><img data-template-id="corn-card-image" class="canva-image h-44 w-full object-cover" loading="lazy" src="https://images.pexels.com/photos/15689799/pexels-photo-15689799.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Campo de maíz verde bajo un cielo azul">
+         <div class="p-5">
+          <div class="flex justify-between gap-2">
+           <div>
+            <h3 class="font-bold">Maíz</h3>
+            <p class="mt-1 text-sm text-slate-500">Lote El Valle</p>
+           </div><span class="rounded-full bg-[#edf3fa] px-2 py-1 text-xs font-bold text-[#326a98]">Crecimiento</span>
+          </div>
+          <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+           <div>
+            <p class="text-xs text-slate-500">Área</p>
+            <p class="font-bold">8 ha</p>
+           </div>
+           <div>
+            <p class="text-xs text-slate-500">Producción</p>
+            <p class="font-bold">58 qq</p>
+           </div>
+          </div><button type="button" data-view-target="crop-detail" class="mt-5 inline-flex items-center gap-2 font-bold text-[#216a4b]">Ver detalle <i data-lucide="arrow-right" width="16"></i></button>
+         </div>
+        </article>
+        <article class="crop-card surface rounded-2xl" data-searchable="hortalizas huerto norte"><img data-template-id="vegetable-card-image" class="canva-image h-44 w-full object-cover" loading="lazy" src="https://images.pexels.com/photos/89267/pexels-photo-89267.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Filas de lechuga verde en un campo agrícola">
+         <div class="p-5">
+          <div class="flex justify-between gap-2">
+           <div>
+            <h3 class="font-bold">Hortalizas</h3>
+            <p class="mt-1 text-sm text-slate-500">Huerto Norte</p>
+           </div><span class="rounded-full bg-[#fff4e9] px-2 py-1 text-xs font-bold text-[#9d5b2c]">Siembra</span>
+          </div>
+          <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+           <div>
+            <p class="text-xs text-slate-500">Área</p>
+            <p class="font-bold">2.2 ha</p>
+           </div>
+           <div>
+            <p class="text-xs text-slate-500">Producción</p>
+            <p class="font-bold">20 qq</p>
+           </div>
+          </div><button type="button" data-view-target="crop-detail" class="mt-5 inline-flex items-center gap-2 font-bold text-[#216a4b]">Ver detalle <i data-lucide="arrow-right" width="16"></i></button>
+         </div>
+        </article>
+       </div>
+      </section>
+      <section id="crop-detail" class="view">
+       <button type="button" data-view-target="crops" class="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[#216a4b]"><i data-lucide="arrow-left" width="17"></i>Volver a cultivos</button>
+       <div class="surface overflow-hidden rounded-3xl">
+        <div class="grid md:grid-cols-[.8fr_1.2fr]"><img data-template-id="detail-coffee-image" class="canva-image h-64 w-full object-cover md:h-full" loading="lazy" src="https://images.pexels.com/photos/7125459/pexels-photo-7125459.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Cerezas de café en distintos colores sobre una rama">
+         <div class="p-6 md:p-8"><span class="rounded-full bg-[#e8f4ea] px-3 py-1 text-xs font-bold text-[#287a50]">Etapa de floración</span>
+          <h2 class="mt-4 text-2xl font-bold">Café · Las Brisas</h2>
+          <p class="mt-2 text-slate-500">12.5 hectáreas · Zona montañosa</p>
+          <p class="mt-4 text-sm leading-6 text-slate-600">Lote con buen vigor vegetativo y floración uniforme. Los datos mostrados son ficticios y de demostración.</p>
+          <div class="mt-6 grid grid-cols-2 gap-3 text-sm">
+           <div class="rounded-xl bg-[#eff6ef] p-3">
+            <p class="text-xs text-slate-500">Gastos acumulados</p>
+            <p class="mt-1 font-bold">C$ 118,200</p>
+           </div>
+           <div class="rounded-xl bg-[#edf4f8] p-3">
+            <p class="text-xs text-slate-500">Ingresos estimados</p>
+            <p class="mt-1 font-bold">C$ 405,000</p>
+           </div>
+           <div class="rounded-xl bg-[#faf4e9] p-3">
+            <p class="text-xs text-slate-500">Rendimiento esperado</p>
+            <p class="mt-1 font-bold">14.4 qq / ha</p>
+           </div>
+           <div class="rounded-xl bg-[#eff6ef] p-3">
+            <p class="text-xs text-slate-500">Producción estimada</p>
+            <p class="mt-1 font-bold">180 qq</p>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+      <section id="finance" class="view">
+       <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+         <p class="text-sm font-bold text-[#287a50]">Control financiero</p>
+         <h2 class="mt-1 text-2xl font-bold">Finanzas</h2>
+         <p class="mt-2 text-sm text-slate-500">Revisa movimientos de ejemplo por cultivo, lote y periodo.</p>
+        </div><button data-open-movement="" type="button" class="primary-btn">Registrar movimiento</button>
+       </div>
+       <div class="surface rounded-2xl p-4"><label class="mb-1.5 block text-xs font-bold text-slate-500" for="filter-crop">Cultivo</label><select id="filter-crop" class="field py-2.5 text-sm"><option value="all">Todos los cultivos</option><option value="coffee">Café</option><option value="empty">Hortalizas</option></select>
+       </div>
+       <div class="mt-5 grid gap-4 sm:grid-cols-3">
+        <div class="surface rounded-2xl p-4">
+         <p class="text-sm text-slate-500">Ingresos</p>
+         <p id="finance-income" class="mt-1 text-xl font-bold text-[#22774d]">C$ 482,000</p>
+        </div>
+        <div class="surface rounded-2xl p-4">
+         <p class="text-sm text-slate-500">Egresos</p>
+         <p id="finance-expense" class="mt-1 text-xl font-bold text-[#bd673d]">C$ 179,400</p>
+        </div>
+        <div class="surface rounded-2xl p-4">
+         <p class="text-sm text-slate-500">Balance neto</p>
+         <p id="finance-net" class="mt-1 text-xl font-bold text-[#174d3e]">C$ 302,600</p>
+        </div>
+       </div>
+       <section class="surface mt-5 overflow-hidden rounded-2xl">
+        <div class="border-b border-[#e7eee8] p-5">
+         <h3 class="font-bold">Movimientos recientes</h3>
+        </div>
+        <div id="movement-list">
+         <div class="data-table-row flex items-center justify-between gap-3 border-b border-[#edf0ec] p-4"><span>Venta de café pergamino</span><strong class="text-[#26764f]">+ C$ 125,000</strong>
+         </div>
+         <div class="data-table-row flex items-center justify-between gap-3 p-4"><span>Fertilización foliar</span><strong class="text-[#bd673d]">− C$ 18,400</strong>
+         </div>
+        </div>
+        <div id="finance-empty" class="hidden p-10 text-center"><i data-lucide="leaf" class="mx-auto text-[#89ae96]" width="30"></i>
+         <p class="mt-3 font-bold">Aún no hay movimientos</p>
+         <p class="mt-1 text-sm text-slate-500">No se encontraron movimientos para este filtro.</p>
+        </div>
+       </section>
+      </section>
+      <section id="tasks" class="view">
+       <div class="mb-7">
+        <p class="text-sm font-bold text-[#287a50]">Organización de campo</p>
+        <h2 class="mt-1 text-2xl font-bold">Tareas agrícolas</h2>
+        <p class="mt-2 text-sm text-slate-500">Marca avances y mantén el calendario productivo al día.</p>
+       </div>
+       <div class="mb-5 flex gap-3 rounded-2xl bg-[#fff5e9] p-4 text-[#88471f]"><i data-lucide="clock-3" width="20"></i>
+        <div>
+         <p class="font-bold">Hay una tarea atrasada</p>
+         <p class="mt-1 text-sm">La aplicación de fertilizante para Café Las Brisas debía realizarse ayer.</p>
+        </div>
+       </div>
+       <div class="space-y-3">
+        <article class="task-card surface flex flex-wrap items-center gap-4 rounded-2xl p-4" data-searchable="aplicar fertilizante café"><button type="button" class="task-check grid h-10 w-10 place-items-center rounded-full border-2 border-[#dc8052] text-[#dc8052]" aria-label="Marcar tarea como completada"><i data-lucide="check" width="18"></i></button>
+         <div class="min-w-[180px] flex-1">
+          <p class="task-title font-bold">Aplicar fertilizante foliar</p>
+          <p class="mt-1 text-sm text-slate-500">Café · Lote Las Brisas</p>
+         </div><span class="rounded-full bg-[#fff0e9] px-3 py-1 text-xs font-bold text-[#b55732]">Alta</span><span class="text-sm font-bold text-[#aa542b]">Atrasada · 20 sep.</span>
+        </article>
+        <article class="task-card surface flex flex-wrap items-center gap-4 rounded-2xl p-4" data-searchable="revisar riego hortalizas"><button type="button" class="task-check grid h-10 w-10 place-items-center rounded-full border-2 border-[#409269] text-[#409269]" aria-label="Marcar tarea como completada"><i data-lucide="check" width="18"></i></button>
+         <div class="min-w-[180px] flex-1">
+          <p class="task-title font-bold">Revisar sistema de riego</p>
+          <p class="mt-1 text-sm text-slate-500">Hortalizas · Huerto Norte</p>
+         </div><span class="rounded-full bg-[#e8f4ea] px-3 py-1 text-xs font-bold text-[#28734c]">Media</span><span class="text-sm font-bold text-[#32734f]">Mañana · 22 sep.</span>
+        </article>
+       </div>
+      </section>
+      <footer class="mt-10 border-t border-[#dce5dc] py-6 text-center text-xs text-slate-500">
+       <span data-template-id="app-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Datos ficticios para demostración.</span>
+       <div class="mt-2 flex justify-center gap-4"><button type="button" class="legal-link" data-legal="privacy">Política de privacidad</button><button type="button" class="legal-link" data-legal="terms">Términos y condiciones</button>
+       </div>
+      </footer>
+      <section id="help" data-template-id="contact-section" class="view surface mt-10 rounded-3xl p-6 md:p-8" aria-labelledby="contact-title" style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(250, 251, 247, 0.91));">
+       <div class="grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
+        <div>
+         <p data-template-id="contact-eyebrow" class="canva-text text-sm font-bold uppercase tracking-[.14em] text-[#287a50]" style="color: rgb(40, 122, 80); font-weight: 700; font-style: normal; font-size: 13px;">Contacto directo</p>
+         <h2 data-template-id="contact-title" class="canva-text mt-2 font-bold leading-tight" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 26px;">Contacto con la desarrolladora</h2>
+         <p data-template-id="contact-role" class="canva-text mt-2 text-sm leading-6 text-slate-600" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Fátima Lisseth Ruíz Pineda · Responsable, desarrolladora y propietaria del sitio web</p>
+         <div class="mt-6 space-y-3 text-sm"><a data-template-id="contact-email" class="canva-link font-semibold text-[#216a4b] underline underline-offset-4" href="mailto:ruizfatima1p@gmail.com" style="color: rgb(33, 106, 75); font-weight: 600; font-style: normal; font-size: 15px;">ruizfatima1p@gmail.com</a><a data-template-id="contact-phone" class="canva-link ml-4 font-semibold text-[#216a4b] underline underline-offset-4" href="tel:+50589476244" style="color: rgb(33, 106, 75); font-weight: 600; font-style: normal; font-size: 15px;">+505 8947 6244</a>
+         </div>
+         <p data-template-id="contact-copyright" class="canva-text mt-8 border-t border-[#dce5dc] pt-4 text-xs leading-5 text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© Fátima Lisseth Ruíz Pineda. Todos los derechos reservados.</p>
+        </div>
+        <form id="contact-form" class="space-y-4" novalidate="">
+         <div><label data-template-id="contact-name-label" class="canva-text mb-1.5 block text-sm font-bold" for="contact-name" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Nombre</label><input id="contact-name" class="field" type="text" autocomplete="name" required="">
+         </div>
+         <div><label data-template-id="contact-email-label" class="canva-text mb-1.5 block text-sm font-bold" for="contact-email-input" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Correo electrónico</label><input id="contact-email-input" class="field" type="email" autocomplete="email" required="">
+         </div>
+         <div><label data-template-id="contact-reason-label" class="canva-text mb-1.5 block text-sm font-bold" for="contact-reason" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Motivo</label><select id="contact-reason" class="field" required=""><option value="">Selecciona una opción</option><option>Duda</option><option>Sugerencia</option><option>Queja</option></select>
+         </div>
+         <div><label data-template-id="contact-message-label" class="canva-text mb-1.5 block text-sm font-bold" for="contact-message" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Mensaje</label><textarea id="contact-message" class="field min-h-32 resize-y" required=""></textarea>
+         </div>
+         <p id="contact-form-message" class="hidden rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]" role="alert"></p><button data-template-id="contact-submit" class="canva-button primary-btn w-full" type="submit" style="background: linear-gradient(120deg, rgb(23, 104, 75), rgb(22, 131, 93)); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 15px;">Preparar correo</button>
+        </form>
+       </div>
+      </section>
+     </main>
+    </div>
+    <nav class="mobile-nav fixed inset-x-0 bottom-0 z-30 justify-around border-t border-[#dce6df] bg-[#fffdf9]/95 px-1 py-2 shadow-[0_-5px_20px_rgba(25,70,53,.08)] backdrop-blur" aria-label="Navegación móvil">
+     <button type="button" data-view-target="dashboard" class="mobile-tab active grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-[#216a4b]"><i data-lucide="layout-dashboard" width="19"></i><span class="text-[10px] font-bold">Inicio</span></button> <button type="button" data-view-target="crops" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wheat" width="19"></i><span class="text-[10px] font-bold">Cultivos</span></button> <button type="button" data-view-target="finance" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wallet-cards" width="19"></i><span class="text-[10px] font-bold">Finanzas</span></button> <button type="button" data-view-target="tasks" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="clipboard-check" width="19"></i><span class="text-[10px] font-bold">Tareas</span></button> <button type="button" data-view-target="help" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="circle-help" width="19"></i><span class="text-[10px] font-bold">Ayuda</span></button>
+    </nav>
+   </section>
   </div>
-
-  <footer>AgroFin © 2026 · Producción, compras, ventas e inventario</footer>
-
+  <div id="movement-modal" class="modal-wrap fixed inset-0 z-50 items-center justify-center bg-[#082f27]/65 p-4 backdrop-blur-sm">
+   <section class="w-full max-w-lg rounded-3xl bg-[#fffdf9] p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="movement-title">
+    <div class="flex justify-between gap-4">
+     <div>
+      <h2 id="movement-title" class="text-xl font-bold">Registrar movimiento</h2>
+      <p class="mt-1 text-sm text-slate-500">Añade un ingreso o egreso local de demostración.</p>
+     </div><button id="close-movement" type="button" class="grid h-9 w-9 place-items-center rounded-lg bg-slate-100 text-slate-500" aria-label="Cerrar formulario"><i data-lucide="x" width="18"></i></button>
+    </div>
+    <form id="movement-form" class="mt-5 space-y-4" novalidate="">
+     <div class="grid gap-4 sm:grid-cols-2">
+      <div><label class="mb-1.5 block text-sm font-bold" for="movement-type">Tipo de movimiento</label><select id="movement-type" class="field"><option value="expense">Egreso</option><option value="income">Ingreso</option></select>
+      </div>
+      <div><label class="mb-1.5 block text-sm font-bold" for="movement-date">Fecha</label><input id="movement-date" type="date" class="field">
+      </div>
+     </div>
+     <div><label class="mb-1.5 block text-sm font-bold" for="movement-concept">Concepto</label><input id="movement-concept" type="text" class="field" placeholder="Ej. Compra de abono">
+     </div>
+     <div><label class="mb-1.5 block text-sm font-bold" for="movement-amount">Monto (C$)</label><input id="movement-amount" type="number" min="1" step="0.01" class="field" placeholder="0.00">
+     </div>
+     <p id="form-message" class="hidden rounded-xl bg-[#fff0ea] p-3 text-sm text-[#a24d2b]" role="alert"></p>
+     <div class="flex flex-wrap justify-end gap-3"><button id="cancel-movement" type="button" class="secondary-btn">Cancelar</button><button type="submit" class="primary-btn">Guardar movimiento</button>
+     </div>
+    </form>
+   </section>
+  </div>
+  <div id="legal-modal" class="modal-wrap fixed inset-0 z-[60] items-center justify-center bg-[#082f27]/65 p-4 backdrop-blur-sm">
+   <section class="w-full max-w-xl rounded-3xl bg-[#fffdf9] p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="legal-title">
+    <div class="flex justify-between gap-4">
+     <div>
+      <h2 id="legal-title" class="text-xl font-bold">Información legal</h2>
+      <p id="legal-content" class="mt-3 text-sm leading-6 text-slate-600"></p>
+     </div><button id="close-legal" type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-500" aria-label="Cerrar información legal"><i data-lucide="x" width="18"></i></button>
+    </div>
+   </section>
+  </div>
+  <div id="toast" class="toast fixed bottom-24 right-5 z-[70] flex items-center gap-3 rounded-xl bg-[#143f38] px-4 py-3 text-sm font-bold text-white shadow-xl md:bottom-6" role="status"><i data-lucide="check-circle-2" width="19" class="text-[#9ce2a8]"></i><span id="toast-text"></span>
+  </div>
   <script>
-    const state = {
-      user: null,
-      crops: [],
-      movements: []
-    };
-
-    function showMessage(elementId, text, type) {
-      const el = document.getElementById(elementId);
-      el.textContent = text;
-      el.className = 'message ' + type;
-    }
-
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      container.appendChild(toast);
-      requestAnimationFrame(() => toast.classList.add('show'));
-      window.setTimeout(() => {
-        toast.classList.remove('show');
-        window.setTimeout(() => toast.remove(), 220);
-      }, 3200);
-    }
-
-    function setSubmitButtonState(formId, isSubmitting, loadingText = 'Guardando...') {
-      const form = document.getElementById(formId);
-      if (!form) return;
-      const button = form.querySelector('button[type="submit"]');
-      if (!button) return;
-      button.disabled = isSubmitting;
-      if (!button.dataset.label) {
-        button.dataset.label = button.textContent.trim();
-      }
-      button.textContent = isSubmitting ? loadingText : button.dataset.label;
-    }
-
-    function formatMoney(value) {
-      const number = Number(value || 0);
-      return new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' }).format(number);
-    }
-
-    async function api(path, options = {}) {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(options.headers || {})
-        },
-        ...options
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      let income = 482000, expense = 179400;
+      const $ = (id) => document.getElementById(id);
+      const money = (value) => "C$ " + Number(value).toLocaleString("es-NI", {minimumFractionDigits:0});
+      const toast = (message) => {
+        $("toast-text").textContent = message;
+        $("toast").classList.add("show");
+        setTimeout(() => $("toast").classList.remove("show"), 3000);
+      };
+      const openApp = () => {
+        $("login-screen").classList.remove("active");
+        $("app-screen").classList.add("active");
+        window.scrollTo({top:0, behavior:"smooth"});
+      };
+      const openLogin = () => {
+        $("app-screen").classList.remove("active");
+        $("login-screen").classList.add("active");
+        $("login-form").reset();
+        $("login-message").classList.add("hidden");
+        window.scrollTo({top:0, behavior:"smooth"});
       };
 
-      const response = await fetch(path, config);
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : null;
-
-      if (!response.ok) {
-        const message = (data && data.error && data.error.message) || 'Error al procesar la solicitud.';
-        throw new Error(message);
-      }
-      return data;
-    }
-
-    function setAuthTab(tab) {
-      const loginBox = document.getElementById('loginFormBox');
-      const registerBox = document.getElementById('registerFormBox');
-      const isRegister = tab === 'register';
-      loginBox.classList.toggle('hidden', isRegister);
-      registerBox.classList.toggle('hidden', !isRegister);
-    }
-
-    function renderAuthState() {
-      const authShell = document.getElementById('authShell');
-      const dashboard = document.getElementById('dashboard');
-      const logoutBtn = document.getElementById('logoutBtn');
-
-      if (state.user) {
-        authShell.style.display = 'none';
-        dashboard.classList.add('visible');
-        logoutBtn.classList.remove('hidden');
-        document.getElementById('welcomeUser').textContent = state.user.name || 'Productor';
-      } else {
-        authShell.style.display = 'block';
-        dashboard.classList.remove('visible');
-        logoutBtn.classList.add('hidden');
-      }
-    }
-
-    async function loadProfile() {
-      setDashboardLoading(true);
-      try {
-        const data = await api('/api/auth/me');
-        state.user = data;
-        renderAuthState();
-        if (state.user) {
-          await Promise.all([loadCrops(), loadMovements()]);
-          renderSummary();
+      $("contact-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = $("contact-name").value.trim();
+        const email = $("contact-email-input").value.trim();
+        const reason = $("contact-reason").value;
+        const message = $("contact-message").value.trim();
+        const feedback = $("contact-form-message");
+        if (!name || !email || !email.includes("@") || !reason || !message) {
+          feedback.textContent = "Completa todos los campos con datos válidos.";
+          feedback.className = "rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]";
+          return;
         }
-      } catch (error) {
-        state.user = null;
-        renderAuthState();
-      } finally {
-        setDashboardLoading(false);
+        const subject = encodeURIComponent("Contacto AgroFin · " + reason + " · " + name);
+        const body = encodeURIComponent("Nombre: " + name + "\nCorreo: " + email + "\nMotivo: " + reason + "\n\nMensaje:\n" + message);
+        window.open("mailto:ruizfatima1p@gmail.com?subject=" + subject + "&body=" + body, "_blank");
+        feedback.textContent = "Se abrirá tu aplicación de correo para completar el envío.";
+        feedback.className = "rounded-xl bg-[#edf8ef] p-3 text-sm text-[#286442]";
+      });
+
+      $("login-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const email = $("login-email").value.trim();
+        if (!email || !email.includes("@")) {
+          $("login-message").textContent = "Ingresa un correo válido para acceder al prototipo.";
+          $("login-message").classList.remove("hidden");
+          return;
+        }
+        openApp();
+        toast("Bienvenida a tu panel de demostración");
+      });
+      $("demo-login").addEventListener("click", () => { openApp(); toast("Datos de demostración cargados"); });
+      $("logout-button").addEventListener("click", openLogin);
+
+      function showView(viewId) {
+        document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === viewId));
+        document.querySelectorAll("[data-view-target]").forEach((button) => button.classList.toggle("active", button.dataset.viewTarget === viewId));
+        window.scrollTo({top:0, behavior:"smooth"});
       }
-    }
+      document.querySelectorAll("[data-view-target]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewTarget)));
 
-    async function loadCrops() {
-      const rows = await api('/api/cultivos');
-      state.crops = rows || [];
-      renderCropTable();
-    }
+      $("notification-button").addEventListener("click", () => $("notice-panel").classList.toggle("open"));
 
-    async function loadMovements() {
-      const rows = await api('/api/movimientos');
-      state.movements = rows || [];
-      renderMovementTable();
-    }
-
-    function setDashboardLoading(isLoading) {
-      const loader = document.getElementById('dashboardLoader');
-      const stats = document.getElementById('statsSection');
-      if (!loader || !stats) return;
-      loader.classList.toggle('visible', isLoading);
-      stats.style.display = isLoading ? 'none' : 'grid';
-    }
-
-    function updateMovementHint() {
-      const kind = document.getElementById('movementKind')?.value || 'compra';
-      const hint = document.getElementById('movementTypeHint');
-      if (!hint) return;
-
-      const messages = {
-        compra: 'Compra: revisa la cantidad, precio y categoría del insumo o material.',
-        venta: 'Venta: valida precio unitario y cantidad antes de guardar.',
-        gasto: 'Gasto: revisa el concepto del gasto para que el costo quede bien categorizado.',
-        produccion: 'Producción: confirma la cantidad y el valor de la producción registrada.'
+      const movementModal = $("movement-modal");
+      const closeMovement = () => {
+        movementModal.classList.remove("open");
+        $("movement-form").reset();
+        $("form-message").classList.add("hidden");
       };
+      document.querySelectorAll("[data-open-movement]").forEach((button) => button.addEventListener("click", () => movementModal.classList.add("open")));
+      $("close-movement").addEventListener("click", closeMovement);
+      $("cancel-movement").addEventListener("click", closeMovement);
+      movementModal.addEventListener("click", (event) => { if (event.target === movementModal) closeMovement(); });
 
-      hint.textContent = messages[kind] || messages.compra;
-      hint.classList.toggle('warning', ['gasto', 'venta'].includes(kind));
-    }
-
-    function renderSummary() {
-      const totalCultivos = state.crops.length;
-      const totalSemillas = state.crops.reduce((sum, crop) => sum + Number(crop.seeds || 0), 0);
-      const totalVentas = state.movements
-        .filter(item => String(item.kind).toLowerCase() === 'venta')
-        .reduce((sum, item) => sum + Number(item.amount || 0) * Number(item.price || 0), 0);
-      const totalCompras = state.movements
-        .filter(item => ['compra', 'gasto'].includes(String(item.kind).toLowerCase()))
-        .reduce((sum, item) => sum + Number(item.amount || 0) * Number(item.price || 0), 0);
-      const utilidad = totalVentas - totalCompras;
-
-      document.getElementById('totalCultivos').textContent = totalCultivos;
-      document.getElementById('totalSemillas').textContent = totalSemillas;
-      document.getElementById('totalVentas').textContent = formatMoney(totalVentas);
-      document.getElementById('utilidadNeta').textContent = formatMoney(utilidad);
-    }
-
-    function renderCropTable() {
-      const tbody = document.getElementById('cropTableBody');
-      if (!state.crops.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5">
-              <div class="empty-state">
-                <div class="empty-icon">🌱</div>
-                <h4>Aún no tienes cultivos registrados</h4>
-                <p>Comienza agregando tu primer sembrado para ver tus métricas en este panel.</p>
-                <button type="button" class="button secondary" data-focus-crop-form>Registrar cultivo</button>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-      tbody.innerHTML = state.crops.map(crop => `
-        <tr>
-          <td data-label="Nombre">${crop.name}</td>
-          <td data-label="Tipo">${crop.type}</td>
-          <td data-label="Área">${crop.area} ${crop.areaUnit}</td>
-          <td data-label="Semillas">${crop.seeds}</td>
-          <td data-label="Acción">
-            <div class="mini-actions">
-              <button type="button" data-delete-crop="${crop.id}">Eliminar</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function renderMovementTable() {
-      const tbody = document.getElementById('movementTableBody');
-      if (!state.movements.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5">
-              <div class="empty-state">
-                <div class="empty-icon">📦</div>
-                <h4>No hay movimientos registrados</h4>
-                <p>Aquí aparecerán tus compras, ventas, gastos y producción cuando empieces a registrar.</p>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-      tbody.innerHTML = state.movements.map(item => {
-        const importe = Number(item.amount || 0) * Number(item.price || 0);
-        const isPositive = ['venta', 'produccion'].includes(String(item.kind || '').toLowerCase());
-        return `
-          <tr>
-            <td data-label="Tipo">${item.kind}</td>
-            <td data-label="Cultivo">${item.crop}</td>
-            <td data-label="Concepto">${item.concept}</td>
-            <td data-label="Importe" class="movement-amount ${isPositive ? 'positive' : 'negative'}">${formatMoney(importe)}</td>
-            <td data-label="Acción">
-              <div class="mini-actions">
-                <button type="button" data-delete-movement="${item.id}">Eliminar</button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    document.querySelectorAll('[data-auth-tab]').forEach(button => {
-      button.addEventListener('click', () => setAuthTab(button.dataset.authTab));
-    });
-
-    document.getElementById('movementKind').addEventListener('change', updateMovementHint);
-    updateMovementHint();
-
-    document.getElementById('googleLoginBtn').addEventListener('click', () => {
-      window.location.href = '/auth/google/login';
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        await api('/api/auth/logout', { method: 'POST' });
-        state.user = null;
-        state.crops = [];
-        state.movements = [];
-        renderAuthState();
-        renderCropTable();
-        renderMovementTable();
-      } catch (error) {
-        showMessage('authMessage', error.message, 'error');
-      }
-    });
-
-    document.getElementById('registerForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      try {
-        const payload = {
-          name: document.getElementById('registerName').value,
-          email: document.getElementById('registerEmail').value,
-          password: document.getElementById('registerPassword').value,
-          country: document.getElementById('registerCountry').value,
-          timezone: document.getElementById('registerTimezone').value,
-        };
-        const user = await api('/api/auth/register', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        state.user = user;
-        renderAuthState();
-        await Promise.all([loadCrops(), loadMovements()]);
-        renderSummary();
-        showMessage('authMessage', 'Cuenta creada correctamente.', 'success');
-        document.getElementById('registerForm').reset();
-      } catch (error) {
-        showMessage('authMessage', error.message, 'error');
-      }
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      try {
-        const payload = {
-          email: document.getElementById('loginEmail').value,
-          password: document.getElementById('loginPassword').value,
-        };
-        const user = await api('/api/auth/login', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        state.user = user;
-        renderAuthState();
-        await Promise.all([loadCrops(), loadMovements()]);
-        renderSummary();
-        showMessage('authMessage', 'Sesión iniciada correctamente.', 'success');
-        document.getElementById('loginForm').reset();
-      } catch (error) {
-        showMessage('authMessage', error.message, 'error');
-      }
-    });
-
-    document.getElementById('cropForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      setSubmitButtonState('cropForm', true);
-      try {
-        const payload = {
-          name: document.getElementById('cropName').value,
-          type: document.getElementById('cropType').value,
-          date: document.getElementById('cropDate').value,
-          area: Number(document.getElementById('cropArea').value),
-          areaUnit: document.getElementById('cropUnit').value,
-          seeds: Number(document.getElementById('cropSeeds').value || 0),
-        };
-        await api('/api/cultivos', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        document.getElementById('cropForm').reset();
-        showMessage('cropMessage', 'Cultivo guardado correctamente.', 'success');
-        showToast('✅ Cultivo registrado con éxito', 'success');
-        await loadCrops();
-        renderSummary();
-      } catch (error) {
-        showMessage('cropMessage', error.message, 'error');
-        showToast(`❌ ${error.message}`, 'error');
-      } finally {
-        setSubmitButtonState('cropForm', false);
-      }
-    });
-
-    document.getElementById('movementForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      setSubmitButtonState('movementForm', true);
-      try {
-        const payload = {
-          kind: document.getElementById('movementKind').value,
-          crop: document.getElementById('movementCrop').value,
-          concept: document.getElementById('movementConcept').value,
-          date: document.getElementById('movementDate').value,
-          category: document.getElementById('movementCategory').value,
-          amount: Number(document.getElementById('movementAmount').value),
-          unit: document.getElementById('movementUnit').value,
-          price: Number(document.getElementById('movementPrice').value || 0),
-        };
-        await api('/api/movimientos', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        document.getElementById('movementForm').reset();
-        showMessage('movementMessage', 'Movimiento guardado correctamente.', 'success');
-        showToast('✅ Movimiento registrado con éxito', 'success');
-        await loadMovements();
-        renderSummary();
-      } catch (error) {
-        showMessage('movementMessage', error.message, 'error');
-        showToast(`❌ ${error.message}`, 'error');
-      } finally {
-        setSubmitButtonState('movementForm', false);
-      }
-    });
-
-    document.addEventListener('click', async (event) => {
-      const focusCropButton = event.target.closest('[data-focus-crop-form]');
-      if (focusCropButton) {
-        document.getElementById('cropName').focus();
-        window.scrollTo({ top: document.getElementById('cropForm').offsetTop - 20, behavior: 'smooth' });
-      }
-
-      const cropButton = event.target.closest('[data-delete-crop]');
-      if (cropButton) {
-        const cropId = cropButton.getAttribute('data-delete-crop');
-        try {
-          await api(`/api/cultivos/${cropId}`, { method: 'DELETE' });
-          await loadCrops();
-          renderSummary();
-          showToast('✅ Cultivo eliminado', 'success');
-        } catch (error) {
-          showToast(`❌ ${error.message}`, 'error');
+      $("movement-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const concept = $("movement-concept").value.trim();
+        const amount = Number($("movement-amount").value);
+        const date = $("movement-date").value;
+        if (!concept || !amount || !date) {
+          $("form-message").textContent = "Completa concepto, monto y fecha para guardar el movimiento.";
+          $("form-message").classList.remove("hidden");
+          return;
         }
-      }
+        const isIncome = $("movement-type").value === "income";
+        if (isIncome) income += amount; else expense += amount;
+        $("finance-income").textContent = money(income);
+        $("finance-expense").textContent = money(expense);
+        $("finance-net").textContent = money(income - expense);
+        $("profit-value").textContent = money(income - expense);
+        const row = document.createElement("div");
+        row.className = "data-table-row flex items-center justify-between gap-3 border-b border-[#edf0ec] p-4";
+        const label = document.createElement("span");
+        label.textContent = concept;
+        const value = document.createElement("strong");
+        value.className = isIncome ? "text-[#26764f]" : "text-[#bd673d]";
+        value.textContent = (isIncome ? "+ " : "− ") + money(amount);
+        row.append(label, value);
+        $("movement-list").prepend(row);
+        closeMovement();
+        toast("Movimiento guardado correctamente");
+      });
 
-      const movementButton = event.target.closest('[data-delete-movement]');
-      if (movementButton) {
-        const movementId = movementButton.getAttribute('data-delete-movement');
-        try {
-          await api(`/api/movimientos/${movementId}`, { method: 'DELETE' });
-          await loadMovements();
-          renderSummary();
-          showToast('✅ Movimiento eliminado', 'success');
-        } catch (error) {
-          showToast(`❌ ${error.message}`, 'error');
-        }
-      }
-    });
+      document.querySelectorAll(".task-check").forEach((button) => {
+        button.addEventListener("click", () => {
+          const card = button.closest(".task-card");
+          const done = card.classList.toggle("task-done");
+          button.classList.toggle("bg-[#409269]", done);
+          button.classList.toggle("text-white", done);
+          toast(done ? "Tarea marcada como completada" : "Tarea reactivada");
+        });
+      });
 
-    document.getElementById('downloadCsvBtn').addEventListener('click', () => {
-      const rows = state.movements.map(item => ({
-        fecha: item.date,
-        tipo: item.kind,
-        cultivo: item.crop,
-        concepto: item.concept,
-        categoria: item.category,
-        cantidad: item.amount,
-        unidad: item.unit,
-        precio: item.price,
-        total: Number(item.amount || 0) * Number(item.price || 0)
+      $("filter-crop").addEventListener("change", (event) => {
+        const empty = event.target.value === "empty";
+        $("movement-list").classList.toggle("hidden", empty);
+        $("finance-empty").classList.toggle("hidden", !empty);
+      });
+
+      $("global-search").addEventListener("input", (event) => {
+        const term = event.target.value.toLowerCase().trim();
+        document.querySelectorAll("[data-searchable]").forEach((item) => item.classList.toggle("hidden", term && !item.dataset.searchable.includes(term)));
+      });
+
+      const legalText = {
+        privacy: ["Política de privacidad", "AgroFin es un prototipo de demostración. El correo introducido se utiliza únicamente para simular el acceso en esta sesión y no se almacena ni se comparte. No se solicitan ni recopilan contraseñas."],
+        terms: ["Términos y condiciones", "Esta experiencia usa información agrícola y financiera ficticia. Los movimientos creados solo existen mientras el prototipo permanece abierto y no representan registros contables reales."]
+      };
+      const legalModal = $("legal-modal");
+      document.querySelectorAll("[data-legal]").forEach((button) => button.addEventListener("click", () => {
+        const content = legalText[button.dataset.legal];
+        $("legal-title").textContent = content[0];
+        $("legal-content").textContent = content[1];
+        legalModal.classList.add("open");
       }));
-
-      const csv = [
-        ['fecha', 'tipo', 'cultivo', 'concepto', 'categoria', 'cantidad', 'unidad', 'precio', 'total'],
-        ...rows.map(row => [row.fecha, row.tipo, row.cultivo, row.concepto, row.categoria, row.cantidad, row.unidad, row.precio, row.total])
-      ].map(row => row.map(value => '"' + String(value).replace(/"/g, '""') + '"').join(',')).join('\n');
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = 'agrofin-reporte.csv';
-      anchor.click();
-      URL.revokeObjectURL(url);
+      $("close-legal").addEventListener("click", () => legalModal.classList.remove("open"));
+      legalModal.addEventListener("click", (event) => { if (event.target === legalModal) legalModal.classList.remove("open"); });
     });
-
-    setAuthTab('login');
-    renderAuthState();
-    loadProfile();
   </script>
-</body>
-</html>
+ </body></html>
