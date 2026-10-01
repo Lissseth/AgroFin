@@ -45,6 +45,35 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(self.client.delete(f'/api/cultivos/{crop_id}').status_code, 204)
         self.assertEqual(self.client.delete(f'/api/cultivos/{crop_id}').status_code, 404)
 
+    def test_accounts_keep_crop_data_separate_and_require_login(self):
+        crop = {
+            'name': 'Maiz', 'type': 'Granos basicos', 'date': '2026-08-20',
+            'area': 2, 'areaUnit': 'manzanas', 'seeds': 10,
+        }
+        self.assertEqual(self.client.get('/api/cultivos').status_code, 401)
+        self.login()
+        self.assertEqual(self.client.post('/api/cultivos', json=crop).status_code, 201)
+        movement = {
+            'kind': 'income', 'crop': 'Maiz', 'concept': 'Venta de prueba',
+            'date': '2026-08-21', 'category': 'Ventas', 'amount': 50, 'unit': 'C$',
+            'price': 1,
+        }
+        self.assertEqual(self.client.post('/api/movimientos', json=movement).status_code, 201)
+
+        other_client = app.app.test_client()
+        registration = other_client.post('/api/auth/register', json={
+            'name': 'Ana Perez', 'email': 'ana@example.com', 'password': 'segura456',
+            'country': 'Nicaragua', 'timezone': 'America/Managua',
+        })
+        self.assertEqual(registration.status_code, 201)
+        self.assertEqual(other_client.get('/api/cultivos').get_json(), [])
+        self.assertEqual(other_client.get('/api/movimientos').get_json(), [])
+        self.assertEqual(other_client.delete('/api/movimientos/1').status_code, 404)
+        self.assertEqual(self.client.get('/api/cultivos').get_json()[0]['name'], 'Maiz')
+        self.assertEqual(self.client.get('/api/movimientos').get_json()[0]['concept'], 'Venta de prueba')
+        self.assertEqual(self.client.post('/api/auth/logout').status_code, 204)
+        self.assertEqual(self.client.get('/api/movimientos').status_code, 401)
+
     def test_profile_registration_and_validation(self):
         invalid = self.client.post('/api/auth/register', json={'name': 'P', 'email': 'correo-invalido', 'password': '123', 'country': 'Nicaragua', 'timezone': 'America/Managua'})
         self.assertEqual(invalid.status_code, 400)
@@ -70,6 +99,12 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(self.client.get('/').status_code, 200)
         self.assertEqual(self.client.get('/privacy').status_code, 200)
         self.assertEqual(self.client.get('/terms').status_code, 200)
+        page = self.client.get('/').get_data(as_text=True)
+        self.assertIn('id="register-name"', page)
+        self.assertIn('"/api/auth/register"', page)
+        self.assertIn('"/api/movimientos"', page)
+        self.assertIn('"/api/cultivos"', page)
+        self.assertNotIn('demo-login', page)
 
     def test_google_oauth_entry_requires_configuration(self):
         response = self.client.get('/auth/google/login')

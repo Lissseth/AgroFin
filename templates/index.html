@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260925-05-46ec85d","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YACgEZulLoA,0","Arial Narrow":"YAGyDvJ_4Ts,0","Arial Rounded MT Bold":"YAFcfoaHu-s,0","Arial":"YAGyDvJ_4Ts,0","Avenir Next":"YAFcfmNq6UY,0","Baloo 2":"YADK30bC6HQ,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,1","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAFcfvtOAUY,1","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","Courier Prime":"YAD1aFjegN8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAFdJpU7Kkk,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHQutsX00Q,0","Hanken Grotesk":"YAFcfhwp99E,0","Helvetica Neue":"YAFcf6CtJfI,0","Helvetica":"YAFcf6CtJfI,0","IBM Plex Mono":"YAFdJkmvhGI,0","Impact":"YAFcfnjI7Vk,0","Instrument Serif":"YAHFeOnZNEk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YADK3zbC6RM,0","JetBrains Mono":"YAFdJksXcAk,0","Josefin Sans":"YAFdJjvw9Ps,0","Lato":"YAFdJuFCnaw,0","Libre Baskerville":"YACgEUFdPdA,0","Lobster":"YAD8SnSjSFI,0","Lora":"YACgEXvxf8Q,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YAFdtQi73Xs,0","Nunito":"YAFdJoNRMmU,1","Oleo Script":"YACgEQQ14jI,0","Oswald":"YACgEQY10lw,0","Pacifico":"YADLjORQ1u4,0","Phantom Sans":"YAFdJvgJ5TU,0","Playfair Display":"YAFdJhem5V8,1","Plus Jakarta Sans":"YAGvf3_u0_Q,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YAFdJpYtCxE,1","Raleway":"YAFdJhmxbVQ,1","Roboto Slab":"YAFdJswIKAg,0","Rockwell":"YAFcfyVZnN0,0","Rye":"YACgEdQP21k,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Source Serif 4":"YACgEfdj394,0","Space Grotesk":"YADZ-dYEmhg,0","Space Mono":"YADW1-vpsoc,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","UV Display":"YAEdVfSSpYo,0","UV Sans":"YAFdJvgJ5TU,0","Ubuntu":"YACgERDU--Q,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YAD1aFjegN8,0","ui-sans-serif":"YACkoD1yZN0,0"}}');</script><script src="/_sdk/6542d56fbfe7a3eb.telemetry_sdk.js" integrity="sha512-ECdM0nK7EkwDuOqho2qxgyRQXyBHk9hZqRKMBr+Xsu6zjeHlt+qkO2N2YRiHN7Kg4e1fEHDhjIp4bGJYVypv1g=="></script>
+<html lang="es"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgroFin — Gestión agrícola</title>
@@ -17,7 +17,6 @@
     button{cursor:pointer}
     button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e7a27f;outline-offset:3px}
     .app-root{width:100%;min-height:calc(100 * min(var(--vh,1vh),1vh));background:radial-gradient(circle at 95% 5%,#dcebdd 0,transparent 25%),linear-gradient(135deg,#f8f5ee,#edf2e9)}
-    .hidden-view{display:none!important}
     .screen{display:none}.screen.active{display:block}
     .login-screen{min-height:calc(100 * min(var(--vh,1vh),1vh));padding:clamp(16px,3vw,40px);display:none;align-items:center}
     .login-screen.active{display:flex}
@@ -45,16 +44,12 @@
     .surface{background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,251,247,.91));border:1px solid rgba(212,223,213,.9);box-shadow:0 14px 34px rgba(27,68,57,.07)}
     .metric{position:relative;overflow:hidden}.metric:after{content:"";position:absolute;width:110px;height:110px;right:-45px;top:-50px;border-radius:50%;background:radial-gradient(circle,rgba(91,176,108,.17),transparent 66%)}
     .view{display:none;animation:enter .28s ease}.view.active{display:block}
-    .bar-chart{background-image:linear-gradient(to top,rgba(20,79,62,.09) 1px,transparent 1px);background-size:100% 25%}
-    .bar-chart > div > div{transition:height .4s ease}.bar-chart > div:hover > div{filter:brightness(1.12)}
     .crop-card{overflow:hidden;transition:.2s}.crop-card:hover{transform:translateY(-4px);box-shadow:0 22px 40px rgba(20,70,56,.15)}
     .crop-card img{transition:.45s}.crop-card:hover img{transform:scale(1.04)}
-    .progress-track{height:9px;border-radius:100px;background:#e4ece4;overflow:hidden}.progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#167b55,#85c96f)}
     .modal-wrap{display:none}.modal-wrap.open{display:flex}
     .notice{display:none}.notice.open{display:block}
     .toast{opacity:0;transform:translateY(18px);pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translateY(0)}
     .mobile-nav{display:none}
-    .task-done{opacity:.58}.task-done .task-title{text-decoration:line-through}
     @keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:767px){
       .login-layout{border-radius:22px}.login-image{min-height:185px}.login-copy{padding:25px}.login-copy p{display:none}
@@ -69,9 +64,6 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
-  <script src="/_sdk/6c2ecc939521f244.data_sdk.js" type="text/javascript" integrity="sha512-gRx8s+XsZDN6mSIQu2sivLZysbV0WHhb5kXNUWlgVb5lCMU1foJYukyMEDPv8Tnoocb8iwqB4XdRrWc7oEGzIQ=="></script>
-  <script src="/_sdk/ef0304cb8c7ed696.editing_sdk.js" type="text/javascript" integrity="sha512-kmL9L5Yuj57MQaequKbMA3aGpT/5lBUp10iGA3e3qnmMLs2ZZQ0poCcIfdd5rTgrhEvNPe4HK0ohePW7ZpgAFg=="></script>
-  <script src="/_sdk/ddcab3e45959c817.resizing_sdk.js" type="text/javascript" integrity="sha512-VAviUKfZVzugWBSeULYjSljTX+nb84wc6Zzbx5GQaQgh6X2ISSjXi8eIiCDGdwDh10esJMY0+QFQgUy9NcrTlQ=="></script>
  </head>
  <body data-template-id="__page-root" style="background: linear-gradient(135deg, rgb(248, 245, 238), rgb(237, 242, 233));">
   <div class="app-root">
@@ -97,23 +89,27 @@
        <div class="md:hidden flex items-center gap-3"><div class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agrícola">A</div>
        </div>
        <p data-template-id="login-eyebrow" class="canva-text mt-7 text-sm font-bold uppercase tracking-[.16em] text-[#287a50]" style="color: rgb(40, 122, 80); font-weight: 700; font-style: normal; font-size: 13px;">Gestión agrícola inteligente</p>
-       <h2 data-template-id="login-title" class="canva-text mt-2 font-bold leading-tight" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Bienvenida de nuevo</h2>
-       <p data-template-id="login-copy" class="canva-text mt-3 leading-6 text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Accede a tu resumen financiero y productivo con datos locales de demostración.</p>
+       <h2 data-template-id="login-title" class="canva-text mt-2 font-bold leading-tight" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Inicia sesión en AgroFin</h2>
+       <p id="auth-copy" data-template-id="login-copy" class="canva-text mt-3 leading-6 text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Regístrate o inicia sesión para guardar y consultar tus datos agrícolas.</p>
       </div>
-      <form id="login-form" class="mt-7 space-y-5" novalidate="">
+      <form id="login-form" class="mt-7 space-y-5">
        <div>
-        <label data-template-id="email-label" class="canva-text mb-2 block text-sm font-bold" for="login-email" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Correo electrónico</label> <input id="login-email" class="field" type="email" autocomplete="email">
+        <label data-template-id="email-label" class="canva-text mb-2 block text-sm font-bold" for="login-email" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 15px;">Correo electrónico</label> <input id="login-email" class="field" type="email" autocomplete="email" required>
        </div>
-       <div class="rounded-xl border border-[#f0d9c9] bg-[#fff8f2] p-3 text-sm leading-5 text-[#804321]">
-        <strong>Acceso seguro de demostración:</strong> este prototipo no solicita ni almacena contraseñas reales.
+       <div id="register-fields" class="hidden space-y-5">
+        <div><label class="mb-2 block text-sm font-bold" for="register-name">Nombre completo</label><input id="register-name" class="field" type="text" autocomplete="name" maxlength="80"></div>
+        <div><label class="mb-2 block text-sm font-bold" for="register-phone">Teléfono (opcional)</label><input id="register-phone" class="field" type="tel" autocomplete="tel" maxlength="30"></div>
+        <div class="grid gap-4 sm:grid-cols-2">
+         <div><label class="mb-2 block text-sm font-bold" for="register-country">País</label><input id="register-country" class="field" type="text" value="Nicaragua" maxlength="60"></div>
+         <div><label class="mb-2 block text-sm font-bold" for="register-timezone">Zona horaria</label><input id="register-timezone" class="field" type="text" value="America/Managua" maxlength="80"></div>
+        </div>
        </div>
-       <p id="login-message" class="hidden rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]" role="alert"></p><button data-template-id="login-button" class="canva-button primary-btn w-full" type="submit" style="background: linear-gradient(120deg, rgb(23, 104, 75), rgb(22, 131, 93)); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 15px;">Iniciar sesión</button>
+       <div><label class="mb-2 block text-sm font-bold" for="login-password">Contraseña</label><input id="login-password" class="field" type="password" autocomplete="current-password" minlength="8" required></div>
+       <p id="login-message" class="hidden rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]" role="alert"></p><button id="auth-submit" data-template-id="login-button" class="canva-button primary-btn w-full" type="submit" style="background: linear-gradient(120deg, rgb(23, 104, 75), rgb(22, 131, 93)); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 15px;">Iniciar sesión</button>
       </form>
-      <div class="mt-4 flex items-center justify-between gap-4 text-sm">
-       <button type="button" class="legal-link" data-legal="terms">¿Olvidaste tu contraseña?</button> <button type="button" class="legal-link" data-legal="terms">Crear una cuenta</button>
-      </div><button data-template-id="demo-button" id="demo-login" class="canva-button secondary-btn mt-6 w-full" type="button" style="background: rgb(238, 247, 239); color: rgb(24, 86, 63); font-weight: 700; font-style: normal; font-size: 15px;">Continuar con datos de demostración</button>
+      <div class="mt-4 text-center text-sm"><span id="auth-toggle-label">¿Aún no tienes cuenta?</span> <button id="auth-toggle" type="button" class="font-bold text-[#216a4b] underline underline-offset-4">Crear una cuenta</button></div>
       <footer class="mt-8 border-t border-[#e4e8df] pt-5 text-xs leading-5 text-slate-500">
-       <span data-template-id="login-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Prototipo de gestión agrícola.</span>
+       <span data-template-id="login-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Gestión agrícola para productores.</span>
        <div class="mt-2 flex gap-4">
         <button type="button" class="legal-link" data-legal="privacy">Política de privacidad</button> <button type="button" class="legal-link" data-legal="terms">Términos y condiciones</button>
        </div>
@@ -135,7 +131,7 @@
      <div class="help-box mt-auto rounded-2xl border border-white/10 bg-white/10 p-4 text-emerald-50">
       <i data-lucide="circle-help" width="19" class="text-emerald-200"></i>
       <p class="mt-3 text-sm font-bold">Datos de ejemplo</p>
-      <p class="mt-1 text-xs leading-5 text-emerald-100/70">Todo el contenido es ficticio para este prototipo.</p>
+      <p class="mt-1 text-xs leading-5 text-emerald-100/70">Tus cultivos y movimientos se guardan en tu cuenta.</p>
      </div>
     </aside>
     <div class="desktop-main min-w-0 md:ml-64">
@@ -149,17 +145,16 @@
          <button id="notification-button" type="button" aria-label="Ver notificaciones" class="grid h-10 w-10 place-items-center rounded-xl border border-[#d8e2d9] bg-white text-[#1d604a] shadow-sm"><i data-lucide="bell" width="18"></i></button>
          <aside id="notice-panel" class="notice absolute right-0 top-12 w-72 rounded-2xl border border-[#dce6dd] bg-white p-4 shadow-2xl" aria-label="Notificaciones">
           <p class="font-bold">Notificaciones</p>
-          <p class="mt-3 rounded-xl bg-[#fff4ea] p-3 text-sm text-[#8b4c25]"><strong>Presupuesto:</strong> Café Las Brisas está cerca del límite mensual.</p>
-          <p class="mt-2 rounded-xl bg-[#edf8ef] p-3 text-sm text-[#286442]"><strong>Tarea pendiente:</strong> Aplicar fertilizante tiene un día de atraso.</p>
+          <p class="mt-3 rounded-xl bg-[#edf8ef] p-3 text-sm text-[#286442]">No tienes notificaciones nuevas.</p>
          </aside>
         </div>
         <div class="surface flex items-center gap-2 rounded-xl px-2 py-1.5">
          <div class="grid h-8 w-8 place-items-center rounded-lg bg-[#ddf0df] text-sm font-bold text-[#1f7049]">
-          MR
+          <span id="user-initials">A</span>
          </div>
          <div class="hidden pr-2 sm:block">
-          <p class="text-sm font-bold">María Rodríguez</p>
-          <p class="text-xs text-slate-500">Productora</p>
+          <p id="user-name" class="text-sm font-bold">Productor</p>
+          <p id="user-email" class="text-xs text-slate-500"></p>
          </div>
         </div><button id="logout-button" type="button" class="grid h-10 w-10 place-items-center rounded-xl border border-[#d8e2d9] bg-white text-[#476158]" aria-label="Cerrar sesión"><i data-lucide="log-out" width="18"></i></button>
        </div>
@@ -170,95 +165,46 @@
        <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
          <p class="text-sm font-bold text-[#287a50]">Resumen operativo</p>
-         <h2 data-template-id="dashboard-title" class="canva-text mt-1 font-bold" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Buenos días, María</h2>
-         <p data-template-id="dashboard-subtitle" class="canva-text mt-2 text-sm text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Así se mueve tu operación agrícola este septiembre.</p>
+         <h2 id="dashboard-title" data-template-id="dashboard-title" class="canva-text mt-1 font-bold" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Resumen de tu operación</h2>
+         <p data-template-id="dashboard-subtitle" class="canva-text mt-2 text-sm text-slate-500" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">Tus cifras se calculan con los cultivos y movimientos que registres.</p>
         </div><button data-template-id="movement-button" data-open-movement="" type="button" class="canva-button primary-btn inline-flex items-center gap-2" style="background: linear-gradient(120deg, rgb(23, 104, 75), rgb(22, 131, 93)); color: rgb(255, 255, 255); font-weight: 700;"><i data-lucide="plus" width="18"></i><span data-template-id="movement-button-label" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 15px;">Registrar movimiento</span></button>
-       </div>
-       <div class="mb-6 flex gap-3 rounded-2xl border border-[#efd4bb] bg-[#fff7ed] p-4 text-[#88471f]"><i data-lucide="triangle-alert" class="mt-0.5 shrink-0" width="20"></i>
-        <div>
-         <p class="font-bold">Alerta de presupuesto en Café Las Brisas</p>
-         <p class="mt-1 text-sm">Has utilizado el 86% del presupuesto estimado para fertilización.</p>
-        </div>
        </div>
        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article class="surface metric rounded-2xl p-5">
-         <p class="text-sm text-slate-500">Ingresos del mes</p>
-         <p class="mt-2 text-2xl font-bold">C$ 482,000</p>
-         <p class="mt-2 text-xs font-bold text-[#287a50]">↑ 12% vs. agosto</p>
+         <p class="text-sm text-slate-500">Ingresos registrados</p>
+         <p id="dashboard-income" class="mt-2 text-2xl font-bold">C$ 0</p>
+         <p class="mt-2 text-xs text-slate-500">Total de tus ingresos</p>
         </article>
         <article class="surface metric rounded-2xl p-5">
-         <p class="text-sm text-slate-500">Egresos del mes</p>
-         <p class="mt-2 text-2xl font-bold">C$ 179,400</p>
-         <p class="mt-2 text-xs font-bold text-[#bd673d]">Dentro del presupuesto</p>
+         <p class="text-sm text-slate-500">Egresos registrados</p>
+         <p id="dashboard-expense" class="mt-2 text-2xl font-bold">C$ 0</p>
+         <p class="mt-2 text-xs text-slate-500">Total de tus egresos</p>
         </article>
         <article class="surface metric rounded-2xl p-5">
-         <p class="text-sm text-slate-500">Utilidad estimada</p>
-         <p id="profit-value" class="mt-2 text-2xl font-bold">C$ 302,600</p>
-         <p class="mt-2 text-xs font-bold text-[#287a50]">Margen proyectado: 63%</p>
+         <p class="text-sm text-slate-500">Balance registrado</p>
+         <p id="profit-value" class="mt-2 text-2xl font-bold">C$ 0</p>
+         <p class="mt-2 text-xs text-slate-500">Ingresos menos egresos</p>
         </article>
         <article class="surface metric rounded-2xl p-5">
-         <p class="text-sm text-slate-500">Producción proyectada</p>
-         <p class="mt-2 text-2xl font-bold">258 qq</p>
-         <p class="mt-2 text-xs font-bold text-[#296b8f]">3 cultivos activos</p>
+         <p class="text-sm text-slate-500">Cultivos registrados</p>
+         <p id="dashboard-crops" class="mt-2 text-2xl font-bold">0</p>
+         <p class="mt-2 text-xs text-slate-500">En tu cuenta</p>
         </article>
        </div>
        <div class="mt-6 grid gap-6 xl:grid-cols-[1.45fr_.9fr]">
         <section class="surface rounded-2xl p-5">
          <div class="flex flex-wrap items-start justify-between gap-3">
           <div>
-           <h3 class="font-bold">Flujo de caja</h3>
-           <p class="mt-1 text-sm text-slate-500">Ingresos netos por mes · datos de ejemplo</p>
-          </div><span class="rounded-full bg-[#e7f3e8] px-3 py-1 text-xs font-bold text-[#287a50]">Últimos 6 meses</span>
-         </div>
-         <div class="bar-chart mt-5 flex h-48 items-end justify-between gap-3 rounded-xl px-2 pb-6 pt-3">
-          <div class="flex h-full flex-1 items-end">
-           <div class="w-full rounded-t bg-[#badfc3]" style="height:36%"></div>
-          </div>
-          <div class="flex h-full flex-1 items-end">
-           <div class="w-full rounded-t bg-[#83c592]" style="height:51%"></div>
-          </div>
-          <div class="flex h-full flex-1 items-end">
-           <div class="w-full rounded-t bg-[#479b69]" style="height:42%"></div>
-          </div>
-          <div class="flex h-full flex-1 items-end">
-           <div class="w-full rounded-t bg-[#277b58]" style="height:72%"></div>
-          </div>
-          <div class="flex h-full flex-1 items-end">
-           <div class="w-full rounded-t bg-[#195f48]" style="height:83%"></div>
-          </div>
-          <div class="flex h-full flex-1 items-end">
-           <div class="w-full rounded-t bg-[#123f58]" style="height:67%"></div>
+           <h3 class="font-bold">Actividad reciente</h3>
+           <p class="mt-1 text-sm text-slate-500">Movimientos que has registrado</p>
           </div>
          </div>
-         <div class="mt-2 flex justify-between px-2 text-xs text-slate-400"><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span>
-         </div>
+         <div id="dashboard-recent" class="mt-5 text-sm text-slate-500">Aún no tienes movimientos registrados.</div>
         </section>
         <section class="surface rounded-2xl p-5">
-         <h3 class="font-bold">Avance de cultivos</h3>
-         <p class="mt-1 text-sm text-slate-500">Progreso estimado por etapa productiva</p>
-         <div class="mt-6 space-y-5">
-          <div>
-           <div class="mb-2 flex justify-between text-sm font-semibold"><span>Café · Las Brisas</span><span class="text-[#287a50]">78%</span>
-           </div>
-           <div class="progress-track">
-            <div class="progress-fill" style="width:78%"></div>
-           </div>
-          </div>
-          <div>
-           <div class="mb-2 flex justify-between text-sm font-semibold"><span>Maíz · El Valle</span><span class="text-[#287a50]">54%</span>
-           </div>
-           <div class="progress-track">
-            <div class="progress-fill" style="width:54%"></div>
-           </div>
-          </div>
-          <div>
-           <div class="mb-2 flex justify-between text-sm font-semibold"><span>Hortalizas · Huerto Norte</span><span class="text-[#287a50]">35%</span>
-           </div>
-           <div class="progress-track">
-            <div class="progress-fill" style="width:35%"></div>
-           </div>
-          </div>
-         </div>
+         <h3 class="font-bold">Cultivos</h3>
+         <p class="mt-1 text-sm text-slate-500">Cantidad de cultivos en tu cuenta</p>
+         <p id="dashboard-crops-summary" class="mt-6 text-3xl font-bold">0</p>
         </section>
        </div>
       </section>
@@ -266,170 +212,66 @@
        <div class="mb-7">
         <p class="text-sm font-bold text-[#287a50]">Producción</p>
         <h2 class="mt-1 text-2xl font-bold">Cultivos y lotes</h2>
-        <p class="mt-2 text-sm text-slate-500">Monitorea cada lote, su etapa y la producción estimada.</p>
+        <p class="mt-2 text-sm text-slate-500">Registra tus cultivos y consulta su área y semillas.</p>
        </div>
-       <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        <article class="crop-card surface rounded-2xl" data-searchable="café las brisas"><img data-template-id="coffee-card-image" class="canva-image h-44 w-full object-cover" loading="lazy" src="https://images.pexels.com/photos/7125469/pexels-photo-7125469.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Cerezas de café rojas y verdes creciendo entre hojas">
-         <div class="p-5">
-          <div class="flex justify-between gap-2">
-           <div>
-            <h3 class="font-bold">Café</h3>
-            <p class="mt-1 text-sm text-slate-500">Lote Las Brisas</p>
-           </div><span class="rounded-full bg-[#e8f4ea] px-2 py-1 text-xs font-bold text-[#287a50]">Floración</span>
-          </div>
-          <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
-           <div>
-            <p class="text-xs text-slate-500">Área</p>
-            <p class="font-bold">12.5 ha</p>
-           </div>
-           <div>
-            <p class="text-xs text-slate-500">Producción</p>
-            <p class="font-bold">180 qq</p>
-           </div>
-          </div><button type="button" data-view-target="crop-detail" class="mt-5 inline-flex items-center gap-2 font-bold text-[#216a4b]">Ver detalle <i data-lucide="arrow-right" width="16"></i></button>
-         </div>
-        </article>
-        <article class="crop-card surface rounded-2xl" data-searchable="maíz el valle"><img data-template-id="corn-card-image" class="canva-image h-44 w-full object-cover" loading="lazy" src="https://images.pexels.com/photos/15689799/pexels-photo-15689799.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Campo de maíz verde bajo un cielo azul">
-         <div class="p-5">
-          <div class="flex justify-between gap-2">
-           <div>
-            <h3 class="font-bold">Maíz</h3>
-            <p class="mt-1 text-sm text-slate-500">Lote El Valle</p>
-           </div><span class="rounded-full bg-[#edf3fa] px-2 py-1 text-xs font-bold text-[#326a98]">Crecimiento</span>
-          </div>
-          <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
-           <div>
-            <p class="text-xs text-slate-500">Área</p>
-            <p class="font-bold">8 ha</p>
-           </div>
-           <div>
-            <p class="text-xs text-slate-500">Producción</p>
-            <p class="font-bold">58 qq</p>
-           </div>
-          </div><button type="button" data-view-target="crop-detail" class="mt-5 inline-flex items-center gap-2 font-bold text-[#216a4b]">Ver detalle <i data-lucide="arrow-right" width="16"></i></button>
-         </div>
-        </article>
-        <article class="crop-card surface rounded-2xl" data-searchable="hortalizas huerto norte"><img data-template-id="vegetable-card-image" class="canva-image h-44 w-full object-cover" loading="lazy" src="https://images.pexels.com/photos/89267/pexels-photo-89267.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Filas de lechuga verde en un campo agrícola">
-         <div class="p-5">
-          <div class="flex justify-between gap-2">
-           <div>
-            <h3 class="font-bold">Hortalizas</h3>
-            <p class="mt-1 text-sm text-slate-500">Huerto Norte</p>
-           </div><span class="rounded-full bg-[#fff4e9] px-2 py-1 text-xs font-bold text-[#9d5b2c]">Siembra</span>
-          </div>
-          <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
-           <div>
-            <p class="text-xs text-slate-500">Área</p>
-            <p class="font-bold">2.2 ha</p>
-           </div>
-           <div>
-            <p class="text-xs text-slate-500">Producción</p>
-            <p class="font-bold">20 qq</p>
-           </div>
-          </div><button type="button" data-view-target="crop-detail" class="mt-5 inline-flex items-center gap-2 font-bold text-[#216a4b]">Ver detalle <i data-lucide="arrow-right" width="16"></i></button>
-         </div>
-        </article>
-       </div>
-      </section>
-      <section id="crop-detail" class="view">
-       <button type="button" data-view-target="crops" class="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[#216a4b]"><i data-lucide="arrow-left" width="17"></i>Volver a cultivos</button>
-       <div class="surface overflow-hidden rounded-3xl">
-        <div class="grid md:grid-cols-[.8fr_1.2fr]"><img data-template-id="detail-coffee-image" class="canva-image h-64 w-full object-cover md:h-full" loading="lazy" src="https://images.pexels.com/photos/7125459/pexels-photo-7125459.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Cerezas de café en distintos colores sobre una rama">
-         <div class="p-6 md:p-8"><span class="rounded-full bg-[#e8f4ea] px-3 py-1 text-xs font-bold text-[#287a50]">Etapa de floración</span>
-          <h2 class="mt-4 text-2xl font-bold">Café · Las Brisas</h2>
-          <p class="mt-2 text-slate-500">12.5 hectáreas · Zona montañosa</p>
-          <p class="mt-4 text-sm leading-6 text-slate-600">Lote con buen vigor vegetativo y floración uniforme. Los datos mostrados son ficticios y de demostración.</p>
-          <div class="mt-6 grid grid-cols-2 gap-3 text-sm">
-           <div class="rounded-xl bg-[#eff6ef] p-3">
-            <p class="text-xs text-slate-500">Gastos acumulados</p>
-            <p class="mt-1 font-bold">C$ 118,200</p>
-           </div>
-           <div class="rounded-xl bg-[#edf4f8] p-3">
-            <p class="text-xs text-slate-500">Ingresos estimados</p>
-            <p class="mt-1 font-bold">C$ 405,000</p>
-           </div>
-           <div class="rounded-xl bg-[#faf4e9] p-3">
-            <p class="text-xs text-slate-500">Rendimiento esperado</p>
-            <p class="mt-1 font-bold">14.4 qq / ha</p>
-           </div>
-           <div class="rounded-xl bg-[#eff6ef] p-3">
-            <p class="text-xs text-slate-500">Producción estimada</p>
-            <p class="mt-1 font-bold">180 qq</p>
-           </div>
-          </div>
-         </div>
+       <form id="crop-form" class="surface mb-6 grid gap-4 rounded-2xl p-5 sm:grid-cols-2 xl:grid-cols-4">
+        <input id="crop-id" type="hidden">
+        <div><label class="mb-1.5 block text-sm font-bold" for="crop-name">Cultivo o lote</label><input id="crop-name" class="field" maxlength="120" required></div>
+        <div><label class="mb-1.5 block text-sm font-bold" for="crop-type">Tipo de cultivo</label><input id="crop-type" class="field" maxlength="120" required></div>
+        <div><label class="mb-1.5 block text-sm font-bold" for="crop-date">Fecha de siembra</label><input id="crop-date" type="date" class="field" required></div>
+        <div class="grid grid-cols-2 gap-3">
+         <div><label class="mb-1.5 block text-sm font-bold" for="crop-area">Área</label><input id="crop-area" type="number" min="0" step="0.01" class="field" required></div>
+         <div><label class="mb-1.5 block text-sm font-bold" for="crop-area-unit">Unidad</label><input id="crop-area-unit" class="field" value="manzanas" maxlength="30" required></div>
         </div>
-       </div>
+        <div><label class="mb-1.5 block text-sm font-bold" for="crop-seeds">Cantidad de semillas (opcional)</label><input id="crop-seeds" type="number" min="0" step="0.01" class="field" value="0"></div>
+        <div class="flex items-end gap-3 sm:col-span-2"><button id="crop-submit" type="submit" class="primary-btn">Guardar cultivo</button><button id="crop-cancel" type="button" class="secondary-btn hidden">Cancelar edición</button></div>
+        <p id="crop-message" class="hidden rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829] sm:col-span-2" role="alert"></p>
+       </form>
+       <div id="crop-list" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"></div>
       </section>
       <section id="finance" class="view">
        <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
          <p class="text-sm font-bold text-[#287a50]">Control financiero</p>
          <h2 class="mt-1 text-2xl font-bold">Finanzas</h2>
-         <p class="mt-2 text-sm text-slate-500">Revisa movimientos de ejemplo por cultivo, lote y periodo.</p>
+         <p class="mt-2 text-sm text-slate-500">Registra y consulta los ingresos y egresos de tu actividad.</p>
         </div><button data-open-movement="" type="button" class="primary-btn">Registrar movimiento</button>
        </div>
-       <div class="surface rounded-2xl p-4"><label class="mb-1.5 block text-xs font-bold text-slate-500" for="filter-crop">Cultivo</label><select id="filter-crop" class="field py-2.5 text-sm"><option value="all">Todos los cultivos</option><option value="coffee">Café</option><option value="empty">Hortalizas</option></select>
+       <div class="surface rounded-2xl p-4"><label class="mb-1.5 block text-xs font-bold text-slate-500" for="filter-crop">Cultivo</label><select id="filter-crop" class="field py-2.5 text-sm"><option value="all">Todos los cultivos</option></select>
        </div>
        <div class="mt-5 grid gap-4 sm:grid-cols-3">
         <div class="surface rounded-2xl p-4">
          <p class="text-sm text-slate-500">Ingresos</p>
-         <p id="finance-income" class="mt-1 text-xl font-bold text-[#22774d]">C$ 482,000</p>
+         <p id="finance-income" class="mt-1 text-xl font-bold text-[#22774d]">C$ 0</p>
         </div>
         <div class="surface rounded-2xl p-4">
          <p class="text-sm text-slate-500">Egresos</p>
-         <p id="finance-expense" class="mt-1 text-xl font-bold text-[#bd673d]">C$ 179,400</p>
+         <p id="finance-expense" class="mt-1 text-xl font-bold text-[#bd673d]">C$ 0</p>
         </div>
         <div class="surface rounded-2xl p-4">
          <p class="text-sm text-slate-500">Balance neto</p>
-         <p id="finance-net" class="mt-1 text-xl font-bold text-[#174d3e]">C$ 302,600</p>
+         <p id="finance-net" class="mt-1 text-xl font-bold text-[#174d3e]">C$ 0</p>
         </div>
        </div>
        <section class="surface mt-5 overflow-hidden rounded-2xl">
         <div class="border-b border-[#e7eee8] p-5">
          <h3 class="font-bold">Movimientos recientes</h3>
         </div>
-        <div id="movement-list">
-         <div class="data-table-row flex items-center justify-between gap-3 border-b border-[#edf0ec] p-4"><span>Venta de café pergamino</span><strong class="text-[#26764f]">+ C$ 125,000</strong>
-         </div>
-         <div class="data-table-row flex items-center justify-between gap-3 p-4"><span>Fertilización foliar</span><strong class="text-[#bd673d]">− C$ 18,400</strong>
-         </div>
-        </div>
+        <div id="movement-list"></div>
         <div id="finance-empty" class="hidden p-10 text-center"><i data-lucide="leaf" class="mx-auto text-[#89ae96]" width="30"></i>
          <p class="mt-3 font-bold">Aún no hay movimientos</p>
-         <p class="mt-1 text-sm text-slate-500">No se encontraron movimientos para este filtro.</p>
+         <p class="mt-1 text-sm text-slate-500">Registra tu primer ingreso o egreso para ver el resumen.</p>
         </div>
        </section>
       </section>
       <section id="tasks" class="view">
-       <div class="mb-7">
-        <p class="text-sm font-bold text-[#287a50]">Organización de campo</p>
-        <h2 class="mt-1 text-2xl font-bold">Tareas agrícolas</h2>
-        <p class="mt-2 text-sm text-slate-500">Marca avances y mantén el calendario productivo al día.</p>
-       </div>
-       <div class="mb-5 flex gap-3 rounded-2xl bg-[#fff5e9] p-4 text-[#88471f]"><i data-lucide="clock-3" width="20"></i>
-        <div>
-         <p class="font-bold">Hay una tarea atrasada</p>
-         <p class="mt-1 text-sm">La aplicación de fertilizante para Café Las Brisas debía realizarse ayer.</p>
-        </div>
-       </div>
-       <div class="space-y-3">
-        <article class="task-card surface flex flex-wrap items-center gap-4 rounded-2xl p-4" data-searchable="aplicar fertilizante café"><button type="button" class="task-check grid h-10 w-10 place-items-center rounded-full border-2 border-[#dc8052] text-[#dc8052]" aria-label="Marcar tarea como completada"><i data-lucide="check" width="18"></i></button>
-         <div class="min-w-[180px] flex-1">
-          <p class="task-title font-bold">Aplicar fertilizante foliar</p>
-          <p class="mt-1 text-sm text-slate-500">Café · Lote Las Brisas</p>
-         </div><span class="rounded-full bg-[#fff0e9] px-3 py-1 text-xs font-bold text-[#b55732]">Alta</span><span class="text-sm font-bold text-[#aa542b]">Atrasada · 20 sep.</span>
-        </article>
-        <article class="task-card surface flex flex-wrap items-center gap-4 rounded-2xl p-4" data-searchable="revisar riego hortalizas"><button type="button" class="task-check grid h-10 w-10 place-items-center rounded-full border-2 border-[#409269] text-[#409269]" aria-label="Marcar tarea como completada"><i data-lucide="check" width="18"></i></button>
-         <div class="min-w-[180px] flex-1">
-          <p class="task-title font-bold">Revisar sistema de riego</p>
-          <p class="mt-1 text-sm text-slate-500">Hortalizas · Huerto Norte</p>
-         </div><span class="rounded-full bg-[#e8f4ea] px-3 py-1 text-xs font-bold text-[#28734c]">Media</span><span class="text-sm font-bold text-[#32734f]">Mañana · 22 sep.</span>
-        </article>
+       <div class="surface rounded-2xl p-6">
+        <h2 class="text-2xl font-bold">Tareas agrícolas</h2>
+        <p class="mt-2 text-sm text-slate-500">La gestión de tareas aún no está disponible. Este panel no mostrará tareas de ejemplo.</p>
        </div>
       </section>
       <footer class="mt-10 border-t border-[#dce5dc] py-6 text-center text-xs text-slate-500">
-       <span data-template-id="app-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Datos ficticios para demostración.</span>
+       <span data-template-id="app-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Tus registros permanecen asociados a tu cuenta.</span>
        <div class="mt-2 flex justify-center gap-4"><button type="button" class="legal-link" data-legal="privacy">Política de privacidad</button><button type="button" class="legal-link" data-legal="terms">Términos y condiciones</button>
        </div>
       </footer>
@@ -468,7 +310,7 @@
     <div class="flex justify-between gap-4">
      <div>
       <h2 id="movement-title" class="text-xl font-bold">Registrar movimiento</h2>
-      <p class="mt-1 text-sm text-slate-500">Añade un ingreso o egreso local de demostración.</p>
+      <p class="mt-1 text-sm text-slate-500">Guarda un ingreso o egreso en tu cuenta.</p>
      </div><button id="close-movement" type="button" class="grid h-9 w-9 place-items-center rounded-lg bg-slate-100 text-slate-500" aria-label="Cerrar formulario"><i data-lucide="x" width="18"></i></button>
     </div>
     <form id="movement-form" class="mt-5 space-y-4" novalidate="">
@@ -478,9 +320,13 @@
       <div><label class="mb-1.5 block text-sm font-bold" for="movement-date">Fecha</label><input id="movement-date" type="date" class="field">
       </div>
      </div>
+     <div class="grid gap-4 sm:grid-cols-2">
+      <div><label class="mb-1.5 block text-sm font-bold" for="movement-crop">Cultivo</label><select id="movement-crop" class="field"><option value="">General</option></select></div>
+      <div><label class="mb-1.5 block text-sm font-bold" for="movement-category">Categoría</label><input id="movement-category" class="field" maxlength="50" placeholder="Ej. Insumos"></div>
+     </div>
      <div><label class="mb-1.5 block text-sm font-bold" for="movement-concept">Concepto</label><input id="movement-concept" type="text" class="field" placeholder="Ej. Compra de abono">
      </div>
-     <div><label class="mb-1.5 block text-sm font-bold" for="movement-amount">Monto (C$)</label><input id="movement-amount" type="number" min="1" step="0.01" class="field" placeholder="0.00">
+     <div><label class="mb-1.5 block text-sm font-bold" for="movement-amount">Monto (C$)</label><input id="movement-amount" type="number" min="0.01" step="0.01" class="field" placeholder="0.00">
      </div>
      <p id="form-message" class="hidden rounded-xl bg-[#fff0ea] p-3 text-sm text-[#a24d2b]" role="alert"></p>
      <div class="flex flex-wrap justify-end gap-3"><button id="cancel-movement" type="button" class="secondary-btn">Cancelar</button><button type="submit" class="primary-btn">Guardar movimiento</button>
@@ -502,28 +348,344 @@
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      let income = 482000, expense = 179400;
+      if (window.lucide) window.lucide.createIcons();
       const $ = (id) => document.getElementById(id);
-      const money = (value) => "C$ " + Number(value).toLocaleString("es-NI", {minimumFractionDigits:0});
+      let user = null;
+      let crops = [];
+      let movements = [];
+      let registering = false;
+      const money = (value) => "C$ " + Number(value || 0).toLocaleString("es-NI", {maximumFractionDigits:2});
       const toast = (message) => {
         $("toast-text").textContent = message;
         $("toast").classList.add("show");
         setTimeout(() => $("toast").classList.remove("show"), 3000);
       };
+      const showMessage = (element, message, success = false) => {
+        element.textContent = message;
+        element.className = success
+          ? "rounded-xl bg-[#edf8ef] p-3 text-sm text-[#286442]"
+          : "rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]";
+      };
+      async function api(path, options = {}) {
+        const response = await fetch(path, {
+          credentials: "same-origin",
+          ...options,
+          headers: {
+            ...(options.body ? {"Content-Type":"application/json"} : {}),
+            ...options.headers
+          }
+        });
+        if (response.status === 204) return null;
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error?.message || "No se pudo completar la solicitud.");
+        return result;
+      }
       const openApp = () => {
         $("login-screen").classList.remove("active");
         $("app-screen").classList.add("active");
+        $("user-name").textContent = user.name;
+        $("user-email").textContent = user.email;
+        $("user-initials").textContent = user.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+        $("dashboard-title").textContent = "Hola, " + user.name;
         window.scrollTo({top:0, behavior:"smooth"});
       };
       const openLogin = () => {
+        user = null;
+        crops = [];
+        movements = [];
         $("app-screen").classList.remove("active");
         $("login-screen").classList.add("active");
         $("login-form").reset();
         $("login-message").classList.add("hidden");
+        setAuthMode(false);
         window.scrollTo({top:0, behavior:"smooth"});
       };
-
+      const setAuthMode = (isRegistering) => {
+        registering = isRegistering;
+        $("register-fields").classList.toggle("hidden", !registering);
+        $("register-name").required = registering;
+        $("register-country").required = registering;
+        $("register-timezone").required = registering;
+        $("login-password").autocomplete = registering ? "new-password" : "current-password";
+        $("auth-copy").textContent = registering
+          ? "Crea tu cuenta para llevar el control de tus cultivos y finanzas."
+          : "Inicia sesión para consultar los datos guardados en tu cuenta.";
+        $("auth-submit").textContent = registering ? "Crear cuenta" : "Iniciar sesión";
+        $("auth-toggle-label").textContent = registering ? "¿Ya tienes una cuenta?" : "¿Aún no tienes cuenta?";
+        $("auth-toggle").textContent = registering ? "Iniciar sesión" : "Crear una cuenta";
+        $("login-message").classList.add("hidden");
+      };
+      function showView(viewId) {
+        document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === viewId));
+        document.querySelectorAll("[data-view-target]").forEach((button) => button.classList.toggle("active", button.dataset.viewTarget === viewId));
+        window.scrollTo({top:0, behavior:"smooth"});
+      }
+      function formatDate(value) {
+        return value ? new Date(value + "T00:00:00").toLocaleDateString("es-NI") : "";
+      }
+      function renderCropOptions() {
+        const selectedFilter = $("filter-crop").value;
+        const filter = $("filter-crop");
+        const movementCrop = $("movement-crop");
+        filter.replaceChildren(new Option("Todos los cultivos", "all"));
+        movementCrop.replaceChildren(new Option("General", ""));
+        crops.forEach((crop) => {
+          filter.add(new Option(crop.name, crop.name));
+          movementCrop.add(new Option(crop.name, crop.name));
+        });
+        if ([...filter.options].some((option) => option.value === selectedFilter)) filter.value = selectedFilter;
+      }
+      function renderCrops() {
+        const list = $("crop-list");
+        list.replaceChildren();
+        $("dashboard-crops").textContent = crops.length;
+        $("dashboard-crops-summary").textContent = crops.length;
+        renderCropOptions();
+        if (!crops.length) {
+          const empty = document.createElement("p");
+          empty.className = "surface rounded-2xl p-6 text-sm text-slate-500 md:col-span-2 xl:col-span-3";
+          empty.textContent = "Todavía no tienes cultivos. Usa el formulario para registrar el primero.";
+          list.append(empty);
+        }
+        crops.forEach((crop) => {
+          const card = document.createElement("article");
+          card.className = "crop-card surface rounded-2xl p-5";
+          card.dataset.searchable = `${crop.name} ${crop.type}`.toLowerCase();
+          const title = document.createElement("h3");
+          title.className = "font-bold";
+          title.textContent = crop.name;
+          const kind = document.createElement("p");
+          kind.className = "mt-1 text-sm text-slate-500";
+          kind.textContent = crop.type + " · Siembra: " + formatDate(crop.date);
+          const details = document.createElement("p");
+          details.className = "mt-4 text-sm";
+          details.textContent = `Área: ${crop.area} ${crop.areaUnit} · Semillas: ${crop.seeds || 0}`;
+          const actions = document.createElement("div");
+          actions.className = "mt-5 flex gap-3";
+          const edit = document.createElement("button");
+          edit.type = "button";
+          edit.className = "font-bold text-[#216a4b]";
+          edit.textContent = "Editar";
+          edit.addEventListener("click", () => editCrop(crop));
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "font-bold text-[#a24d2b]";
+          remove.textContent = "Eliminar";
+          remove.addEventListener("click", async () => {
+            if (!window.confirm(`¿Eliminar el cultivo ${crop.name}?`)) return;
+            try {
+              await api(`/api/cultivos/${crop.id}`, {method:"DELETE"});
+              await loadWorkspace();
+              toast("Cultivo eliminado");
+            } catch (error) {
+              toast(error.message);
+            }
+          });
+          actions.append(edit, remove);
+          card.append(title, kind, details, actions);
+          list.append(card);
+        });
+      }
+      function renderMovements() {
+        const selectedCrop = $("filter-crop").value;
+        const visible = movements.filter((movement) => selectedCrop === "all" || movement.crop === selectedCrop);
+        const list = $("movement-list");
+        list.replaceChildren();
+        let income = 0;
+        let expense = 0;
+        const totalIncome = movements.filter((item) => item.kind === "income")
+          .reduce((sum, item) => sum + Number(item.amount) * Number(item.price || 1), 0);
+        const totalExpense = movements.filter((item) => item.kind !== "income")
+          .reduce((sum, item) => sum + Number(item.amount) * Number(item.price || 1), 0);
+        visible.forEach((movement) => {
+          const amount = Number(movement.amount) * Number(movement.price || 1);
+          const isIncome = movement.kind === "income";
+          if (isIncome) income += amount; else expense += amount;
+          const row = document.createElement("div");
+          row.className = "data-table-row flex items-center justify-between gap-3 border-b border-[#edf0ec] p-4";
+          row.dataset.searchable = `${movement.concept} ${movement.crop} ${movement.category}`.toLowerCase();
+          const description = document.createElement("div");
+          const label = document.createElement("p");
+          label.className = "font-semibold";
+          label.textContent = movement.concept;
+          const meta = document.createElement("p");
+          meta.className = "mt-1 text-xs text-slate-500";
+          meta.textContent = `${movement.crop || "General"} · ${movement.category} · ${formatDate(movement.date)}`;
+          description.append(label, meta);
+          const value = document.createElement("strong");
+          value.className = isIncome ? "text-[#26764f]" : "text-[#bd673d]";
+          value.textContent = (isIncome ? "+ " : "− ") + money(amount);
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "text-sm font-semibold text-slate-500";
+          remove.setAttribute("aria-label", "Eliminar movimiento " + movement.concept);
+          remove.textContent = "Eliminar";
+          remove.addEventListener("click", async () => {
+            if (!window.confirm(`¿Eliminar el movimiento ${movement.concept}?`)) return;
+            try {
+              await api(`/api/movimientos/${movement.id}`, {method:"DELETE"});
+              await loadWorkspace();
+              toast("Movimiento eliminado");
+            } catch (error) {
+              toast(error.message);
+            }
+          });
+          row.append(description, value, remove);
+          list.append(row);
+        });
+        const balance = income - expense;
+        $("finance-income").textContent = money(income);
+        $("finance-expense").textContent = money(expense);
+        $("finance-net").textContent = money(balance);
+        $("finance-empty").classList.toggle("hidden", visible.length > 0);
+        $("movement-list").classList.toggle("hidden", visible.length === 0);
+        $("dashboard-income").textContent = money(totalIncome);
+        $("dashboard-expense").textContent = money(totalExpense);
+        $("profit-value").textContent = money(totalIncome - totalExpense);
+        const recent = $("dashboard-recent");
+        recent.replaceChildren();
+        if (!movements.length) {
+          recent.textContent = "Aún no tienes movimientos registrados.";
+        } else {
+          movements.slice(0, 5).forEach((movement) => {
+            const entry = document.createElement("p");
+            entry.className = "border-b border-[#edf0ec] py-3 last:border-0";
+            entry.textContent = `${formatDate(movement.date)} · ${movement.concept} · ${movement.kind === "income" ? "+" : "−"} ${money(Number(movement.amount) * Number(movement.price || 1))}`;
+            recent.append(entry);
+          });
+        }
+      }
+      async function loadWorkspace() {
+        const [cropData, movementData] = await Promise.all([api("/api/cultivos"), api("/api/movimientos")]);
+        crops = cropData;
+        movements = movementData;
+        renderCrops();
+        renderMovements();
+      }
+      function editCrop(crop) {
+        $("crop-id").value = crop.id;
+        $("crop-name").value = crop.name;
+        $("crop-type").value = crop.type;
+        $("crop-date").value = crop.date;
+        $("crop-area").value = crop.area;
+        $("crop-area-unit").value = crop.areaUnit;
+        $("crop-seeds").value = crop.seeds || 0;
+        $("crop-submit").textContent = "Guardar cambios";
+        $("crop-cancel").classList.remove("hidden");
+        $("crop-form").scrollIntoView({behavior:"smooth", block:"center"});
+      }
+      function resetCropForm() {
+        $("crop-form").reset();
+        $("crop-id").value = "";
+        $("crop-area-unit").value = "manzanas";
+        $("crop-seeds").value = "0";
+        $("crop-submit").textContent = "Guardar cultivo";
+        $("crop-cancel").classList.add("hidden");
+        $("crop-message").classList.add("hidden");
+      }
+      $("auth-toggle").addEventListener("click", () => setAuthMode(!registering));
+      $("login-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        $("auth-submit").disabled = true;
+        $("login-message").classList.add("hidden");
+        const payload = {email:$("login-email").value.trim(), password:$("login-password").value};
+        if (registering) {
+          Object.assign(payload, {
+            name:$("register-name").value.trim(),
+            phone:$("register-phone").value.trim(),
+            country:$("register-country").value.trim(),
+            timezone:$("register-timezone").value.trim()
+          });
+        }
+        try {
+          user = await api(registering ? "/api/auth/register" : "/api/auth/login", {
+            method:"POST", body:JSON.stringify(payload)
+          });
+          await loadWorkspace();
+          openApp();
+          toast(registering ? "Cuenta creada correctamente" : "Sesión iniciada");
+        } catch (error) {
+          showMessage($("login-message"), error.message);
+        } finally {
+          $("auth-submit").disabled = false;
+        }
+      });
+      $("logout-button").addEventListener("click", async () => {
+        try {
+          await api("/api/auth/logout", {method:"POST"});
+          openLogin();
+        } catch (error) {
+          toast(error.message);
+        }
+      });
+      $("crop-cancel").addEventListener("click", resetCropForm);
+      $("crop-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const cropId = $("crop-id").value;
+        const payload = {
+          name:$("crop-name").value.trim(),
+          type:$("crop-type").value.trim(),
+          date:$("crop-date").value,
+          area:$("crop-area").value,
+          areaUnit:$("crop-area-unit").value.trim(),
+          seeds:$("crop-seeds").value || 0
+        };
+        try {
+          await api(cropId ? `/api/cultivos/${cropId}` : "/api/cultivos", {
+            method:cropId ? "PUT" : "POST", body:JSON.stringify(payload)
+          });
+          resetCropForm();
+          await loadWorkspace();
+          toast(cropId ? "Cultivo actualizado" : "Cultivo guardado");
+        } catch (error) {
+          showMessage($("crop-message"), error.message);
+        }
+      });
+      const movementModal = $("movement-modal");
+      const closeMovement = () => {
+        movementModal.classList.remove("open");
+        $("movement-form").reset();
+        $("form-message").classList.add("hidden");
+      };
+      document.querySelectorAll("[data-open-movement]").forEach((button) => button.addEventListener("click", () => {
+        const today = new Date();
+        $("movement-date").value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+        movementModal.classList.add("open");
+      }));
+      $("close-movement").addEventListener("click", closeMovement);
+      $("cancel-movement").addEventListener("click", closeMovement);
+      movementModal.addEventListener("click", (event) => { if (event.target === movementModal) closeMovement(); });
+      $("movement-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const kind = $("movement-type").value;
+        const payload = {
+          kind,
+          crop:$("movement-crop").value || "General",
+          concept:$("movement-concept").value.trim(),
+          date:$("movement-date").value,
+          category:$("movement-category").value.trim() || (kind === "income" ? "Ingreso" : "Egreso"),
+          amount:$("movement-amount").value,
+          unit:"C$",
+          price:1
+        };
+        try {
+          await api("/api/movimientos", {method:"POST", body:JSON.stringify(payload)});
+          closeMovement();
+          await loadWorkspace();
+          toast("Movimiento guardado");
+        } catch (error) {
+          showMessage($("form-message"), error.message);
+        }
+      });
+      function applySearch(term) {
+        document.querySelectorAll("[data-searchable]").forEach((item) => {
+          item.classList.toggle("hidden", Boolean(term) && !item.dataset.searchable.includes(term));
+        });
+      }
+      $("filter-crop").addEventListener("change", renderMovements);
+      $("global-search").addEventListener("input", (event) => applySearch(event.target.value.toLowerCase().trim()));
+      document.querySelectorAll("[data-view-target]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewTarget)));
+      $("notification-button").addEventListener("click", () => $("notice-panel").classList.toggle("open"));
       $("contact-form").addEventListener("submit", (event) => {
         event.preventDefault();
         const name = $("contact-name").value.trim();
@@ -532,104 +694,17 @@
         const message = $("contact-message").value.trim();
         const feedback = $("contact-form-message");
         if (!name || !email || !email.includes("@") || !reason || !message) {
-          feedback.textContent = "Completa todos los campos con datos válidos.";
-          feedback.className = "rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829]";
+          showMessage(feedback, "Completa todos los campos con datos válidos.");
           return;
         }
         const subject = encodeURIComponent("Contacto AgroFin · " + reason + " · " + name);
         const body = encodeURIComponent("Nombre: " + name + "\nCorreo: " + email + "\nMotivo: " + reason + "\n\nMensaje:\n" + message);
         window.open("mailto:ruizfatima1p@gmail.com?subject=" + subject + "&body=" + body, "_blank");
-        feedback.textContent = "Se abrirá tu aplicación de correo para completar el envío.";
-        feedback.className = "rounded-xl bg-[#edf8ef] p-3 text-sm text-[#286442]";
+        showMessage(feedback, "Se abrirá tu aplicación de correo para completar el envío.", true);
       });
-
-      $("login-form").addEventListener("submit", (event) => {
-        event.preventDefault();
-        const email = $("login-email").value.trim();
-        if (!email || !email.includes("@")) {
-          $("login-message").textContent = "Ingresa un correo válido para acceder al prototipo.";
-          $("login-message").classList.remove("hidden");
-          return;
-        }
-        openApp();
-        toast("Bienvenida a tu panel de demostración");
-      });
-      $("demo-login").addEventListener("click", () => { openApp(); toast("Datos de demostración cargados"); });
-      $("logout-button").addEventListener("click", openLogin);
-
-      function showView(viewId) {
-        document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === viewId));
-        document.querySelectorAll("[data-view-target]").forEach((button) => button.classList.toggle("active", button.dataset.viewTarget === viewId));
-        window.scrollTo({top:0, behavior:"smooth"});
-      }
-      document.querySelectorAll("[data-view-target]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewTarget)));
-
-      $("notification-button").addEventListener("click", () => $("notice-panel").classList.toggle("open"));
-
-      const movementModal = $("movement-modal");
-      const closeMovement = () => {
-        movementModal.classList.remove("open");
-        $("movement-form").reset();
-        $("form-message").classList.add("hidden");
-      };
-      document.querySelectorAll("[data-open-movement]").forEach((button) => button.addEventListener("click", () => movementModal.classList.add("open")));
-      $("close-movement").addEventListener("click", closeMovement);
-      $("cancel-movement").addEventListener("click", closeMovement);
-      movementModal.addEventListener("click", (event) => { if (event.target === movementModal) closeMovement(); });
-
-      $("movement-form").addEventListener("submit", (event) => {
-        event.preventDefault();
-        const concept = $("movement-concept").value.trim();
-        const amount = Number($("movement-amount").value);
-        const date = $("movement-date").value;
-        if (!concept || !amount || !date) {
-          $("form-message").textContent = "Completa concepto, monto y fecha para guardar el movimiento.";
-          $("form-message").classList.remove("hidden");
-          return;
-        }
-        const isIncome = $("movement-type").value === "income";
-        if (isIncome) income += amount; else expense += amount;
-        $("finance-income").textContent = money(income);
-        $("finance-expense").textContent = money(expense);
-        $("finance-net").textContent = money(income - expense);
-        $("profit-value").textContent = money(income - expense);
-        const row = document.createElement("div");
-        row.className = "data-table-row flex items-center justify-between gap-3 border-b border-[#edf0ec] p-4";
-        const label = document.createElement("span");
-        label.textContent = concept;
-        const value = document.createElement("strong");
-        value.className = isIncome ? "text-[#26764f]" : "text-[#bd673d]";
-        value.textContent = (isIncome ? "+ " : "− ") + money(amount);
-        row.append(label, value);
-        $("movement-list").prepend(row);
-        closeMovement();
-        toast("Movimiento guardado correctamente");
-      });
-
-      document.querySelectorAll(".task-check").forEach((button) => {
-        button.addEventListener("click", () => {
-          const card = button.closest(".task-card");
-          const done = card.classList.toggle("task-done");
-          button.classList.toggle("bg-[#409269]", done);
-          button.classList.toggle("text-white", done);
-          toast(done ? "Tarea marcada como completada" : "Tarea reactivada");
-        });
-      });
-
-      $("filter-crop").addEventListener("change", (event) => {
-        const empty = event.target.value === "empty";
-        $("movement-list").classList.toggle("hidden", empty);
-        $("finance-empty").classList.toggle("hidden", !empty);
-      });
-
-      $("global-search").addEventListener("input", (event) => {
-        const term = event.target.value.toLowerCase().trim();
-        document.querySelectorAll("[data-searchable]").forEach((item) => item.classList.toggle("hidden", term && !item.dataset.searchable.includes(term)));
-      });
-
       const legalText = {
-        privacy: ["Política de privacidad", "AgroFin es un prototipo de demostración. El correo introducido se utiliza únicamente para simular el acceso en esta sesión y no se almacena ni se comparte. No se solicitan ni recopilan contraseñas."],
-        terms: ["Términos y condiciones", "Esta experiencia usa información agrícola y financiera ficticia. Los movimientos creados solo existen mientras el prototipo permanece abierto y no representan registros contables reales."]
+        privacy: ["Política de privacidad", "AgroFin guarda en su base de datos tu nombre, correo, país, zona horaria, teléfono opcional, cultivos y movimientos para ofrecerte el servicio. Las contraseñas se almacenan como hashes y tu información agrícola solo se muestra dentro de tu cuenta. Puedes contactar a la responsable del sitio para solicitar ayuda sobre tus datos."],
+        terms: ["Términos y condiciones", "AgroFin permite registrar información agrícola y financiera para organizar tu actividad. Eres responsable de la exactitud de los datos y debes mantener la confidencialidad de tu contraseña. Los reportes son informativos y no sustituyen asesoría contable, financiera o agrícola."]
       };
       const legalModal = $("legal-modal");
       document.querySelectorAll("[data-legal]").forEach((button) => button.addEventListener("click", () => {
@@ -640,6 +715,17 @@
       }));
       $("close-legal").addEventListener("click", () => legalModal.classList.remove("open"));
       legalModal.addEventListener("click", (event) => { if (event.target === legalModal) legalModal.classList.remove("open"); });
+      api("/api/auth/me").then(async (currentUser) => {
+        if (!currentUser) return;
+        user = currentUser;
+        try {
+          await loadWorkspace();
+          openApp();
+        } catch (error) {
+          user = null;
+          showMessage($("login-message"), error.message);
+        }
+      }).catch((error) => showMessage($("login-message"), error.message));
     });
   </script>
  </body></html>

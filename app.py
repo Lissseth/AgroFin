@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -18,6 +19,8 @@ try:
 except ImportError:  # pragma: no cover - optional dependency for Render/PostgreSQL
     psycopg2 = None
     RealDictCursor = None
+
+DB_INTEGRITY_ERRORS = (sqlite3.IntegrityError,) + ((psycopg2.IntegrityError,) if psycopg2 else ())
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
@@ -178,14 +181,14 @@ def init_db():
             );
         ''')
         for table in ('cultivos', 'movimientos'):
-            try:
-                connection.execute(f'ALTER TABLE {table} ADD COLUMN user_id INTEGER')
-            except Exception as exc:
-                if backend == 'sqlite' and not isinstance(exc, sqlite3.OperationalError):
-                    raise
-                if backend == 'postgres' and getattr(exc, 'pgcode', None) != '42701':
-                    raise
-                pass
+            if backend == 'postgres':
+                connection.execute(f'ALTER TABLE {table} ADD COLUMN IF NOT EXISTS user_id INTEGER')
+            else:
+                try:
+                    connection.execute(f'ALTER TABLE {table} ADD COLUMN user_id INTEGER')
+                except sqlite3.OperationalError as exc:
+                    if 'duplicate column name' not in str(exc).lower():
+                        raise
 
 
 def error(message, status):
@@ -268,7 +271,7 @@ def register():
             cursor = connection.execute('''INSERT INTO usuarios (name,email,phone,country,timezone,password_hash)
                 VALUES (?,?,?,?,?,?) RETURNING id''', (data['name'], data['email'], data['phone'], data['country'], data['timezone'], generate_password_hash(data['password'])))
             session['user_id'] = cursor.fetchone()['id']
-    except sqlite3.IntegrityError:
+    except DB_INTEGRITY_ERRORS:
         return error('Ya existe una cuenta con ese correo.', 409)
     return jsonify(current_user_data()), 201
 
@@ -454,11 +457,11 @@ def save_profile():
     data, problem = settings_payload()
     if problem or data is None:
         return error(problem, 400)
-    with get_db() as connection:
-        try:
+    try:
+        with get_db() as connection:
             connection.execute('UPDATE usuarios SET name=?, email=?, phone=?, country=?, timezone=? WHERE id=?', (data['name'], data['email'], data['phone'], data['country'], data['timezone'], session['user_id']))
-        except sqlite3.IntegrityError:
-            return error('Ya existe una cuenta con ese correo.', 409)
+    except DB_INTEGRITY_ERRORS:
+        return error('Ya existe una cuenta con ese correo.', 409)
     return jsonify(current_user_data())
 
 
