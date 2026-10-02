@@ -424,7 +424,29 @@ def contact_message():
     sent = send_email(recipient, subject, body, reply_to=email)
     if not sent:
         return error('No se pudo enviar tu mensaje en este momento. Inténtalo nuevamente más tarde.', 500)
-    return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
+        return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
+
+@app.post('/api/contacto')
+def contacto():
+    data, problem = payload(['subject', 'message'])
+    if problem or data is None:
+        return error(problem, 400)
+    name = clean_text(data.get('name', 'Usuario'), 80)
+    email = clean_text(data.get('email', ''), 160).lower()
+    subject = clean_text(data['subject'], 120)
+    message = clean_text(data['message'], 2000)
+    if not email or not re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
+        return error('Escribe un correo válido.', 400)
+    if len(subject) < 3 or len(message) < 5:
+        return error('Asunto y mensaje deben ser más largos.', 400)
+    config = email_configuration()
+    recipient = config['recipient']
+    if not recipient:
+        return error('No hay destinatario configurado.', 500)
+    sent = send_email(recipient, f'Contacto AgroFin: {subject}', f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}', reply_to=email)
+    if not sent:
+        return error('No se pudo enviar tu mensaje.', 500)
+    return jsonify({'message': 'Tu mensaje fue enviado correctamente'})
 
 @app.get('/auth/google/callback')
 def google_callback():
