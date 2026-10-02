@@ -2,9 +2,11 @@ import json
 import logging
 import os
 import re
+import smtplib
 import sqlite3
 from datetime import date
 from contextlib import contextmanager
+from email.message import EmailMessage
 from functools import wraps
 from urllib import request as urllib_request
 from urllib.parse import urlencode
@@ -220,6 +222,57 @@ def clean_number(value, field):
     return number
 
 
+def email_configuration():
+    sender = os.getenv('EMAIL_USERNAME') or os.getenv('GMAIL_USERNAME') or os.getenv('MAIL_USERNAME') or 'ruizfatima1p@gmail.com'
+    password = os.getenv('EMAIL_PASSWORD') or os.getenv('GMAIL_APP_PASSWORD') or os.getenv('MAIL_PASSWORD')
+    recipient = os.getenv('CONTACT_EMAIL') or os.getenv('ADMIN_EMAIL') or os.getenv('EMAIL_TO') or 'ruizfatima1p@gmail.com'
+    return {
+        'host': os.getenv('EMAIL_HOST', 'smtp.gmail.com'),
+        'port': int(os.getenv('EMAIL_PORT', '465')),
+        'username': sender,
+        'password': password,
+        'recipient': recipient,
+    }
+
+
+def send_email(to_email, subject, body, reply_to=None):
+    config = email_configuration()
+    if not config['username'] or not config['password']:
+        logger.warning('SMTP no configurado. Se omitió el envío automático de correo.')
+        return False
+    try:
+        message = EmailMessage()
+        message['From'] = config['username']
+        message['To'] = to_email
+        message['Subject'] = subject
+        if reply_to:
+            message['Reply-To'] = reply_to
+        message.set_content(body)
+        with smtplib.SMTP_SSL(config['host'], config['port']) as server:
+            server.login(config['username'], config['password'])
+            server.send_message(message)
+        return True
+    except Exception:
+        logger.exception('No se pudo enviar el correo electrónico.')
+        return False
+
+
+def send_registration_email(name, email):
+    config = email_configuration()
+    if not config['username'] or not config['password']:
+        return False
+    name = clean_text(name, 80)
+    subject = 'Bienvenido a AgroFin'
+    body = (
+        f'Hola {name},\n\n'
+        'Gracias por registrarte en AgroFin. Tu cuenta ya quedó creada y puedes comenzar a registrar cultivos, movimientos y finanzas del campo.\n\n'
+        'Si necesitas ayuda, puedes escribirnos desde la sección de Ayuda de la aplicación.\n\n'
+        'Saludos,\n'
+        'Equipo AgroFin\n'
+    )
+    return send_email(email, subject, body, reply_to=config['recipient'])
+
+
 def current_user():
     user_id = session.get('user_id')
     if not user_id:
@@ -273,6 +326,7 @@ def register():
             session['user_id'] = cursor.fetchone()['id']
     except DB_INTEGRITY_ERRORS:
         return error('Ya existe una cuenta con ese correo.', 409)
+    send_registration_email(data['name'], data['email'])
     return jsonify(current_user_data()), 201
 
 
@@ -291,6 +345,7 @@ def login():
 
 
 @app.post('/api/auth/logout')
+
 def logout():
     session.clear()
     return '', 204
@@ -331,6 +386,8 @@ def google_token_exchange(code):
         return json.loads(response.read().decode('utf-8'))
 
 
+
+
 def google_userinfo(access_token):
     request_obj = urllib_request.Request(
         'https://www.googleapis.com/oauth2/v3/userinfo',
@@ -339,6 +396,35 @@ def google_userinfo(access_token):
     with urllib_request.urlopen(request_obj, timeout=20) as response:
         return json.loads(response.read().decode('utf-8'))
 
+
+@app.post('/api/contact')
+def contact_message():
+    data, problem = payload(['name', 'email', 'reason', 'message'])
+    if problem or data is None:
+        return error(problem, 400)
+    name = clean_text(data['name'], 80)
+    email = clean_text(data['email'], 160).lower()
+    reason = clean_text(data['reason'], 80)
+    message = clean_text(data['message'], 1000)
+    if not re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
+        return error('Escribe un correo electrónico válido.', 400)
+    if len(name) < 2 or len(message) < 10:
+        return error('Completa nombre y mensaje con información válida.', 400)
+    recipient = email_configuration()['recipient']
+    if not recipient:
+        return error('No hay un destinatario configurado para los mensajes de ayuda.', 500)
+    subject = f'Contacto AgroFin · {reason} · {name}'
+    body = (
+        f'Nombre: {name}\n'
+        f'Correo: {email}\n'
+        f'Motivo: {reason}\n\n'
+        'Mensaje:\n'
+        f'{message}\n'
+    )
+    sent = send_email(recipient, subject, body, reply_to=email)
+    if not sent:
+        return error('No se pudo enviar tu mensaje en este momento. Inténtalo nuevamente más tarde.', 500)
+    return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
 
 @app.get('/auth/google/callback')
 def google_callback():

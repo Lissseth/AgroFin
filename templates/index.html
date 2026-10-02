@@ -27,7 +27,8 @@
     .login-copy{position:relative;z-index:1;color:white;padding:clamp(30px,4vw,58px);height:100%;display:flex;flex-direction:column;justify-content:flex-end}
     .login-form{padding:clamp(26px,5vw,64px);max-width:560px;margin:auto;width:100%}
     .brand-badge{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#6fbd71,#16835d);color:white;box-shadow:0 10px 22px rgba(22,131,93,.25)}
-    .brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#6fbd71,#16835d);color:#fff;font-weight:800;font-size:1.1rem;letter-spacing:-.04em;box-shadow:0 10px 22px rgba(22,131,93,.25)}
+    .brand-mark{width:54px;height:54px;display:block;flex-shrink:0;filter:drop-shadow(0 12px 22px rgba(22,131,93,.15))}
+    .brand-mark svg{display:block;width:100%;height:100%}
     .legal-link{color:#296d54;text-decoration:underline;text-underline-offset:3px;font-weight:600;background:none;border:0;padding:0}
     .legal-link:hover{color:var(--terracotta)}
     .field{width:100%;border:1px solid #cfdcd1;border-radius:14px;background:#fff;padding:13px 14px;color:var(--ink);transition:.2s}
@@ -72,21 +73,51 @@
      <div class="login-image order-2 md:order-1">
       <img data-template-id="login-hero-image" class="canva-image" loading="lazy" src="https://images.pexels.com/photos/38868127/pexels-photo-38868127.jpeg" alt="Vista aérea de plantaciones verdes cubiertas por neblina al amanecer">
       <div class="login-copy">
-       <div class="flex items-center gap-3"><div class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agrícola">A</div><span data-template-id="login-brand" class="canva-text sr-only" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 28px;">AgroFin</span>
+       <div class="flex items-center gap-3"><span class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agr?cola">
+       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+         <circle cx="60" cy="60" r="46" fill="none" stroke="#0d6d66" stroke-width="10"/>
+         <path d="M38 56C29 34 43 18 58 32c9 8 15 18 17 30-12-4-22-7-37-6Z" fill="#1fa072"/>
+         <path d="M51 31c-11 4-22 15-24 30 12 0 20-3 30-12-2-8-4-13-6-18Z" fill="#0d8c73"/>
+         <path d="M32 54c8-2 16-1 24 3-6 4-11 10-13 18-9-4-13-13-11-21Z" fill="#1d9b80"/>
+         <path d="M64 38c14 0 24 8 28 18l-17 5-11-11V38Z" fill="#1d9b80"/>
+         <path d="M73 31c8 4 14 11 16 20-10 1-19 4-27 12 0-12 3-23 11-32Z" fill="#0b7f69"/>
+         <path d="M64 44L44 93h13l9-18h13l9 18h13L79 44H64Z" fill="#0d6d66"/>
+         <path d="M53 67h21l10 24H43l10-24Z" fill="#178c7e"/>
+         <path d="M27 92c9 0 15 7 15 15H12c0-8 6-15 15-15Z" fill="#0a6c69"/>
+         <path d="M48 86c10 0 18 7 18 16H30c0-9 8-16 18-16Z" fill="#1aa57c"/>
+         <path d="M71 80c12 0 21 8 21 17H50c0-9 9-17 21-17Z" fill="#0d7d72"/>
+         <path d="M80 61c14 0 24 8 24 18 0 8-6 16-15 20-9-8-18-17-23-31 5-4 9-7 14-7Z" fill="#1aa57c"/>
+         <path d="M68 41l14 11-16 11 10-16-8-6Z" fill="#0d6d66"/>
+         <path d="M84 49l16-5-3 14-13 3 0-12Z" fill="#0d7d72"/>
+         <path d="M88 72c9-6 21-6 28 1-7 13-18 19-30 19-7-8-8-14 2-20Z" fill="#40b78d"/>
+       </svg>
+     </span><span data-template-id="login-brand" class="canva-text sr-only" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 28px;">AgroFin</span>
        </div>
        <h1 data-template-id="login-image-title" class="canva-text mt-10 font-bold leading-tight" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 30px;">Decisiones claras para cada cosecha</h1>
        <p data-template-id="login-image-copy" class="canva-text mt-4 max-w-md text-base leading-7 text-emerald-50" style="color: rgb(239, 250, 241); font-weight: 400; font-style: normal; font-size: 15px;">Organiza tus cultivos, movimientos y tareas desde una experiencia pensada para el campo.</p>
       </div>
      </div>
      <div class="login-form order-1 md:order-2">
-      <header class="flex items-center justify-between gap-3">
-       <p data-template-id="login-copyright-top" class="canva-text text-xs font-semibold text-slate-500" style="color: rgb(100, 117, 109); font-weight: 700; font-style: normal; font-size: 15px;">© AgroFin 2026</p>
-       <div class="flex gap-3 text-xs">
-        <button type="button" class="legal-link" data-legal="privacy">Privacidad</button> <button type="button" class="legal-link" data-legal="terms">Términos</button>
-       </div>
-      </header>
       <div class="mt-9">
-       <div class="md:hidden flex items-center gap-3"><div class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agrícola">A</div>
+       <div class="md:hidden flex items-center gap-3"><span class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agr?cola">
+       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+         <circle cx="60" cy="60" r="46" fill="none" stroke="#0d6d66" stroke-width="10"/>
+         <path d="M38 56C29 34 43 18 58 32c9 8 15 18 17 30-12-4-22-7-37-6Z" fill="#1fa072"/>
+         <path d="M51 31c-11 4-22 15-24 30 12 0 20-3 30-12-2-8-4-13-6-18Z" fill="#0d8c73"/>
+         <path d="M32 54c8-2 16-1 24 3-6 4-11 10-13 18-9-4-13-13-11-21Z" fill="#1d9b80"/>
+         <path d="M64 38c14 0 24 8 28 18l-17 5-11-11V38Z" fill="#1d9b80"/>
+         <path d="M73 31c8 4 14 11 16 20-10 1-19 4-27 12 0-12 3-23 11-32Z" fill="#0b7f69"/>
+         <path d="M64 44L44 93h13l9-18h13l9 18h13L79 44H64Z" fill="#0d6d66"/>
+         <path d="M53 67h21l10 24H43l10-24Z" fill="#178c7e"/>
+         <path d="M27 92c9 0 15 7 15 15H12c0-8 6-15 15-15Z" fill="#0a6c69"/>
+         <path d="M48 86c10 0 18 7 18 16H30c0-9 8-16 18-16Z" fill="#1aa57c"/>
+         <path d="M71 80c12 0 21 8 21 17H50c0-9 9-17 21-17Z" fill="#0d7d72"/>
+         <path d="M80 61c14 0 24 8 24 18 0 8-6 16-15 20-9-8-18-17-23-31 5-4 9-7 14-7Z" fill="#1aa57c"/>
+         <path d="M68 41l14 11-16 11 10-16-8-6Z" fill="#0d6d66"/>
+         <path d="M84 49l16-5-3 14-13 3 0-12Z" fill="#0d7d72"/>
+         <path d="M88 72c9-6 21-6 28 1-7 13-18 19-30 19-7-8-8-14 2-20Z" fill="#40b78d"/>
+       </svg>
+     </span>
        </div>
        <p data-template-id="login-eyebrow" class="canva-text mt-7 text-sm font-bold uppercase tracking-[.16em] text-[#287a50]" style="color: rgb(40, 122, 80); font-weight: 700; font-style: normal; font-size: 13px;">Gestión agrícola inteligente</p>
        <h2 data-template-id="login-title" class="canva-text mt-2 font-bold leading-tight" style="color: rgb(23, 53, 46); font-weight: 700; font-style: normal; font-size: 23px;">Inicia sesión en AgroFin</h2>
@@ -119,7 +150,25 @@
    </section>
    <section id="app-screen" class="screen" aria-label="Panel AgroFin">
     <aside class="desktop-side sidebar fixed inset-y-0 left-0 z-30 hidden w-64 flex-col p-5 md:flex">
-     <header class="mb-9 flex items-center gap-3"><div class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agrícola">A</div>
+     <header class="mb-9 flex items-center gap-3"><span class="brand-mark" aria-label="Logotipo AgroFin de control financiero y crecimiento agr?cola">
+       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+         <circle cx="60" cy="60" r="46" fill="none" stroke="#0d6d66" stroke-width="10"/>
+         <path d="M38 56C29 34 43 18 58 32c9 8 15 18 17 30-12-4-22-7-37-6Z" fill="#1fa072"/>
+         <path d="M51 31c-11 4-22 15-24 30 12 0 20-3 30-12-2-8-4-13-6-18Z" fill="#0d8c73"/>
+         <path d="M32 54c8-2 16-1 24 3-6 4-11 10-13 18-9-4-13-13-11-21Z" fill="#1d9b80"/>
+         <path d="M64 38c14 0 24 8 28 18l-17 5-11-11V38Z" fill="#1d9b80"/>
+         <path d="M73 31c8 4 14 11 16 20-10 1-19 4-27 12 0-12 3-23 11-32Z" fill="#0b7f69"/>
+         <path d="M64 44L44 93h13l9-18h13l9 18h13L79 44H64Z" fill="#0d6d66"/>
+         <path d="M53 67h21l10 24H43l10-24Z" fill="#178c7e"/>
+         <path d="M27 92c9 0 15 7 15 15H12c0-8 6-15 15-15Z" fill="#0a6c69"/>
+         <path d="M48 86c10 0 18 7 18 16H30c0-9 8-16 18-16Z" fill="#1aa57c"/>
+         <path d="M71 80c12 0 21 8 21 17H50c0-9 9-17 21-17Z" fill="#0d7d72"/>
+         <path d="M80 61c14 0 24 8 24 18 0 8-6 16-15 20-9-8-18-17-23-31 5-4 9-7 14-7Z" fill="#1aa57c"/>
+         <path d="M68 41l14 11-16 11 10-16-8-6Z" fill="#0d6d66"/>
+         <path d="M84 49l16-5-3 14-13 3 0-12Z" fill="#0d7d72"/>
+         <path d="M88 72c9-6 21-6 28 1-7 13-18 19-30 19-7-8-8-14 2-20Z" fill="#40b78d"/>
+       </svg>
+     </span>
       <div class="brand-copy">
        <h1 data-template-id="brand-name" class="canva-text font-bold text-white" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 24px;">AgroFin</h1>
        <p class="text-xs text-emerald-100/70">Control agrícola</p>
@@ -271,9 +320,7 @@
        </div>
       </section>
       <footer class="mt-10 border-t border-[#dce5dc] py-6 text-center text-xs text-slate-500">
-       <span data-template-id="app-footer-copy" class="canva-text" style="color: rgb(100, 117, 109); font-weight: 400; font-style: normal; font-size: 15px;">© AgroFin 2026 · Tus registros permanecen asociados a tu cuenta.</span>
-       <div class="mt-2 flex justify-center gap-4"><button type="button" class="legal-link" data-legal="privacy">Política de privacidad</button><button type="button" class="legal-link" data-legal="terms">Términos y condiciones</button>
-       </div>
+       <span>© AgroFin 2026 · Tus registros permanecen asociados a tu cuenta. Política de privacidad | Términos y condiciones</span>
       </footer>
       <section id="help" data-template-id="contact-section" class="view surface mt-10 rounded-3xl p-6 md:p-8" aria-labelledby="contact-title" style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(250, 251, 247, 0.91));">
        <div class="grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
@@ -686,7 +733,7 @@
       $("global-search").addEventListener("input", (event) => applySearch(event.target.value.toLowerCase().trim()));
       document.querySelectorAll("[data-view-target]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewTarget)));
       $("notification-button").addEventListener("click", () => $("notice-panel").classList.toggle("open"));
-      $("contact-form").addEventListener("submit", (event) => {
+      $("contact-form").addEventListener("submit", async (event) => {
         event.preventDefault();
         const name = $("contact-name").value.trim();
         const email = $("contact-email-input").value.trim();
@@ -697,10 +744,16 @@
           showMessage(feedback, "Completa todos los campos con datos válidos.");
           return;
         }
-        const subject = encodeURIComponent("Contacto AgroFin · " + reason + " · " + name);
-        const body = encodeURIComponent("Nombre: " + name + "\nCorreo: " + email + "\nMotivo: " + reason + "\n\nMensaje:\n" + message);
-        window.open("mailto:ruizfatima1p@gmail.com?subject=" + subject + "&body=" + body, "_blank");
-        showMessage(feedback, "Se abrirá tu aplicación de correo para completar el envío.", true);
+        try {
+          const response = await api("/api/contact", {
+            method: "POST",
+            body: JSON.stringify({ name, email, reason, message })
+          });
+          showMessage(feedback, response.message || "Tu mensaje fue enviado correctamente.", true);
+          $("contact-form").reset();
+        } catch (error) {
+          showMessage(feedback, error.message);
+        }
       });
       const legalText = {
         privacy: ["Política de privacidad", "AgroFin guarda en su base de datos tu nombre, correo, país, zona horaria, teléfono opcional, cultivos y movimientos para ofrecerte el servicio. Las contraseñas se almacenan como hashes y tu información agrícola solo se muestra dentro de tu cuenta. Puedes contactar a la responsable del sitio para solicitar ayuda sobre tus datos."],
