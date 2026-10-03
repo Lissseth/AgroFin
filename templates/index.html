@@ -179,7 +179,7 @@
       </div>
      </header>
      <nav aria-label="Navegación principal" class="space-y-2">
-      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="tasks" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="clipboard-check" width="19"></i><span class="side-label">Tareas</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
+      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="tasks" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="clipboard-check" width="19"></i><span class="side-label">Tareas</span></button> <button type="button" id="premium-plans-btn" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 text-amber-100"><i data-lucide="crown" width="19"></i><span class="side-label">Planes Premium</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
      </nav>
      <div class="help-box mt-auto rounded-2xl border border-white/10 bg-white/10 p-4 text-emerald-50">
       <i data-lucide="circle-help" width="19" class="text-emerald-200"></i>
@@ -208,6 +208,7 @@
          <div class="hidden pr-2 sm:block">
           <p id="user-name" class="text-sm font-bold">Productor</p>
           <p id="user-email" class="text-xs text-slate-500"></p>
+          <p id="user-subscription" class="text-xs font-semibold mt-0.5"><span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-slate-100 text-slate-600">Gratuito</span></p>
          </div>
         </div><button id="logout-button" type="button" class="grid h-10 w-10 place-items-center rounded-xl border border-[#d8e2d9] bg-white text-[#476158]" aria-label="Cerrar sesión"><i data-lucide="log-out" width="18"></i></button>
        </div>
@@ -290,6 +291,21 @@
          <p class="mt-2 text-sm text-slate-500">Registra y consulta los ingresos y egresos de tu actividad.</p>
         </div><button data-open-movement="" type="button" class="primary-btn">Registrar movimiento</button>
        </div>
+       <div id="finance-premium-tools" class="mb-6 rounded-xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-5">
+          <div class="flex items-start gap-4">
+            <div class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white">
+              <i data-lucide="file-spreadsheet" width="24"></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-amber-800">Exportación de reportes Premium</h3>
+              <p class="mt-1 text-sm text-slate-600">Desbloquea la exportación de reportes financieros en PDF y Excel, con análisis detallado de rentabilidad por cultivo.</p>
+              <button type="button" id="upgrade-to-premium-finance-btn" class="mt-3 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-2 text-sm font-bold text-white shadow hover:brightness-110 transition">
+                <i data-lucide="crown" width="16"></i>
+                Actualizar a Premium ($5/mes)
+              </button>
+            </div>
+          </div>
+        </div>
        <div class="surface rounded-2xl p-4"><label class="mb-1.5 block text-xs font-bold text-slate-500" for="filter-crop">Cultivo</label><select id="filter-crop" class="field py-2.5 text-sm"><option value="all">Todos los cultivos</option></select>
        </div>
        <div class="mt-5 grid gap-4 sm:grid-cols-3">
@@ -333,6 +349,22 @@
     </table>
    
         <p class="mt-2 text-sm text-slate-500">La gestión de tareas aún no está disponible. Este panel no mostrará tareas de ejemplo.</p>
+        
+        <div id="premium-tools-section" class="mt-6 rounded-xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-5">
+          <div class="flex items-start gap-4">
+            <div class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white">
+              <i data-lucide="crown" width="24"></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-amber-800">Herramientas avanzadas Premium</h3>
+              <p class="mt-1 text-sm text-slate-600">Desbloquea el cálculo de margen de utilidad por quintal/arroba, exportación de reportes en PDF/Excel y soporte prioritario por WhatsApp.</p>
+              <button type="button" id="upgrade-to-premium-btn" class="mt-3 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-2 text-sm font-bold text-white shadow hover:brightness-110 transition">
+                <i data-lucide="crown" width="16"></i>
+                Actualizar a Premium ($5/mes)
+              </button>
+            </div>
+          </div>
+        </div>
        </div>
       </section>
       <footer class="mt-10 border-t border-[#dce5dc] py-6 text-center text-xs text-slate-500">
@@ -415,6 +447,72 @@
     </div>
    </section>
   </div>
+  <div id="premium-modal" class="modal-wrap fixed inset-0 z-[60] items-center justify-center bg-[#082f27]/65 p-4 backdrop-blur-sm">
+   <section class="w-full max-w-4xl rounded-3xl bg-[#fffdf9] p-6 shadow-2xl max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="premium-title">
+    <div class="flex justify-between gap-4 mb-6">
+     <div>
+      <h2 id="premium-title" class="text-2xl font-bold">Planes Premium</h2>
+      <p class="mt-1 text-sm text-slate-500">Elige el plan que mejor se adapte a tu operación agrícola</p>
+     </div><button id="close-premium" type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-500" aria-label="Cerrar planes premium"><i data-lucide="x" width="18"></i></button>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+     <div class="surface rounded-2xl p-6 border-2 border-slate-200">
+      <div class="flex items-center gap-2 mb-3">
+       <i data-lucide="leaf" width="20" class="text-slate-500"></i>
+       <h3 class="text-xl font-bold">Plan Básico</h3>
+      </div>
+      <p class="text-3xl font-bold text-slate-700">$0<span class="text-sm font-normal text-slate-500">/mes</span></p>
+      <p class="mt-3 text-sm text-slate-600">Lotes limitados y control financiero esencial</p>
+      <ul class="mt-4 space-y-2 text-sm text-slate-600">
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Registro de cultivos y lotes</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Control de ingresos y egresos</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Panel de resumen básico</li>
+       <li class="flex items-center gap-2 text-slate-400"><i data-lucide="x" width="16"></i> Lotes ilimitados</li>
+       <li class="flex items-center gap-2 text-slate-400"><i data-lucide="x" width="16"></i> Cálculo de margen por quintal/arroba</li>
+       <li class="flex items-center gap-2 text-slate-400"><i data-lucide="x" width="16"></i> Exportación de reportes</li>
+       <li class="flex items-center gap-2 text-slate-400"><i data-lucide="x" width="16"></i> Soporte por WhatsApp</li>
+      </ul>
+      <button type="button" class="mt-6 w-full secondary-btn py-3">Plan actual</button>
+     </div>
+     <div class="surface rounded-2xl p-6 border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">RECOMENDADO</div>
+      <div class="flex items-center gap-2 mb-3">
+       <i data-lucide="crown" width="20" class="text-amber-500"></i>
+       <h3 class="text-xl font-bold text-amber-700">Plan Premium</h3>
+      </div>
+      <p class="text-3xl font-bold text-amber-700">$5<span class="text-sm font-normal text-slate-500">/mes</span></p>
+      <p class="mt-3 text-sm text-slate-600">Lotes ilimitados, análisis avanzado y soporte prioritario</p>
+      <ul class="mt-4 space-y-2 text-sm text-slate-600">
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Lotes ilimitados</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Cálculo de margen de utilidad por quintal/arroba</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Exportación de reportes en PDF/Excel</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Soporte prioritario por WhatsApp</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Análisis de rentabilidad detallado</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Alertas de costos y gastos</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Acceso a nuevas funciones</li>
+      </ul>
+      <div class="mt-6 space-y-3">
+       <p class="text-sm font-semibold text-slate-700">Pago por transferencia o depósito:</p>
+       <div class="rounded-lg bg-slate-50 p-3 text-sm">
+        <p class="font-semibold">Banco: La Fise Pyme</p>
+        <p class="text-slate-600">Cuenta: 1234567890</p>
+        <p class="text-slate-600">A nombre de: Fátima Lisseth Ruíz Pineda</p>
+       </div>
+       <a href="https://wa.me/50589476244?text=Hola,%20quiero%20activar%20mi%20suscripción%20Premium%20en%20AgroFin.%20Ya%20realicé%20el%20pago%20y%20envío%20el%20comprobante." target="_blank" rel="noopener noreferrer" class="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-green-700 transition">
+        <i data-lucide="message-circle" width="18"></i>
+        Enviar comprobante por WhatsApp
+       </a>
+      </div>
+     </div>
+    </div>
+    <div class="mt-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-4 text-center">
+      <p class="text-sm font-semibold text-blue-800 flex items-center justify-center gap-2">
+        <i data-lucide="sparkles" width="16"></i>
+        Próximamente: Pagos automáticos con tarjeta/PayPal y App Móvil (Android/iOS)
+      </p>
+    </div>
+   </section>
+  </div>
   <div id="toast" class="toast fixed bottom-24 right-5 z-[70] flex items-center gap-3 rounded-xl bg-[#143f38] px-4 py-3 text-sm font-bold text-white shadow-xl md:bottom-6" role="status"><i data-lucide="check-circle-2" width="19" class="text-[#9ce2a8]"></i><span id="toast-text"></span>
   </div>
   <script>
@@ -457,6 +555,18 @@
         $("user-name").textContent = user.name;
         $("user-email").textContent = user.email;
         $("user-initials").textContent = user.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+        const subscriptionBadge = $("user-subscription");
+        const premiumToolsSection = $("premium-tools-section");
+        const financePremiumTools = $("finance-premium-tools");
+        if (user.es_premium) {
+          subscriptionBadge.innerHTML = '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold">Premium</span>';
+          if (premiumToolsSection) premiumToolsSection.classList.add("hidden");
+          if (financePremiumTools) financePremiumTools.classList.add("hidden");
+        } else {
+          subscriptionBadge.innerHTML = '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-slate-100 text-slate-600">Gratuito</span>';
+          if (premiumToolsSection) premiumToolsSection.classList.remove("hidden");
+          if (financePremiumTools) financePremiumTools.classList.remove("hidden");
+        }
         $("dashboard-title").textContent = "Hola, " + user.name;
         window.scrollTo({top:0, behavior:"smooth"});
       };
@@ -792,6 +902,16 @@
       }));
       $("close-legal").addEventListener("click", () => legalModal.classList.remove("open"));
       legalModal.addEventListener("click", (event) => { if (event.target === legalModal) legalModal.classList.remove("open"); });
+      const premiumModal = $("premium-modal");
+      $("premium-plans-btn").addEventListener("click", () => premiumModal.classList.add("open"));
+      if ($("upgrade-to-premium-btn")) {
+        $("upgrade-to-premium-btn").addEventListener("click", () => premiumModal.classList.add("open"));
+      }
+      if ($("upgrade-to-premium-finance-btn")) {
+        $("upgrade-to-premium-finance-btn").addEventListener("click", () => premiumModal.classList.add("open"));
+      }
+      $("close-premium").addEventListener("click", () => premiumModal.classList.remove("open"));
+      premiumModal.addEventListener("click", (event) => { if (event.target === premiumModal) premiumModal.classList.remove("open"); });
       api("/api/auth/me").then(async (currentUser) => {
         if (!currentUser) return;
         user = currentUser;

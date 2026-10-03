@@ -179,7 +179,10 @@ def init_db():
                 country TEXT NOT NULL DEFAULT 'Nicaragua',
                 timezone TEXT NOT NULL DEFAULT 'America/Managua',
                 password_hash TEXT NOT NULL,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                es_premium INTEGER NOT NULL DEFAULT 0,
+                paypal_subscriber_id TEXT DEFAULT '',
+                premium_hasta TEXT DEFAULT NULL
             );
         ''')
         for table in ('cultivos', 'movimientos'):
@@ -188,6 +191,16 @@ def init_db():
             else:
                 try:
                     connection.execute(f'ALTER TABLE {table} ADD COLUMN user_id INTEGER')
+                except sqlite3.OperationalError as exc:
+                    if 'duplicate column name' not in str(exc).lower():
+                        raise
+        for column in ('es_premium', 'paypal_subscriber_id', 'premium_hasta'):
+            if backend == 'postgres':
+                connection.execute(f'ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS {column} {"INTEGER NOT NULL DEFAULT 0" if column == "es_premium" else "TEXT DEFAULT \'\'" if column == "paypal_subscriber_id" else "TEXT DEFAULT NULL"}')
+            else:
+                try:
+                    default_value = "0" if column == "es_premium" else "''" if column == "paypal_subscriber_id" else "NULL"
+                    connection.execute(f'ALTER TABLE usuarios ADD COLUMN {column} {"INTEGER NOT NULL DEFAULT 0" if column == "es_premium" else "TEXT DEFAULT \'\'" if column == "paypal_subscriber_id" else "TEXT DEFAULT NULL"}')
                 except sqlite3.OperationalError as exc:
                     if 'duplicate column name' not in str(exc).lower():
                         raise
@@ -278,7 +291,7 @@ def current_user():
     if not user_id:
         return None
     with get_db() as connection:
-        return connection.execute('SELECT id, name, email, phone, country, timezone FROM usuarios WHERE id=?', (user_id,)).fetchone()
+        return connection.execute('SELECT id, name, email, phone, country, timezone, es_premium, paypal_subscriber_id, premium_hasta FROM usuarios WHERE id=?', (user_id,)).fetchone()
 
 
 def current_user_data():
@@ -467,7 +480,7 @@ def google_callback():
         if not email or userinfo.get('email_verified') is not True:
             return error('La cuenta de Google no está verificada para iniciar sesión.', 400)
         with get_db() as connection:
-            user = connection.execute('SELECT id, name, email, phone, country, timezone FROM usuarios WHERE email=?', (email,)).fetchone()
+            user = connection.execute('SELECT id, name, email, phone, country, timezone, es_premium, paypal_subscriber_id, premium_hasta FROM usuarios WHERE email=?', (email,)).fetchone()
             if user is None:
                 name = clean_text(userinfo.get('name') or userinfo.get('given_name') or 'Usuario Google', 80)
                 country = clean_text(os.getenv('DEFAULT_COUNTRY', 'Nicaragua'), 60)
