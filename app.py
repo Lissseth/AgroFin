@@ -32,10 +32,10 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('FORCE_HTTPS') == '1'
 DEFAULT_DATABASE_PATH = '/data/agrofin.db' if os.path.isdir('/data') else os.path.join(os.path.dirname(__file__), 'agrofin.db')
-# Configuración de base de datos: Supabase pooler con modo de sesión
-# Este formato es más compatible con aplicaciones Flask/Gunicorn
-SUPABASE_DATABASE_URL = "postgresql://postgres:F26DEDICIEMBRE2008@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
-DATABASE_URL = os.getenv('SUPABASE_URL') or SUPABASE_DATABASE_URL
+# Configuración de base de datos: Neon Postgres (GRATIS, permite conexiones externas)
+# La variable de entorno DATABASE_URL puede sobrescribir esto si es necesario
+NEON_DATABASE_URL = "postgresql://neondb_owner:npg_uQYaU1Bjxt0y@ep-old-grass-b4it5ibs-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL = os.getenv('DATABASE_URL') or NEON_DATABASE_URL
 DATABASE = DATABASE_URL
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
@@ -135,7 +135,8 @@ def get_db():
     if backend == 'postgres':
         if psycopg2 is None:
             raise RuntimeError('psycopg2 is required when using PostgreSQL connections.')
-        connection = psycopg2.connect(database_path, sslmode='require')
+        # Neon usa SSL por defecto, no forzamos sslmode si ya está en la URL
+        connection = psycopg2.connect(database_path)
         wrapped = DatabaseConnection(connection, backend)
     else:
         connection = sqlite3.connect(database_path)
