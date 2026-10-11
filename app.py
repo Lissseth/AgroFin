@@ -32,7 +32,9 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('FORCE_HTTPS') == '1'
 DEFAULT_DATABASE_PATH = '/data/agrofin.db' if os.path.isdir('/data') else os.path.join(os.path.dirname(__file__), 'agrofin.db')
-DATABASE_URL = os.getenv('DATABASE_URL') or os.getenv('DATABASE_PATH') or DEFAULT_DATABASE_PATH
+# Configuración de base de datos: Supabase pooler por defecto (permite conexiones externas), pero permite sobrescribir con variable de entorno
+SUPABASE_DATABASE_URL = "postgresql://postgres:F26DEDICIEMBRE2008@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+DATABASE_URL = os.getenv('DATABASE_URL') or os.getenv('DATABASE_PATH') or SUPABASE_DATABASE_URL
 DATABASE = DATABASE_URL
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
