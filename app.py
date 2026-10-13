@@ -3,7 +3,6 @@ import logging
 import os
 import re
 import smtplib
-import sqlite3
 from datetime import date
 from contextlib import contextmanager
 from email.message import EmailMessage
@@ -15,14 +14,10 @@ from flask import Flask, jsonify, redirect, render_template, request, send_file,
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-try:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
-except ImportError:  # pragma: no cover - optional dependency for Render/PostgreSQL
-    psycopg2 = None
-    RealDictCursor = None
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
-DB_INTEGRITY_ERRORS = (sqlite3.IntegrityError,) + ((psycopg2.IntegrityError,) if psycopg2 else ())
+DB_INTEGRITY_ERRORS = (psycopg2.IntegrityError,)
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
@@ -31,12 +26,10 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'agrofin-local-change-this-ke
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('FORCE_HTTPS') == '1'
-DEFAULT_DATABASE_PATH = '/data/agrofin.db' if os.path.isdir('/data') else os.path.join(os.path.dirname(__file__), 'agrofin.db')
-# Configuración de base de datos: Neon Postgres (GRATIS, permite conexiones externas)
-# Ignorar variable de entorno DATABASE_URL de Render (apunta a Supabase antigua)
-# Usar NEON_DATABASE_URL como prioridad absoluta
-NEON_DATABASE_URL = "postgresql://neondb_owner:npg_uQYaU1Bjxt0y@ep-old-grass-b4it5ibs-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-DATABASE_URL = NEON_DATABASE_URL
+# Configuración de base de datos: Neon Postgres
+DATABASE_URL = os.getenv('NEON_DATABASE_URL')
+if not DATABASE_URL:
+    raise RuntimeError('NEON_DATABASE_URL environment variable is required')
 DATABASE = DATABASE_URL
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
@@ -52,39 +45,24 @@ def get_google_redirect_uri():
     return 'http://localhost:5000/auth/google/callback'
 
 
-def database_backend():
-    if isinstance(DATABASE, str) and re.match(r'^(postgres|postgresql)(\+.*)?://', DATABASE, re.IGNORECASE):
-        return 'postgres', DATABASE
-    return 'sqlite', DATABASE
-
-
-def sql_query(query, backend=None):
-    resolved = backend or database_backend()[0]
-    if resolved == 'postgres':
-        return re.sub(r'(?<!:)\?', '%s', query)
-    return query
+def sql_query(query):
+    return re.sub(r'(?<!:)\?', '%s', query)
 
 
 class DatabaseConnection:
-    def __init__(self, raw_connection, backend):
+    def __init__(self, raw_connection):
         self._connection = raw_connection
-        self.backend = backend
 
     def execute(self, query, params=()):
-        if self.backend == 'postgres':
-            cursor = self._connection.cursor(cursor_factory=RealDictCursor)
-            cursor.execute(sql_query(query, self.backend), params)
-            self._last_cursor = cursor
-            return cursor
-        self._last_cursor = self._connection.execute(sql_query(query, self.backend), params)
-        return self._last_cursor
+        cursor = self._connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(sql_query(query), params)
+        self._last_cursor = cursor
+        return cursor
 
     def executescript(self, script):
-        if self.backend == 'postgres':
-            for statement in [part.strip() for part in script.split(';') if part.strip()]:
-                self.execute(statement)
-            return None
-        return self._connection.executescript(script)
+        for statement in [part.strip() for part in script.split(';') if part.strip()]:
+            self.execute(statement)
+        return None
 
     def commit(self):
         self._connection.commit()
@@ -132,17 +110,8 @@ def add_security_headers(response):
 
 @contextmanager
 def get_db():
-    backend, database_path = database_backend()
-    if backend == 'postgres':
-        if psycopg2 is None:
-            raise RuntimeError('psycopg2 is required when using PostgreSQL connections.')
-        # Neon usa SSL por defecto, no forzamos sslmode si ya está en la URL
-        connection = psycopg2.connect(database_path)
-        wrapped = DatabaseConnection(connection, backend)
-    else:
-        connection = sqlite3.connect(database_path)
-        connection.row_factory = sqlite3.Row
-        wrapped = DatabaseConnection(connection, backend)
+    connection = psycopg2.connect(DATABASE)
+    wrapped = DatabaseConnection(connection)
     try:
         yield wrapped
         wrapped.commit()
@@ -154,18 +123,16 @@ def get_db():
 
 
 def init_db():
-    backend, _ = database_backend()
-    integer_primary_key = 'SERIAL PRIMARY KEY' if backend == 'postgres' else 'INTEGER PRIMARY KEY AUTOINCREMENT'
     with get_db() as connection:
-        connection.executescript(f'''
+        connection.executescript('''
             CREATE TABLE IF NOT EXISTS cultivos (
-                id {integer_primary_key},
+                id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL, type TEXT NOT NULL, date TEXT NOT NULL,
                 area REAL NOT NULL CHECK(area >= 0), areaUnit TEXT NOT NULL,
                 seeds REAL DEFAULT 0 CHECK(seeds >= 0)
             );
             CREATE TABLE IF NOT EXISTS movimientos (
-                id {integer_primary_key},
+                id SERIAL PRIMARY KEY,
                 kind TEXT NOT NULL, crop TEXT NOT NULL, concept TEXT NOT NULL,
                 date TEXT NOT NULL, category TEXT NOT NULL, amount REAL NOT NULL CHECK(amount >= 0),
                 unit TEXT NOT NULL, price REAL DEFAULT 0 CHECK(price >= 0)
@@ -177,7 +144,7 @@ def init_db():
                 phone TEXT DEFAULT ''
             );
             CREATE TABLE IF NOT EXISTS usuarios (
-                id {integer_primary_key},
+                id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
                 phone TEXT DEFAULT '',
@@ -191,24 +158,10 @@ def init_db():
             );
         ''')
         for table in ('cultivos', 'movimientos'):
-            if backend == 'postgres':
-                connection.execute(f'ALTER TABLE {table} ADD COLUMN IF NOT EXISTS user_id INTEGER')
-            else:
-                try:
-                    connection.execute(f'ALTER TABLE {table} ADD COLUMN user_id INTEGER')
-                except sqlite3.OperationalError as exc:
-                    if 'duplicate column name' not in str(exc).lower():
-                        raise
-        for column in ('es_premium', 'paypal_subscriber_id', 'premium_hasta'):
-            if backend == 'postgres':
-                connection.execute(f'ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS {column} {"INTEGER NOT NULL DEFAULT 0" if column == "es_premium" else "TEXT DEFAULT \'\'" if column == "paypal_subscriber_id" else "TEXT DEFAULT NULL"}')
-            else:
-                try:
-                    default_value = "0" if column == "es_premium" else "''" if column == "paypal_subscriber_id" else "NULL"
-                    connection.execute(f'ALTER TABLE usuarios ADD COLUMN {column} {"INTEGER NOT NULL DEFAULT 0" if column == "es_premium" else "TEXT DEFAULT \'\'" if column == "paypal_subscriber_id" else "TEXT DEFAULT NULL"}')
-                except sqlite3.OperationalError as exc:
-                    if 'duplicate column name' not in str(exc).lower():
-                        raise
+            connection.execute(f'ALTER TABLE {table} ADD COLUMN IF NOT EXISTS user_id INTEGER')
+        connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS es_premium INTEGER NOT NULL DEFAULT 0')
+        connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS paypal_subscriber_id TEXT DEFAULT \'\'')
+        connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS premium_hasta TEXT DEFAULT NULL')
 
 
 def error(message, status):

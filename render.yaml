@@ -9,7 +9,7 @@ services:
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: DATABASE_URL
+      - key: NEON_DATABASE_URL
         sync: false
       - key: FORCE_HTTPS
         value: "1"
