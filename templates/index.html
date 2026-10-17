@@ -854,28 +854,40 @@
       $("global-search").addEventListener("input", (event) => applySearch(event.target.value.toLowerCase().trim()));
       document.querySelectorAll("[data-view-target]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewTarget)));
       $("notification-button").addEventListener("click", () => $("notice-panel").classList.toggle("open"));
-      $("contact-form").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const name = $("contact-name").value.trim();
-        const email = $("contact-email-input").value.trim();
-        const reason = $("contact-reason").value;
-        const message = $("contact-message").value.trim();
-        const feedback = $("contact-form-message");
-        if (!name || !email || !email.includes("@") || !reason || !message) {
-          showMessage(feedback, "Completa todos los campos con datos válidos.");
-          return;
-        }
-        try {
-          const response = await api("/api/contact", {
-            method: "POST",
-            body: JSON.stringify({ name, email, reason, message })
-          });
-          showMessage(feedback, response.message || "Tu mensaje fue enviado correctamente.", true);
-          $("contact-form").reset();
-        } catch (error) {
-          showMessage(feedback, error.message);
-        }
-      });
+      const contactForm = $("contact-form");
+      if (contactForm) {
+        console.log("Formulario de contacto encontrado, agregando event listener");
+        contactForm.addEventListener("submit", async (event) => {
+          console.log("Formulario de contacto enviado");
+          event.preventDefault();
+          const name = $("contact-name").value.trim();
+          const email = $("contact-email-input").value.trim();
+          const reason = $("contact-reason").value;
+          const message = $("contact-message").value.trim();
+          const feedback = $("contact-form-message");
+          console.log("Datos del formulario:", { name, email, reason, message });
+          if (!name || !email || !email.includes("@") || !reason || !message) {
+            console.log("Validación fallida");
+            showMessage(feedback, "Completa todos los campos con datos válidos.");
+            return;
+          }
+          try {
+            console.log("Enviando a API...");
+            const response = await api("/api/contact", {
+              method: "POST",
+              body: JSON.stringify({ name, email, reason, message })
+            });
+            console.log("Respuesta de API:", response);
+            showMessage(feedback, response.message || "Tu mensaje fue enviado correctamente.", true);
+            $("contact-form").reset();
+          } catch (error) {
+            console.error("Error al enviar:", error);
+            showMessage(feedback, error.message);
+          }
+        });
+      } else {
+        console.error("No se encontró el formulario de contacto");
+      }
       const legalText = {
         privacy: ["Política de privacidad", "AgroFin guarda en su base de datos tu nombre, correo, país, zona horaria, teléfono opcional, cultivos y movimientos para ofrecerte el servicio. Las contraseñas se almacenan como hashes y tu información agrícola solo se muestra dentro de tu cuenta. Puedes contactar a la responsable del sitio para solicitar ayuda sobre tus datos."],
         terms: ["Términos y condiciones", "AgroFin permite registrar información agrícola y financiera para organizar tu actividad. Eres responsable de la exactitud de los datos y debes mantener la confidencialidad de tu contraseña. Los reportes son informativos y no sustituyen asesoría contable, financiera o agrícola."]
