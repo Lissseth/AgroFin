@@ -370,19 +370,25 @@ def google_userinfo(access_token):
 
 @app.post('/api/contact')
 def contact_message():
+    logger.info('=== Iniciando procesamiento de formulario de contacto ===')
     data, problem = payload(['name', 'email', 'reason', 'message'])
     if problem or data is None:
+        logger.error(f'Error en payload: {problem}')
         return error(problem, 400)
     name = clean_text(data['name'], 80)
     email = clean_text(data['email'], 160).lower()
     reason = clean_text(data['reason'], 80)
     message = clean_text(data['message'], 1000)
+    logger.info(f'Datos recibidos - Nombre: {name}, Email: {email}, Razón: {reason}')
     if not re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
         return error('Escribe un correo electrónico válido.', 400)
     if len(name) < 2 or len(message) < 10:
         return error('Completa nombre y mensaje con información válida.', 400)
-    recipient = email_configuration()['recipient']
+    config = email_configuration()
+    logger.info(f'Configuración SMTP - Host: {config["host"]}, Username: {config["username"]}, Recipient: {config["recipient"]}')
+    recipient = config['recipient']
     if not recipient:
+        logger.error('No hay destinatario configurado')
         return error('No hay un destinatario configurado para los mensajes de ayuda.', 500)
     subject = f'Contacto AgroFin · {reason} · {name}'
     body = (
@@ -392,9 +398,12 @@ def contact_message():
         'Mensaje:\n'
         f'{message}\n'
     )
+    logger.info('Intentando enviar correo...')
     sent = send_email(recipient, subject, body, reply_to=email)
     if not sent:
+        logger.error('No se pudo enviar el correo - verificar configuración SMTP')
         return error('No se pudo enviar tu mensaje en este momento. Inténtalo nuevamente más tarde.', 500)
+    logger.info('Correo enviado exitosamente')
     return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
 
 @app.post('/api/contacto')
