@@ -395,7 +395,7 @@ def contact_message():
     sent = send_email(recipient, subject, body, reply_to=email)
     if not sent:
         return error('No se pudo enviar tu mensaje en este momento. Inténtalo nuevamente más tarde.', 500)
-        return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
+    return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
 
 @app.post('/api/contacto')
 def contacto():
