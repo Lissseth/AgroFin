@@ -503,9 +503,12 @@
   <div id="toast" class="toast fixed bottom-24 right-5 z-[70] flex items-center gap-3 rounded-xl bg-[#143f38] px-4 py-3 text-sm font-bold text-white shadow-xl md:bottom-6" role="status"><i data-lucide="check-circle-2" width="19" class="text-[#9ce2a8]"></i><span id="toast-text"></span>
   </div>
   <script>
+    console.log("Script iniciado");
     document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOM cargado, inicializando aplicación");
       if (window.lucide) window.lucide.createIcons();
       const $ = (id) => document.getElementById(id);
+      console.log("Función $ definida");
       let user = null;
       let crops = [];
       let movements = [];
@@ -584,8 +587,18 @@
         $("login-message").classList.add("hidden");
       };
       function showView(viewId) {
-        document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === viewId));
-        document.querySelectorAll("[data-view-target]").forEach((button) => button.classList.toggle("active", button.dataset.viewTarget === viewId));
+        console.log("showView llamado con:", viewId);
+        const targetView = document.getElementById(viewId);
+        console.log("Vista objetivo encontrada:", !!targetView);
+        document.querySelectorAll(".view").forEach((view) => {
+          const isActive = view.id === viewId;
+          view.classList.toggle("active", isActive);
+          console.log(`Vista ${view.id}: ${isActive ? "activa" : "inactiva"}`);
+        });
+        document.querySelectorAll("[data-view-target]").forEach((button) => {
+          const isActive = button.dataset.viewTarget === viewId;
+          button.classList.toggle("active", isActive);
+        });
         window.scrollTo({top:0, behavior:"smooth"});
       }
       function formatDate(value) {
@@ -852,7 +865,16 @@
       }
       $("filter-crop").addEventListener("change", renderMovements);
       $("global-search").addEventListener("input", (event) => applySearch(event.target.value.toLowerCase().trim()));
-      document.querySelectorAll("[data-view-target]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewTarget)));
+      console.log("Agregando event listeners de navegación...");
+      const navButtons = document.querySelectorAll("[data-view-target]");
+      console.log("Botones de navegación encontrados:", navButtons.length);
+      navButtons.forEach((button) => {
+        console.log("Agregando listener a botón:", button.dataset.viewTarget);
+        button.addEventListener("click", () => {
+          console.log("Click en:", button.dataset.viewTarget);
+          showView(button.dataset.viewTarget);
+        });
+      });
       $("notification-button").addEventListener("click", () => $("notice-panel").classList.toggle("open"));
       const contactForm = $("contact-form");
       if (contactForm) {
@@ -922,6 +944,7 @@
           showMessage($("login-message"), error.message);
         }
       }).catch((error) => showMessage($("login-message"), error.message));
+      console.log("Inicialización completada");
     });
   </script>
  </body></html>
