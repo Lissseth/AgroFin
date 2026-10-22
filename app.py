@@ -181,9 +181,7 @@ def init_db():
                 threshold_amount REAL NOT NULL DEFAULT 0,
                 threshold_type TEXT DEFAULT 'expense',
                 is_active INTEGER DEFAULT 1,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-                FOREIGN KEY (crop_id) REFERENCES cultivos(id) ON DELETE CASCADE
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS suscripciones (
                 id SERIAL PRIMARY KEY,
@@ -198,18 +196,34 @@ def init_db():
                 current_period_end TEXT,
                 cancel_at_period_end INTEGER DEFAULT 0,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         ''')
+        
         for table in ('cultivos', 'movimientos'):
             connection.execute(f'ALTER TABLE {table} ADD COLUMN IF NOT EXISTS user_id INTEGER')
+        
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS es_premium INTEGER NOT NULL DEFAULT 0')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS paypal_subscriber_id TEXT DEFAULT \'\'')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS premium_hasta TEXT DEFAULT NULL')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS max_crops INTEGER DEFAULT 5')
         connection.execute('ALTER TABLE cultivos ADD COLUMN IF NOT EXISTS estimated_yield REAL DEFAULT 0')
         connection.execute('ALTER TABLE cultivos ADD COLUMN IF NOT EXISTS yield_unit TEXT DEFAULT \'quintales\'')
+        
+        try:
+            connection.execute('ALTER TABLE alertas_costos ADD CONSTRAINT fk_alertas_user FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE')
+        except Exception:
+            pass
+        
+        try:
+            connection.execute('ALTER TABLE alertas_costos ADD CONSTRAINT fk_alertas_crop FOREIGN KEY (crop_id) REFERENCES cultivos(id) ON DELETE CASCADE')
+        except Exception:
+            pass
+        
+        try:
+            connection.execute('ALTER TABLE suscripciones ADD CONSTRAINT fk_suscripciones_user FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE')
+        except Exception:
+            pass
 
 
 def error(message, status):
