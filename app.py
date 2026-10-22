@@ -3,7 +3,8 @@ import logging
 import os
 import re
 import smtplib
-from datetime import date
+import io
+from datetime import date, datetime, timedelta
 from contextlib import contextmanager
 from email.message import EmailMessage
 from functools import wraps
@@ -13,6 +14,19 @@ from urllib.parse import urlencode
 from flask import Flask, jsonify, redirect, render_template, request, send_file, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
+
+try:
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment
+    EXPORT_AVAILABLE = True
+except ImportError:
+    EXPORT_AVAILABLE = False
+    logger.warning('Librerías de exportación no disponibles. Instala reportlab y openpyxl para habilitar exportación.')
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -129,7 +143,9 @@ def init_db():
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL, type TEXT NOT NULL, date TEXT NOT NULL,
                 area REAL NOT NULL CHECK(area >= 0), areaUnit TEXT NOT NULL,
-                seeds REAL DEFAULT 0 CHECK(seeds >= 0)
+                seeds REAL DEFAULT 0 CHECK(seeds >= 0),
+                estimated_yield REAL DEFAULT 0 CHECK(estimated_yield >= 0),
+                yield_unit TEXT DEFAULT 'quintales'
             );
             CREATE TABLE IF NOT EXISTS movimientos (
                 id SERIAL PRIMARY KEY,
@@ -154,7 +170,36 @@ def init_db():
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 es_premium INTEGER NOT NULL DEFAULT 0,
                 paypal_subscriber_id TEXT DEFAULT '',
-                premium_hasta TEXT DEFAULT NULL
+                premium_hasta TEXT DEFAULT NULL,
+                max_crops INTEGER DEFAULT 5
+            );
+            CREATE TABLE IF NOT EXISTS alertas_costos (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                crop_id INTEGER,
+                category TEXT,
+                threshold_amount REAL NOT NULL DEFAULT 0,
+                threshold_type TEXT DEFAULT 'expense',
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+                FOREIGN KEY (crop_id) REFERENCES cultivos(id) ON DELETE CASCADE
+            );
+            CREATE TABLE IF NOT EXISTS suscripciones (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL UNIQUE,
+                plan_type TEXT NOT NULL DEFAULT 'basic',
+                stripe_subscription_id TEXT DEFAULT '',
+                paypal_subscription_id TEXT DEFAULT '',
+                amount REAL NOT NULL DEFAULT 0,
+                currency TEXT DEFAULT 'USD',
+                status TEXT DEFAULT 'inactive',
+                current_period_start TEXT,
+                current_period_end TEXT,
+                cancel_at_period_end INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
             );
         ''')
         for table in ('cultivos', 'movimientos'):
@@ -162,6 +207,9 @@ def init_db():
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS es_premium INTEGER NOT NULL DEFAULT 0')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS paypal_subscriber_id TEXT DEFAULT \'\'')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS premium_hasta TEXT DEFAULT NULL')
+        connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS max_crops INTEGER DEFAULT 5')
+        connection.execute('ALTER TABLE cultivos ADD COLUMN IF NOT EXISTS estimated_yield REAL DEFAULT 0')
+        connection.execute('ALTER TABLE cultivos ADD COLUMN IF NOT EXISTS yield_unit TEXT DEFAULT \'quintales\'')
 
 
 def error(message, status):
@@ -567,12 +615,21 @@ def create_crop():
     data, problem = payload(['name', 'type', 'date', 'area', 'areaUnit'])
     if problem or data is None:
         return error(problem, 400)
+    
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        with get_db() as connection:
+            crop_count = connection.execute('SELECT COUNT(*) as count FROM cultivos WHERE user_id=?', (session['user_id'],)).fetchone()['count']
+            max_crops = user.get('max_crops', 5) if user else 5
+            if crop_count >= max_crops:
+                return error(f'Has alcanzado el límite de {max_crops} lotes. Actualiza a Premium para tener lotes ilimitados.', 403)
+    
     try:
-        crop = (clean_text(data['name']), clean_text(data['type']), date.fromisoformat(data['date']).isoformat(), clean_number(data['area'], 'area'), clean_text(data['areaUnit'], 30), clean_number(data.get('seeds', 0), 'seeds'))
+        crop = (clean_text(data['name']), clean_text(data['type']), date.fromisoformat(data['date']).isoformat(), clean_number(data['area'], 'area'), clean_text(data['areaUnit'], 30), clean_number(data.get('seeds', 0), 'seeds'), clean_number(data.get('estimated_yield', 0), 'estimated_yield'), clean_text(data.get('yield_unit', 'quintales'), 20))
     except (ValueError, TypeError) as exc:
         return error(str(exc), 400)
     with get_db() as connection:
-        cursor = connection.execute('INSERT INTO cultivos (name,type,date,area,areaUnit,seeds,user_id) VALUES (?,?,?,?,?,?,?) RETURNING id', (*crop, session['user_id']))
+        cursor = connection.execute('INSERT INTO cultivos (name,type,date,area,areaUnit,seeds,estimated_yield,yield_unit,user_id) VALUES (?,?,?,?,?,?,?,?,?) RETURNING id', (*crop, session['user_id']))
         created = connection.execute('SELECT * FROM cultivos WHERE id = ?', (cursor.fetchone()['id'],)).fetchone()
     logger.info('Cultivo creado id=%s nombre=%s', created['id'], created['name'])
     return jsonify(dict(created)), 201
@@ -585,11 +642,11 @@ def update_crop(crop_id):
     if problem or data is None:
         return error(problem, 400)
     try:
-        values = (clean_text(data['name']), clean_text(data['type']), date.fromisoformat(data['date']).isoformat(), clean_number(data['area'], 'area'), clean_text(data['areaUnit'], 30), clean_number(data.get('seeds', 0), 'seeds'), crop_id)
+        values = (clean_text(data['name']), clean_text(data['type']), date.fromisoformat(data['date']).isoformat(), clean_number(data['area'], 'area'), clean_text(data['areaUnit'], 30), clean_number(data.get('seeds', 0), 'seeds'), clean_number(data.get('estimated_yield', 0), 'estimated_yield'), clean_text(data.get('yield_unit', 'quintales'), 20), crop_id)
     except (ValueError, TypeError) as exc:
         return error(str(exc), 400)
     with get_db() as connection:
-        cursor = connection.execute('UPDATE cultivos SET name=?,type=?,date=?,area=?,areaUnit=?,seeds=? WHERE id=? AND user_id=?', (*values, session['user_id']))
+        cursor = connection.execute('UPDATE cultivos SET name=?,type=?,date=?,area=?,areaUnit=?,seeds=?,estimated_yield=?,yield_unit=? WHERE id=? AND user_id=?', (*values, session['user_id']))
         if cursor.rowcount == 0:
             return error('Cultivo no encontrado.', 404)
         updated = connection.execute('SELECT * FROM cultivos WHERE id=?', (crop_id,)).fetchone()
@@ -640,6 +697,521 @@ def delete_movement(movement_id):
     if cursor.rowcount == 0:
         return error('Movimiento no encontrado.', 404)
     return '', 204
+
+
+@app.get('/api/premium/status')
+@login_required
+def get_premium_status():
+    user = current_user()
+    if not user:
+        return error('Usuario no autenticado', 401)
+    
+    with get_db() as connection:
+        crop_count = connection.execute('SELECT COUNT(*) as count FROM cultivos WHERE user_id=?', (session['user_id'],)).fetchone()['count']
+        max_crops = user.get('max_crops', 5) if not user.get('es_premium') else float('inf')
+        can_add_more = user.get('es_premium') or crop_count < max_crops
+    
+    return jsonify({
+        'is_premium': bool(user.get('es_premium')),
+        'premium_until': user.get('premium_hasta'),
+        'crop_count': crop_count,
+        'max_crops': max_crops if not user.get('es_premium') else 'ilimitado',
+        'can_add_more_crops': can_add_more,
+        'features': {
+            'unlimited_crops': bool(user.get('es_premium')),
+            'margin_calculation': bool(user.get('es_premium')),
+            'export_reports': bool(user.get('es_premium')),
+            'whatsapp_support': bool(user.get('es_premium')),
+            'detailed_analysis': bool(user.get('es_premium')),
+            'cost_alerts': bool(user.get('es_premium')),
+            'new_features': bool(user.get('es_premium'))
+        }
+    })
+
+
+@app.post('/api/premium/activate')
+@login_required
+def activate_premium():
+    data, problem = payload(['subscription_id', 'payment_method'])
+    if problem or data is None:
+        return error(problem, 400)
+    
+    user = current_user()
+    if not user:
+        return error('Usuario no autenticado', 401)
+    
+    payment_method = clean_text(data['payment_method'], 20)
+    subscription_id = clean_text(data['subscription_id'], 100)
+    
+    if payment_method not in ['stripe', 'paypal', 'manual']:
+        return error('Método de pago no válido', 400)
+    
+    try:
+        with get_db() as connection:
+            premium_until = (datetime.now() + timedelta(days=30)).isoformat()
+            
+            connection.execute('''
+                UPDATE usuarios 
+                SET es_premium=1, premium_hasta=?, max_crops=NULL, 
+                    paypal_subscriber_id=?
+                WHERE id=?
+            ''', (premium_until, subscription_id if payment_method == 'paypal' else '', session['user_id']))
+            
+            connection.execute('''
+                INSERT INTO suscripciones (user_id, plan_type, stripe_subscription_id, paypal_subscription_id, amount, currency, status, current_period_start, current_period_end, updated_at)
+                VALUES (?, 'premium', ?, ?, 16, 'USD', 'active', ?, ?, ?)
+                ON CONFLICT (user_id) DO UPDATE SET
+                    plan_type='premium',
+                    stripe_subscription_id=EXCLUDED.stripe_subscription_id,
+                    paypal_subscription_id=EXCLUDED.paypal_subscription_id,
+                    status='active',
+                    current_period_start=?,
+                    current_period_end=?,
+                    updated_at=?
+            ''', (
+                session['user_id'],
+                subscription_id if payment_method == 'stripe' else '',
+                subscription_id if payment_method == 'paypal' else '',
+                datetime.now().isoformat(),
+                premium_until,
+                datetime.now().isoformat(),
+                premium_until,
+                datetime.now().isoformat()
+            ))
+        
+        return jsonify({
+            'message': 'Suscripción Premium activada correctamente',
+            'premium_until': premium_until
+        })
+    except Exception as e:
+        logger.exception('Error al activar premium')
+        return error(f'Error al activar suscripción: {str(e)}', 500)
+
+
+@app.post('/api/premium/stripe/create-checkout')
+@login_required
+def create_stripe_checkout():
+    user = current_user()
+    if not user:
+        return error('Usuario no autenticado', 401)
+    
+    stripe_api_key = os.getenv('STRIPE_SECRET_KEY')
+    if not stripe_api_key:
+        return error('Stripe no está configurado. Contacta al administrador.', 400)
+    
+    try:
+        import stripe
+        stripe.api_key = stripe_api_key
+        
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'AgroFin Premium - Mensual',
+                        'description': 'Lotes ilimitados, análisis avanzado y soporte prioritario'
+                    },
+                    'unit_amount': 1600,
+                },
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=f"{os.getenv('PUBLIC_URL', 'http://localhost:5000')}/premium/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{os.getenv('PUBLIC_URL', 'http://localhost:5000')}/premium/cancel",
+            client_reference_id=str(user['id']),
+            metadata={
+                'user_id': str(user['id']),
+                'user_email': user['email']
+            }
+        )
+        
+        return jsonify({'checkout_url': checkout_session.url})
+    except ImportError:
+        return error('Stripe no está instalado. Instala stripe-python para habilitar pagos.', 500)
+    except Exception as e:
+        logger.exception('Error al crear sesión de Stripe')
+        return error(f'Error al crear sesión de pago: {str(e)}', 500)
+
+
+@app.get('/premium/success')
+def premium_success():
+    session_id = request.args.get('session_id')
+    if not session_id:
+        return error('No se proporcionó session_id', 400)
+    
+    stripe_api_key = os.getenv('STRIPE_SECRET_KEY')
+    if not stripe_api_key:
+        return redirect('/?error=stripe_not_configured')
+    
+    try:
+        import stripe
+        stripe.api_key = stripe_api_key
+        
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+        user_id = checkout_session.client_reference_id
+        
+        if not user_id:
+            return redirect('/?error=no_user_id')
+        
+        with get_db() as connection:
+            premium_until = (datetime.now() + timedelta(days=30)).isoformat()
+            
+            connection.execute('''
+                UPDATE usuarios 
+                SET es_premium=1, premium_hasta=?, max_crops=NULL
+                WHERE id=?
+            ''', (premium_until, int(user_id)))
+            
+            connection.execute('''
+                INSERT INTO suscripciones (user_id, plan_type, stripe_subscription_id, amount, currency, status, current_period_start, current_period_end, updated_at)
+                VALUES (?, 'premium', ?, 16, 'USD', 'active', ?, ?, ?)
+                ON CONFLICT (user_id) DO UPDATE SET
+                    plan_type='premium',
+                    stripe_subscription_id=EXCLUDED.stripe_subscription_id,
+                    status='active',
+                    current_period_start=?,
+                    current_period_end=?,
+                    updated_at=?
+            ''', (
+                int(user_id),
+                checkout_session.subscription,
+                datetime.now().isoformat(),
+                premium_until,
+                datetime.now().isoformat(),
+                datetime.now().isoformat(),
+                premium_until,
+                datetime.now().isoformat()
+            ))
+        
+        return redirect('/?premium=activated')
+    except Exception as e:
+        logger.exception('Error al procesar éxito de Stripe')
+        return redirect(f'/?error={str(e)}')
+
+
+@app.get('/premium/cancel')
+def premium_cancel():
+    return redirect('/?premium=cancelled')
+
+
+@app.get('/api/premium/analysis')
+@login_required
+def get_premium_analysis():
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    with get_db() as connection:
+        crops = connection.execute('SELECT * FROM cultivos WHERE user_id=?', (session['user_id'],)).fetchall()
+        movements = connection.execute('SELECT * FROM movimientos WHERE user_id=?', (session['user_id'],)).fetchall()
+    
+    analysis = []
+    for crop in crops:
+        crop_movements = [m for m in movements if m['crop'] == crop['name']]
+        total_income = sum(float(m['amount']) * float(m.get('price', 1)) for m in crop_movements if m['kind'] == 'income')
+        total_expense = sum(float(m['amount']) * float(m.get('price', 1)) for m in crop_movements if m['kind'] != 'income')
+        net_profit = total_income - total_expense
+        
+        estimated_yield = float(crop.get('estimated_yield', 0))
+        yield_unit = crop.get('yield_unit', 'quintales')
+        
+        margin_per_unit = 0
+        if estimated_yield > 0:
+            margin_per_unit = net_profit / estimated_yield
+        
+        roi = 0
+        if total_expense > 0:
+            roi = ((net_profit / total_expense) * 100)
+        
+        analysis.append({
+            'crop_id': crop['id'],
+            'crop_name': crop['name'],
+            'crop_type': crop['type'],
+            'area': crop['area'],
+            'area_unit': crop['areaUnit'],
+            'total_income': total_income,
+            'total_expense': total_expense,
+            'net_profit': net_profit,
+            'estimated_yield': estimated_yield,
+            'yield_unit': yield_unit,
+            'margin_per_unit': margin_per_unit,
+            'margin_per_unit_formatted': f'C$ {margin_per_unit:.2f} por {yield_unit}',
+            'roi_percentage': roi,
+            'roi_formatted': f'{roi:.2f}%',
+            'movement_count': len(crop_movements)
+        })
+    
+    return jsonify({
+        'analysis': analysis,
+        'total_crops': len(crops),
+        'total_movements': len(movements),
+        'overall_income': sum(a['total_income'] for a in analysis),
+        'overall_expense': sum(a['total_expense'] for a in analysis),
+        'overall_profit': sum(a['net_profit'] for a in analysis)
+    })
+
+
+@app.get('/api/premium/export/pdf')
+@login_required
+def export_pdf():
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    if not EXPORT_AVAILABLE:
+        return error('Librerías de exportación no disponibles', 500)
+    
+    analysis_response = get_premium_analysis()
+    if isinstance(analysis_response, tuple):
+        return analysis_response
+    
+    analysis_data = analysis_response.get_json()
+    
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+    
+    title_style = styles['Heading1']
+    title_style.alignment = TA_CENTER
+    elements.append(Paragraph("Reporte de Rentabilidad - AgroFin", title_style))
+    elements.append(Spacer(1, 12))
+    
+    elements.append(Paragraph(f"Usuario: {user['name']}", styles['Normal']))
+    elements.append(Paragraph(f"Fecha: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
+    elements.append(Spacer(1, 12))
+    
+    data = [['Cultivo', 'Tipo', 'Área', 'Ingresos', 'Egresos', 'Utilidad', 'Margen/Unidad', 'ROI']]
+    for item in analysis_data['analysis']:
+        data.append([
+            item['crop_name'],
+            item['crop_type'],
+            f"{item['area']} {item['area_unit']}",
+            f"C$ {item['total_income']:.2f}",
+            f"C$ {item['total_expense']:.2f}",
+            f"C$ {item['net_profit']:.2f}",
+            item['margin_per_unit_formatted'],
+            item['roi_formatted']
+        ])
+    
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#287a50')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    elements.append(table)
+    
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"Total Ingresos: C$ {analysis_data['overall_income']:.2f}", styles['Normal']))
+    elements.append(Paragraph(f"Total Egresos: C$ {analysis_data['overall_expense']:.2f}", styles['Normal']))
+    elements.append(Paragraph(f"Utilidad Total: C$ {analysis_data['overall_profit']:.2f}", styles['Heading2']))
+    
+    doc.build(elements)
+    buffer.seek(0)
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f'reporte_agrofin_{datetime.now().strftime("%Y%m%d")}.pdf',
+        mimetype='application/pdf'
+    )
+
+
+@app.get('/api/premium/export/excel')
+@login_required
+def export_excel():
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    if not EXPORT_AVAILABLE:
+        return error('Librerías de exportación no disponibles', 500)
+    
+    analysis_response = get_premium_analysis()
+    if isinstance(analysis_response, tuple):
+        return analysis_response
+    
+    analysis_data = analysis_response.get_json()
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Análisis de Rentabilidad"
+    
+    headers = ['Cultivo', 'Tipo', 'Área', 'Unidad Área', 'Ingresos', 'Egresos', 'Utilidad', 'Rendimiento Est.', 'Unidad Rend.', 'Margen/Unidad', 'ROI %', 'Movimientos']
+    ws.append(headers)
+    
+    header_fill = PatternFill(start_color="287a50", end_color="287a50", fill_type="solid")
+    header_font = Font(bold=True, color="FFFFFF")
+    
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal="center")
+    
+    for item in analysis_data['analysis']:
+        ws.append([
+            item['crop_name'],
+            item['crop_type'],
+            item['area'],
+            item['area_unit'],
+            item['total_income'],
+            item['total_expense'],
+            item['net_profit'],
+            item['estimated_yield'],
+            item['yield_unit'],
+            item['margin_per_unit'],
+            item['roi_percentage'],
+            item['movement_count']
+        ])
+    
+    ws.append([])
+    ws.append(['RESUMEN GENERAL'])
+    ws.append(['Total Cultivos', analysis_data['total_crops']])
+    ws.append(['Total Movimientos', analysis_data['total_movements']])
+    ws.append(['Ingresos Totales', analysis_data['overall_income']])
+    ws.append(['Egresos Totales', analysis_data['overall_expense']])
+    ws.append(['Utilidad Total', analysis_data['overall_profit']])
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f'reporte_agrofin_{datetime.now().strftime("%Y%m%d")}.xlsx',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
+
+@app.get('/api/premium/alerts')
+@login_required
+def get_alerts():
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    with get_db() as connection:
+        alerts = connection.execute('''
+            SELECT a.*, c.name as crop_name 
+            FROM alertas_costos a
+            LEFT JOIN cultivos c ON a.crop_id = c.id
+            WHERE a.user_id=? AND a.is_active=1
+            ORDER BY a.created_at DESC
+        ''', (session['user_id'],)).fetchall()
+    
+    return jsonify([dict(alert) for alert in alerts])
+
+
+@app.post('/api/premium/alerts')
+@login_required
+def create_alert():
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    data, problem = payload(['threshold_amount', 'threshold_type'])
+    if problem or data is None:
+        return error(problem, 400)
+    
+    try:
+        threshold_amount = clean_number(data['threshold_amount'], 'threshold_amount')
+        threshold_type = clean_text(data.get('threshold_type', 'expense'), 20)
+        crop_id = data.get('crop_id')
+        category = clean_text(data.get('category', ''), 50)
+        
+        if threshold_type not in ['expense', 'income', 'balance']:
+            return error('Tipo de umbral no válido. Debe ser: expense, income o balance', 400)
+        
+        with get_db() as connection:
+            cursor = connection.execute('''
+                INSERT INTO alertas_costos (user_id, crop_id, category, threshold_amount, threshold_type, is_active)
+                VALUES (?, ?, ?, ?, ?, 1)
+                RETURNING id
+            ''', (session['user_id'], crop_id, category, threshold_amount, threshold_type))
+            
+            created = connection.execute('SELECT * FROM alertas_costos WHERE id=?', (cursor.fetchone()['id'],)).fetchone()
+        
+        return jsonify(dict(created)), 201
+    except (ValueError, TypeError) as exc:
+        return error(str(exc), 400)
+
+
+@app.delete('/api/premium/alerts/<int:alert_id>')
+@login_required
+def delete_alert(alert_id):
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    with get_db() as connection:
+        cursor = connection.execute('UPDATE alertas_costos SET is_active=0 WHERE id=? AND user_id=?', (alert_id, session['user_id']))
+    
+    if cursor.rowcount == 0:
+        return error('Alerta no encontrada.', 404)
+    
+    return '', 204
+
+
+@app.get('/api/premium/alerts/check')
+@login_required
+def check_alerts():
+    user = current_user()
+    if not user or not user.get('es_premium'):
+        return error('Esta función es exclusiva para usuarios Premium', 403)
+    
+    with get_db() as connection:
+        alerts = connection.execute('''
+            SELECT * FROM alertas_costos 
+            WHERE user_id=? AND is_active=1
+        ''', (session['user_id'],)).fetchall()
+        
+        movements = connection.execute('SELECT * FROM movimientos WHERE user_id=?', (session['user_id'],)).fetchall()
+    
+    triggered_alerts = []
+    
+    for alert in alerts:
+        relevant_movements = movements
+        
+        if alert['crop_id']:
+            crop = connection.execute('SELECT name FROM cultivos WHERE id=?', (alert['crop_id'],)).fetchone()
+            if crop:
+                relevant_movements = [m for m in movements if m['crop'] == crop['name']]
+        
+        if alert['category']:
+            relevant_movements = [m for m in relevant_movements if m['category'] == alert['category']]
+        
+        if alert['threshold_type'] == 'expense':
+            total = sum(float(m['amount']) * float(m.get('price', 1)) for m in relevant_movements if m['kind'] != 'income')
+        elif alert['threshold_type'] == 'income':
+            total = sum(float(m['amount']) * float(m.get('price', 1)) for m in relevant_movements if m['kind'] == 'income')
+        else:
+            income = sum(float(m['amount']) * float(m.get('price', 1)) for m in relevant_movements if m['kind'] == 'income')
+            expense = sum(float(m['amount']) * float(m.get('price', 1)) for m in relevant_movements if m['kind'] != 'income')
+            total = income - expense
+        
+        if total >= float(alert['threshold_amount']):
+            triggered_alerts.append({
+                'alert_id': alert['id'],
+                'crop_id': alert['crop_id'],
+                'category': alert['category'],
+                'threshold_type': alert['threshold_type'],
+                'threshold_amount': alert['threshold_amount'],
+                'current_amount': total,
+                'message': f"¡Alerta! {alert['threshold_type']} ha alcanzado C$ {total:.2f} (umbral: C$ {alert['threshold_amount']:.2f})"
+            })
+    
+    return jsonify({
+        'has_alerts': len(triggered_alerts) > 0,
+        'triggered_alerts': triggered_alerts
+    })
 
 @app.route('/')
 def home():

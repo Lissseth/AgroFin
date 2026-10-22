@@ -179,7 +179,7 @@
       </div>
      </header>
      <nav aria-label="Navegación principal" class="space-y-2">
-      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="tasks" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="clipboard-check" width="19"></i><span class="side-label">Tareas</span></button> <button type="button" id="premium-plans-btn" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 text-amber-100"><i data-lucide="crown" width="19"></i><span class="side-label">Planes Premium</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
+      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="analysis" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="bar-chart-3" width="19"></i><span class="side-label">Análisis Premium</span></button> <button type="button" data-view-target="tasks" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="clipboard-check" width="19"></i><span class="side-label">Tareas</span></button> <button type="button" id="premium-plans-btn" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 text-amber-100"><i data-lucide="crown" width="19"></i><span class="side-label">Planes Premium</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
      </nav>
      <div class="help-box mt-auto rounded-2xl border border-white/10 bg-white/10 p-4 text-emerald-50">
       <i data-lucide="circle-help" width="19" class="text-emerald-200"></i>
@@ -278,6 +278,10 @@
          <div><label class="mb-1.5 block text-sm font-bold" for="crop-area-unit">Unidad</label><input id="crop-area-unit" class="field" value="manzanas" maxlength="30" required></div>
         </div>
         <div><label class="mb-1.5 block text-sm font-bold" for="crop-seeds">Cantidad de semillas (opcional)</label><input id="crop-seeds" type="number" min="0" step="0.01" class="field" value="0"></div>
+        <div class="grid grid-cols-2 gap-3">
+         <div><label class="mb-1.5 block text-sm font-bold" for="crop-estimated-yield">Rendimiento est. (Premium)</label><input id="crop-estimated-yield" type="number" min="0" step="0.01" class="field" value="0" placeholder="0"></div>
+         <div><label class="mb-1.5 block text-sm font-bold" for="crop-yield-unit">Unidad</label><select id="crop-yield-unit" class="field"><option value="quintales">Quintales</option><option value="arrobas">Arrobas</option><option value="toneladas">Toneladas</option></select></div>
+        </div>
         <div class="flex items-end gap-3 sm:col-span-2"><button id="crop-submit" type="submit" class="primary-btn">Guardar cultivo</button><button id="crop-cancel" type="button" class="secondary-btn hidden">Cancelar edición</button></div>
         <p id="crop-message" class="hidden rounded-xl bg-[#fff0e8] p-3 text-sm text-[#9a4829] sm:col-span-2" role="alert"></p>
        </form>
@@ -332,6 +336,78 @@
          <p class="mt-1 text-sm text-slate-500">Registra tu primer ingreso o egreso para ver el resumen.</p>
         </div>
        </section>
+      </section>
+      <section id="analysis" class="view">
+       <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+         <p class="text-sm font-bold text-[#287a50]">Análisis avanzado</p>
+         <h2 class="mt-1 text-2xl font-bold">Análisis Premium</h2>
+         <p class="mt-2 text-sm text-slate-500">Cálculo de márgenes, ROI y exportación de reportes detallados.</p>
+        </div>
+        <div class="flex gap-3">
+         <button id="export-pdf-btn" type="button" class="primary-btn inline-flex items-center gap-2"><i data-lucide="file-text" width="18"></i>Exportar PDF</button>
+         <button id="export-excel-btn" type="button" class="primary-btn inline-flex items-center gap-2"><i data-lucide="file-spreadsheet" width="18"></i>Exportar Excel</button>
+        </div>
+       </div>
+       <div id="analysis-content" class="surface rounded-2xl p-6">
+        <div id="analysis-loading" class="text-center py-10">
+         <i data-lucide="loader-2" class="mx-auto animate-spin text-[#287a50]" width="30"></i>
+         <p class="mt-3 text-sm text-slate-500">Cargando análisis...</p>
+        </div>
+        <div id="analysis-data" class="hidden">
+         <div class="grid gap-4 sm:grid-cols-3 mb-6">
+          <div class="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 p-4">
+           <p class="text-sm text-slate-600">Ingresos Totales</p>
+           <p id="analysis-total-income" class="mt-2 text-2xl font-bold text-green-700">C$ 0</p>
+          </div>
+          <div class="rounded-xl bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 p-4">
+           <p class="text-sm text-slate-600">Egresos Totales</p>
+           <p id="analysis-total-expense" class="mt-2 text-2xl font-bold text-red-700">C$ 0</p>
+          </div>
+          <div class="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-4">
+           <p class="text-sm text-slate-600">Utilidad Total</p>
+           <p id="analysis-total-profit" class="mt-2 text-2xl font-bold text-blue-700">C$ 0</p>
+          </div>
+         </div>
+         <h3 class="font-bold text-lg mb-4">Análisis por Cultivo</h3>
+         <div id="analysis-table" class="overflow-x-auto">
+          <table class="w-full text-sm">
+           <thead>
+            <tr class="border-b border-slate-200">
+             <th class="text-left py-3 px-4 font-semibold">Cultivo</th>
+             <th class="text-left py-3 px-4 font-semibold">Tipo</th>
+             <th class="text-right py-3 px-4 font-semibold">Área</th>
+             <th class="text-right py-3 px-4 font-semibold">Ingresos</th>
+             <th class="text-right py-3 px-4 font-semibold">Egresos</th>
+             <th class="text-right py-3 px-4 font-semibold">Utilidad</th>
+             <th class="text-right py-3 px-4 font-semibold">Margen/Unidad</th>
+             <th class="text-right py-3 px-4 font-semibold">ROI</th>
+            </tr>
+           </thead>
+           <tbody id="analysis-table-body"></tbody>
+          </table>
+         </div>
+        </div>
+        <div id="analysis-locked" class="hidden text-center py-10">
+         <i data-lucide="lock" class="mx-auto text-amber-500" width="40"></i>
+         <h3 class="mt-4 font-bold text-lg">Función Premium</h3>
+         <p class="mt-2 text-sm text-slate-600">Actualiza a Premium para acceder al análisis detallado de rentabilidad, cálculo de márgenes por quintal/arroba y exportación de reportes.</p>
+         <button id="analysis-upgrade-btn" type="button" class="mt-4 primary-btn inline-flex items-center gap-2"><i data-lucide="crown" width="18"></i>Actualizar a Premium</button>
+        </div>
+       </div>
+       <div class="mt-6 surface rounded-2xl p-6">
+        <h3 class="font-bold text-lg mb-4">Alertas de Costos y Gastos</h3>
+        <div id="alerts-content">
+         <p class="text-sm text-slate-500 mb-4">Configura alertas para recibir notificaciones cuando tus gastos superen un umbral específico.</p>
+         <form id="alert-form" class="grid gap-4 sm:grid-cols-4 mb-6">
+          <div><label class="mb-1.5 block text-sm font-bold">Tipo de alerta</label><select id="alert-type" class="field"><option value="expense">Gastos totales</option><option value="income">Ingresos totales</option><option value="balance">Balance</option></select></div>
+          <div><label class="mb-1.5 block text-sm font-bold">Umbral (C$)</label><input id="alert-threshold" type="number" min="0" step="0.01" class="field" placeholder="1000"></div>
+          <div><label class="mb-1.5 block text-sm font-bold">Cultivo (opcional)</label><select id="alert-crop" class="field"><option value="">Todos los cultivos</option></select></div>
+          <div class="flex items-end"><button type="submit" class="primary-btn w-full">Crear alerta</button></div>
+         </form>
+         <div id="alerts-list"></div>
+        </div>
+       </div>
       </section>
       <section id="tasks" class="view">
    <div class="surface rounded-2xl p-6">
@@ -396,7 +472,7 @@
      </main>
     </div>
     <nav class="mobile-nav fixed inset-x-0 bottom-0 z-30 justify-around border-t border-[#dce6df] bg-[#fffdf9]/95 px-1 py-2 shadow-[0_-5px_20px_rgba(25,70,53,.08)] backdrop-blur" aria-label="Navegación móvil">
-     <button type="button" data-view-target="dashboard" class="mobile-tab active grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-[#216a4b]"><i data-lucide="layout-dashboard" width="19"></i><span class="text-[10px] font-bold">Inicio</span></button> <button type="button" data-view-target="crops" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wheat" width="19"></i><span class="text-[10px] font-bold">Cultivos</span></button> <button type="button" data-view-target="finance" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wallet-cards" width="19"></i><span class="text-[10px] font-bold">Finanzas</span></button> <button type="button" data-view-target="tasks" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="clipboard-check" width="19"></i><span class="text-[10px] font-bold">Tareas</span></button> <button type="button" data-view-target="help" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="circle-help" width="19"></i><span class="text-[10px] font-bold">Ayuda</span></button>
+     <button type="button" data-view-target="dashboard" class="mobile-tab active grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-[#216a4b]"><i data-lucide="layout-dashboard" width="19"></i><span class="text-[10px] font-bold">Inicio</span></button> <button type="button" data-view-target="crops" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wheat" width="19"></i><span class="text-[10px] font-bold">Cultivos</span></button> <button type="button" data-view-target="finance" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wallet-cards" width="19"></i><span class="text-[10px] font-bold">Finanzas</span></button> <button type="button" data-view-target="analysis" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="bar-chart-3" width="19"></i><span class="text-[10px] font-bold">Análisis</span></button> <button type="button" data-view-target="tasks" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="clipboard-check" width="19"></i><span class="text-[10px] font-bold">Tareas</span></button> <button type="button" data-view-target="help" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="circle-help" width="19"></i><span class="text-[10px] font-bold">Ayuda</span></button>
     </nav>
    </section>
   </div>
@@ -484,11 +560,17 @@
        <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Acceso a nuevas funciones</li>
       </ul>
       <div class="mt-6 space-y-3">
-       <p class="text-sm text-slate-600">Para solicitar la activación de tu suscripción o coordinar tu método de pago directo, contáctanos directamente por WhatsApp.</p>
-       <a href="https://wa.me/50589476244?text=Hola,%20quiero%20activar%20mi%20suscripción%20Premium%20en%20AgroFin." target="_blank" rel="noopener noreferrer" class="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-green-700 transition">
-        <i data-lucide="message-circle" width="18"></i>
-        Enviar mensaje por WhatsApp
-       </a>
+       <p class="text-sm text-slate-600">Elige tu método de pago para activar tu suscripción Premium:</p>
+       <div class="grid gap-3">
+        <button id="stripe-payment-btn" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-indigo-700 transition">
+         <i data-lucide="credit-card" width="18"></i>
+         Pagar con Tarjeta (Stripe)
+        </button>
+        <a href="https://wa.me/50589476244?text=Hola,%20quiero%20activar%20mi%20suscripción%20Premium%20en%20AgroFin." target="_blank" rel="noopener noreferrer" class="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-green-700 transition">
+         <i data-lucide="message-circle" width="18"></i>
+         Pagar por WhatsApp
+        </a>
+       </div>
       </div>
      </div>
     </div>
@@ -608,11 +690,14 @@
         const selectedFilter = $("filter-crop").value;
         const filter = $("filter-crop");
         const movementCrop = $("movement-crop");
+        const alertCrop = $("alert-crop");
         filter.replaceChildren(new Option("Todos los cultivos", "all"));
         movementCrop.replaceChildren(new Option("General", ""));
+        if (alertCrop) alertCrop.replaceChildren(new Option("Todos los cultivos", ""));
         crops.forEach((crop) => {
           filter.add(new Option(crop.name, crop.name));
           movementCrop.add(new Option(crop.name, crop.name));
+          if (alertCrop) alertCrop.add(new Option(crop.name, crop.id));
         });
         if ([...filter.options].some((option) => option.value === selectedFilter)) filter.value = selectedFilter;
       }
@@ -751,6 +836,8 @@
         $("crop-area").value = crop.area;
         $("crop-area-unit").value = crop.areaUnit;
         $("crop-seeds").value = crop.seeds || 0;
+        $("crop-estimated-yield").value = crop.estimated_yield || 0;
+        $("crop-yield-unit").value = crop.yield_unit || "quintales";
         $("crop-submit").textContent = "Guardar cambios";
         $("crop-cancel").classList.remove("hidden");
         $("crop-form").scrollIntoView({behavior:"smooth", block:"center"});
@@ -760,6 +847,8 @@
         $("crop-id").value = "";
         $("crop-area-unit").value = "manzanas";
         $("crop-seeds").value = "0";
+        $("crop-estimated-yield").value = "0";
+        $("crop-yield-unit").value = "quintales";
         $("crop-submit").textContent = "Guardar cultivo";
         $("crop-cancel").classList.add("hidden");
         $("crop-message").classList.add("hidden");
@@ -809,7 +898,9 @@
           date:$("crop-date").value,
           area:$("crop-area").value,
           areaUnit:$("crop-area-unit").value.trim(),
-          seeds:$("crop-seeds").value || 0
+          seeds:$("crop-seeds").value || 0,
+          estimated_yield:$("crop-estimated-yield").value || 0,
+          yield_unit:$("crop-yield-unit").value
         };
         try {
           await api(cropId ? `/api/cultivos/${cropId}` : "/api/cultivos", {
@@ -933,6 +1024,148 @@
       }
       $("close-premium").addEventListener("click", () => premiumModal.classList.remove("open"));
       premiumModal.addEventListener("click", (event) => { if (event.target === premiumModal) premiumModal.classList.remove("open"); });
+      
+      const analysisView = $("analysis");
+      if (analysisView) {
+        const loadAnalysis = async () => {
+          try {
+            const status = await api("/api/premium/status");
+            if (!status.is_premium) {
+              $("analysis-loading").classList.add("hidden");
+              $("analysis-data").classList.add("hidden");
+              $("analysis-locked").classList.remove("hidden");
+              return;
+            }
+            
+            const data = await api("/api/premium/analysis");
+            $("analysis-loading").classList.add("hidden");
+            $("analysis-data").classList.remove("hidden");
+            $("analysis-locked").classList.add("hidden");
+            
+            $("analysis-total-income").textContent = money(data.overall_income);
+            $("analysis-total-expense").textContent = money(data.overall_expense);
+            $("analysis-total-profit").textContent = money(data.overall_profit);
+            
+            const tbody = $("analysis-table-body");
+            tbody.replaceChildren();
+            
+            data.analysis.forEach(item => {
+              const row = document.createElement("tr");
+              row.className = "border-b border-slate-100 hover:bg-slate-50";
+              row.innerHTML = `
+                <td class="py-3 px-4 font-semibold">${item.crop_name}</td>
+                <td class="py-3 px-4 text-slate-600">${item.crop_type}</td>
+                <td class="py-3 px-4 text-right">${item.area} ${item.area_unit}</td>
+                <td class="py-3 px-4 text-right text-green-600">${money(item.total_income)}</td>
+                <td class="py-3 px-4 text-right text-red-600">${money(item.total_expense)}</td>
+                <td class="py-3 px-4 text-right font-semibold ${item.net_profit >= 0 ? 'text-green-600' : 'text-red-600'}">${money(item.net_profit)}</td>
+                <td class="py-3 px-4 text-right">${item.margin_per_unit_formatted}</td>
+                <td class="py-3 px-4 text-right font-semibold ${item.roi_percentage >= 0 ? 'text-green-600' : 'text-red-600'}">${item.roi_formatted}</td>
+              `;
+              tbody.appendChild(row);
+            });
+            
+            await loadAlerts();
+          } catch (error) {
+            $("analysis-loading").classList.add("hidden");
+            $("analysis-data").classList.add("hidden");
+            $("analysis-locked").classList.remove("hidden");
+            console.error("Error loading analysis:", error);
+          }
+        };
+        
+        const loadAlerts = async () => {
+          try {
+            const alerts = await api("/api/premium/alerts");
+            const alertsList = $("alerts-list");
+            alertsList.replaceChildren();
+            
+            if (alerts.length === 0) {
+              alertsList.innerHTML = '<p class="text-sm text-slate-500">No tienes alertas configuradas.</p>';
+              return;
+            }
+            
+            alerts.forEach(alert => {
+              const div = document.createElement("div");
+              div.className = "flex items-center justify-between py-2 border-b border-slate-100";
+              div.innerHTML = `
+                <div>
+                  <p class="font-semibold text-sm">${alert.threshold_type === 'expense' ? 'Gastos' : alert.threshold_type === 'income' ? 'Ingresos' : 'Balance'} > C$ ${alert.threshold_amount}</p>
+                  <p class="text-xs text-slate-500">${alert.crop_name || 'Todos los cultivos'} ${alert.category ? '· ' + alert.category : ''}</p>
+                </div>
+                <button class="text-sm font-semibold text-red-600 hover:text-red-700" onclick="deleteAlert(${alert.id})">Eliminar</button>
+              `;
+              alertsList.appendChild(div);
+            });
+          } catch (error) {
+            console.error("Error loading alerts:", error);
+          }
+        };
+        
+        window.deleteAlert = async (alertId) => {
+          if (!confirm("¿Eliminar esta alerta?")) return;
+          try {
+            await api(`/api/premium/alerts/${alertId}`, {method: "DELETE"});
+            await loadAlerts();
+            toast("Alerta eliminada");
+          } catch (error) {
+            toast(error.message);
+          }
+        };
+        
+        $("alert-form").addEventListener("submit", async (event) => {
+          event.preventDefault();
+          try {
+            await api("/api/premium/alerts", {
+              method: "POST",
+              body: JSON.stringify({
+                threshold_amount: $("alert-threshold").value,
+                threshold_type: $("alert-type").value,
+                crop_id: $("alert-crop").value || null
+              })
+            });
+            $("alert-form").reset();
+            await loadAlerts();
+            toast("Alerta creada");
+          } catch (error) {
+            toast(error.message);
+          }
+        });
+        
+        $("export-pdf-btn").addEventListener("click", async () => {
+          try {
+            window.open("/api/premium/export/pdf", "_blank");
+            toast("Generando reporte PDF...");
+          } catch (error) {
+            toast(error.message);
+          }
+        });
+        
+        $("export-excel-btn").addEventListener("click", async () => {
+          try {
+            window.open("/api/premium/export/excel", "_blank");
+            toast("Generando reporte Excel...");
+          } catch (error) {
+            toast(error.message);
+          }
+        });
+        
+        $("analysis-upgrade-btn").addEventListener("click", () => premiumModal.classList.add("open"));
+        
+        $("stripe-payment-btn").addEventListener("click", async () => {
+          try {
+            const response = await api("/api/premium/stripe/create-checkout", {method: "POST"});
+            if (response.checkout_url) {
+              window.location.href = response.checkout_url;
+            }
+          } catch (error) {
+            toast(error.message);
+          }
+        });
+        
+        document.querySelector('[data-view-target="analysis"]').addEventListener("click", loadAnalysis);
+      }
+      
       api("/api/auth/me").then(async (currentUser) => {
         if (!currentUser) return;
         user = currentUser;

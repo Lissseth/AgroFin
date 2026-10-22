@@ -27,3 +27,7 @@ services:
         value: "Nicaragua"
       - key: DEFAULT_TIMEZONE
         value: "America/Managua"
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
