@@ -11,7 +11,7 @@ from functools import wraps
 from urllib import request as urllib_request
 from urllib.parse import urlencode
 
-from flask import Flask, jsonify, redirect, render_template, request, send_file, session
+from flask import Flask, jsonify, redirect, render_template, request, send_file, send_from_directory, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -33,7 +33,7 @@ from psycopg2.extras import RealDictCursor
 
 DB_INTEGRITY_ERRORS = (psycopg2.IntegrityError,)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 app.config['JSON_SORT_KEYS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'agrofin-local-change-this-key')
@@ -1230,6 +1230,11 @@ def check_alerts():
 @app.route('/')
 def home():
     return render_template('index.html')
+
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
 
 
 @app.route('/privacy')
