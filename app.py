@@ -183,21 +183,6 @@ def init_db():
                 is_active INTEGER DEFAULT 1,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
-            CREATE TABLE IF NOT EXISTS suscripciones (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL UNIQUE,
-                plan_type TEXT NOT NULL DEFAULT 'basic',
-                stripe_subscription_id TEXT DEFAULT '',
-                paypal_subscription_id TEXT DEFAULT '',
-                amount REAL NOT NULL DEFAULT 0,
-                currency TEXT DEFAULT 'USD',
-                status TEXT DEFAULT 'inactive',
-                current_period_start TEXT,
-                current_period_end TEXT,
-                cancel_at_period_end INTEGER DEFAULT 0,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
         ''')
         
         for table in ('cultivos', 'movimientos'):
@@ -217,11 +202,6 @@ def init_db():
         
         try:
             connection.execute('ALTER TABLE alertas_costos ADD CONSTRAINT fk_alertas_crop FOREIGN KEY (crop_id) REFERENCES cultivos(id) ON DELETE CASCADE')
-        except Exception:
-            pass
-        
-        try:
-            connection.execute('ALTER TABLE suscripciones ADD CONSTRAINT fk_suscripciones_user FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE')
         except Exception:
             pass
 
@@ -762,37 +742,15 @@ def activate_premium():
     
     try:
         with get_db() as connection:
-            premium_until = (datetime.now() + timedelta(days=30)).isoformat()
+            premium_until = (datetime.now() + timedelta(days=365)).isoformat()
             
             connection.execute('''
-                UPDATE usuarios 
-                SET es_premium=1, premium_hasta=?, max_crops=NULL, 
+                UPDATE usuarios
+                SET es_premium=1, premium_hasta=?, max_crops=NULL,
                     paypal_subscriber_id=?
                 WHERE id=?
             ''', (premium_until, subscription_id if payment_method == 'paypal' else '', session['user_id']))
-            
-            connection.execute('''
-                INSERT INTO suscripciones (user_id, plan_type, stripe_subscription_id, paypal_subscription_id, amount, currency, status, current_period_start, current_period_end, updated_at)
-                VALUES (?, 'premium', ?, ?, 16, 'USD', 'active', ?, ?, ?)
-                ON CONFLICT (user_id) DO UPDATE SET
-                    plan_type='premium',
-                    stripe_subscription_id=EXCLUDED.stripe_subscription_id,
-                    paypal_subscription_id=EXCLUDED.paypal_subscription_id,
-                    status='active',
-                    current_period_start=?,
-                    current_period_end=?,
-                    updated_at=?
-            ''', (
-                session['user_id'],
-                subscription_id if payment_method == 'stripe' else '',
-                subscription_id if payment_method == 'paypal' else '',
-                datetime.now().isoformat(),
-                premium_until,
-                datetime.now().isoformat(),
-                premium_until,
-                datetime.now().isoformat()
-            ))
-        
+
         return jsonify({
             'message': 'Suscripción Premium activada correctamente',
             'premium_until': premium_until
@@ -823,14 +781,14 @@ def create_stripe_checkout():
                 'price_data': {
                     'currency': 'usd',
                     'product_data': {
-                        'name': 'AgroFin Premium - Mensual',
+                        'name': 'AgroFin Premium - Anual',
                         'description': 'Lotes ilimitados, análisis avanzado y soporte prioritario'
                     },
-                    'unit_amount': 1600,
+                    'unit_amount': 19200,
                 },
                 'quantity': 1,
             }],
-            mode='subscription',
+            mode='payment',
             success_url=f"{os.getenv('PUBLIC_URL', 'http://localhost:5000')}/premium/success?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{os.getenv('PUBLIC_URL', 'http://localhost:5000')}/premium/cancel",
             client_reference_id=str(user['id']),
@@ -869,35 +827,14 @@ def premium_success():
             return redirect('/?error=no_user_id')
         
         with get_db() as connection:
-            premium_until = (datetime.now() + timedelta(days=30)).isoformat()
+            premium_until = (datetime.now() + timedelta(days=365)).isoformat()
             
             connection.execute('''
-                UPDATE usuarios 
+                UPDATE usuarios
                 SET es_premium=1, premium_hasta=?, max_crops=NULL
                 WHERE id=?
             ''', (premium_until, int(user_id)))
-            
-            connection.execute('''
-                INSERT INTO suscripciones (user_id, plan_type, stripe_subscription_id, amount, currency, status, current_period_start, current_period_end, updated_at)
-                VALUES (?, 'premium', ?, 16, 'USD', 'active', ?, ?, ?)
-                ON CONFLICT (user_id) DO UPDATE SET
-                    plan_type='premium',
-                    stripe_subscription_id=EXCLUDED.stripe_subscription_id,
-                    status='active',
-                    current_period_start=?,
-                    current_period_end=?,
-                    updated_at=?
-            ''', (
-                int(user_id),
-                checkout_session.subscription,
-                datetime.now().isoformat(),
-                premium_until,
-                datetime.now().isoformat(),
-                datetime.now().isoformat(),
-                premium_until,
-                datetime.now().isoformat()
-            ))
-        
+
         return redirect('/?premium=activated')
     except Exception as e:
         logger.exception('Error al procesar éxito de Stripe')
