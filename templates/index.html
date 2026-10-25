@@ -123,7 +123,7 @@
       </div>
      </header>
      <nav aria-label="Navegación principal" class="space-y-2">
-      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="analysis" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="bar-chart-3" width="19"></i><span class="side-label">Análisis Premium</span></button> <button type="button" data-view-target="tasks" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="clipboard-check" width="19"></i><span class="side-label">Tareas</span></button> <button type="button" id="premium-plans-btn" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 text-amber-100"><i data-lucide="crown" width="19"></i><span class="side-label">Planes Premium</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
+      <button type="button" data-view-target="dashboard" class="side-item active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="layout-dashboard" width="19"></i><span class="side-label">Panel principal</span></button> <button type="button" data-view-target="crops" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wheat" width="19"></i><span class="side-label">Cultivos y lotes</span></button> <button type="button" data-view-target="finance" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="wallet-cards" width="19"></i><span class="side-label">Finanzas</span></button> <button type="button" data-view-target="analysis" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="bar-chart-3" width="19"></i><span class="side-label">Análisis Premium</span></button> <button type="button" id="premium-plans-btn" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 text-amber-100"><i data-lucide="crown" width="19"></i><span class="side-label">Planes Premium</span></button> <button type="button" data-view-target="help" class="side-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-semibold"><i data-lucide="circle-help" width="19"></i><span class="side-label">Ayuda</span></button>
      </nav>
      <div class="help-box mt-auto rounded-2xl border border-white/10 bg-white/10 p-4 text-emerald-50">
       <i data-lucide="circle-help" width="19" class="text-emerald-200"></i>
@@ -356,18 +356,12 @@
       <section id="tasks" class="view">
    <div class="surface rounded-2xl p-6">
     <h2 class="text-2xl font-bold">Tareas agrícolas</h2>
-    <form onsubmit="event.preventDefault(); addTask();" class="space-y-4 mt-4">
-      <div class="grid md:grid-cols-3 gap-3">
-        <input type="text" id="task-title" placeholder="Título de la tarea" class="input input-bordered w-full" required>
-        <input type="date" id="task-date" class="input input-bordered w-full" required>
-        <button type="submit" class="btn btn-primary px-6 py-2 bg-green-700 text-white rounded-xl shadow hover:brightness-110 transition">Agregar tarea</button>
-      </div>
-    </form>
-    <table id="task-list" class="table table-zebra w-full mt-4">
-      <thead><tr><th>Título</th><th>Fecha</th><th>Estado</th></tr></thead>
-      <tbody></tbody>
-    </table>
-   
+    <div class="mt-6 rounded-xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-6 text-center">
+      <i data-lucide="clipboard-check" class="mx-auto text-amber-500" width="48"></i>
+      <h3 class="mt-4 font-bold text-lg">Próximamente</h3>
+      <p class="mt-2 text-sm text-slate-600">La gestión de tareas estará disponible en una futura actualización. Mientras tanto, usa los cultivos y finanzas para organizar tu operación.</p>
+    </div>
+
         <div id="premium-tools-section" class="mt-6 rounded-xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-5">
           <div class="flex items-start gap-4">
             <div class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white">
@@ -414,7 +408,7 @@
      </main>
     </div>
     <nav class="mobile-nav fixed inset-x-0 bottom-0 z-30 justify-around border-t border-[#dce6df] bg-[#fffdf9]/95 px-1 py-2 shadow-[0_-5px_20px_rgba(25,70,53,.08)] backdrop-blur" aria-label="Navegación móvil">
-     <button type="button" data-view-target="dashboard" class="mobile-tab active grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-[#216a4b]"><i data-lucide="layout-dashboard" width="19"></i><span class="text-[10px] font-bold">Inicio</span></button> <button type="button" data-view-target="crops" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wheat" width="19"></i><span class="text-[10px] font-bold">Cultivos</span></button> <button type="button" data-view-target="finance" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wallet-cards" width="19"></i><span class="text-[10px] font-bold">Finanzas</span></button> <button type="button" data-view-target="analysis" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="bar-chart-3" width="19"></i><span class="text-[10px] font-bold">Análisis</span></button> <button type="button" data-view-target="tasks" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="clipboard-check" width="19"></i><span class="text-[10px] font-bold">Tareas</span></button> <button type="button" data-view-target="help" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="circle-help" width="19"></i><span class="text-[10px] font-bold">Ayuda</span></button>
+     <button type="button" data-view-target="dashboard" class="mobile-tab active grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-[#216a4b]"><i data-lucide="layout-dashboard" width="19"></i><span class="text-[10px] font-bold">Inicio</span></button> <button type="button" data-view-target="crops" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wheat" width="19"></i><span class="text-[10px] font-bold">Cultivos</span></button> <button type="button" data-view-target="finance" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="wallet-cards" width="19"></i><span class="text-[10px] font-bold">Finanzas</span></button> <button type="button" data-view-target="analysis" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="bar-chart-3" width="19"></i><span class="text-[10px] font-bold">Análisis</span></button> <button type="button" data-view-target="help" class="mobile-tab grid min-w-14 place-items-center gap-1 rounded-lg px-2 py-1 text-slate-500"><i data-lucide="circle-help" width="19"></i><span class="text-[10px] font-bold">Ayuda</span></button>
     </nav>
    </section>
   </div>
