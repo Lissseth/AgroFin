@@ -886,24 +886,24 @@ def get_premium_analysis():
         total_income = sum(float(m['amount']) * float(m.get('price', 1)) for m in crop_movements if m['kind'] == 'income')
         total_expense = sum(float(m['amount']) * float(m.get('price', 1)) for m in crop_movements if m['kind'] != 'income')
         net_profit = total_income - total_expense
-        
+
         estimated_yield = float(crop.get('estimated_yield', 0))
         yield_unit = crop.get('yield_unit', 'quintales')
-        
+
         margin_per_unit = 0
         if estimated_yield > 0:
             margin_per_unit = net_profit / estimated_yield
-        
+
         roi = 0
         if total_expense > 0:
             roi = ((net_profit / total_expense) * 100)
-        
+
         analysis.append({
             'crop_id': crop['id'],
             'crop_name': crop['name'],
             'crop_type': crop['type'],
             'area': crop['area'],
-            'area_unit': crop['areaUnit'],
+            'area_unit': crop.get('areaUnit', 'manzanas'),
             'total_income': total_income,
             'total_expense': total_expense,
             'net_profit': net_profit,
