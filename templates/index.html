@@ -998,10 +998,13 @@
             const currentUser = await api("/api/auth/me");
             if (currentUser) {
               user = currentUser;
+              console.log("Usuario actualizado en loadAnalysis:", user);
             }
 
             const status = await api("/api/premium/status");
+            console.log("Status premium:", status);
             if (!status.is_premium) {
+              console.log("Usuario no es premium, mostrando locked");
               $("analysis-loading").classList.add("hidden");
               $("analysis-data").classList.add("hidden");
               $("analysis-locked").classList.remove("hidden");
