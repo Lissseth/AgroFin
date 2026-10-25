@@ -482,7 +482,7 @@
        <li class="flex items-center gap-2 text-slate-400"><i data-lucide="x" width="16"></i> Exportación de reportes</li>
        <li class="flex items-center gap-2 text-slate-400"><i data-lucide="x" width="16"></i> Soporte por WhatsApp</li>
       </ul>
-      <button type="button" class="mt-6 w-full secondary-btn py-3">Plan actual</button>
+      <button id="basic-plan-btn" type="button" class="mt-6 w-full secondary-btn py-3">Plan actual</button>
      </div>
      <div class="surface rounded-2xl p-6 border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 relative overflow-hidden">
       <div class="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">RECOMENDADO</div>
@@ -501,7 +501,7 @@
        <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Alertas de costos y gastos</li>
        <li class="flex items-center gap-2"><i data-lucide="check" width="16" class="text-green-600"></i> Acceso a nuevas funciones</li>
       </ul>
-      <div class="mt-6 space-y-3">
+      <div id="premium-plan-actions" class="mt-6 space-y-3">
        <p class="text-sm text-slate-600">Elige tu método de pago para activar tu suscripción Premium:</p>
        <div class="grid gap-3">
         <button id="stripe-payment-btn" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-indigo-700 transition">
@@ -514,6 +514,8 @@
         </a>
        </div>
       </div>
+      <button id="premium-plan-btn" type="button" class="mt-6 w-full primary-btn py-3 hidden">Plan actual</button>
+     </div>
      </div>
     </div>
     <div class="mt-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-4 text-center">
@@ -581,6 +583,21 @@
           subscriptionBadge.innerHTML = '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-slate-100 text-slate-600">Gratuito</span>';
           if (premiumToolsSection) premiumToolsSection.classList.remove("hidden");
           if (financePremiumTools) financePremiumTools.classList.remove("hidden");
+        }
+        // Actualizar modal de planes premium
+        const isPremium = user.es_premium === 1 || user.es_premium === true || user.es_premium === '1' || user.es_premium === 'true';
+        const basicPlanBtn = $("basic-plan-btn");
+        const premiumPlanBtn = $("premium-plan-btn");
+        const premiumPlanActions = $("premium-plan-actions");
+
+        if (isPremium) {
+          if (basicPlanBtn) basicPlanBtn.classList.add("hidden");
+          if (premiumPlanBtn) premiumPlanBtn.classList.remove("hidden");
+          if (premiumPlanActions) premiumPlanActions.classList.add("hidden");
+        } else {
+          if (basicPlanBtn) basicPlanBtn.classList.remove("hidden");
+          if (premiumPlanBtn) premiumPlanBtn.classList.add("hidden");
+          if (premiumPlanActions) premiumPlanActions.classList.remove("hidden");
         }
         $("dashboard-title").textContent = "Hola, " + user.name;
         window.scrollTo({top:0, behavior:"smooth"});
@@ -972,6 +989,12 @@
       if (analysisView) {
         const loadAnalysis = async () => {
           try {
+            // Recargar usuario actual para tener datos frescos
+            const currentUser = await api("/api/auth/me");
+            if (currentUser) {
+              user = currentUser;
+            }
+
             const status = await api("/api/premium/status");
             if (!status.is_premium) {
               $("analysis-loading").classList.add("hidden");
