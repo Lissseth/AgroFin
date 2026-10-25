@@ -302,10 +302,14 @@ def current_user_data():
 def is_user_premium(user):
     """Verifica si un usuario es premium de forma consistente."""
     if not user:
+        logger.warning('is_user_premium: user is None')
         return False
     premium_value = user.get('es_premium')
+    logger.info(f'is_user_premium: user_id={user.get("id")}, es_premium={premium_value}, type={type(premium_value)}')
     # Acepta 1, True, '1', 'true' como premium
-    return bool(premium_value) and premium_value not in (0, '0', False, 'false')
+    result = bool(premium_value) and premium_value not in (0, '0', False, 'false')
+    logger.info(f'is_user_premium: result={result}')
+    return result
 
 
 def login_required(function):
@@ -928,30 +932,51 @@ def export_pdf():
     user = current_user()
     if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
-    
+
     if not EXPORT_AVAILABLE:
         return error('Librerías de exportación no disponibles', 500)
-    
+
     analysis_response = get_premium_analysis()
     if isinstance(analysis_response, tuple):
         return analysis_response
-    
+
     analysis_data = analysis_response.get_json()
-    
+
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=72, bottomMargin=72)
     elements = []
     styles = getSampleStyleSheet()
-    
+
+    # Header con branding
     title_style = styles['Heading1']
     title_style.alignment = TA_CENTER
-    elements.append(Paragraph("Reporte de Rentabilidad - AgroFin", title_style))
-    elements.append(Spacer(1, 12))
-    
-    elements.append(Paragraph(f"Usuario: {user['name']}", styles['Normal']))
-    elements.append(Paragraph(f"Fecha: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
-    elements.append(Spacer(1, 12))
-    
+    title_style.textColor = colors.HexColor('#287a50')
+    elements.append(Paragraph("AgroFin - Reporte de Rentabilidad", title_style))
+    elements.append(Spacer(1, 8))
+
+    # Información del usuario
+    user_info_style = styles['Normal']
+    user_info_style.alignment = TA_CENTER
+    elements.append(Paragraph(f"<b>Usuario:</b> {user['name']}", user_info_style))
+    elements.append(Paragraph(f"<b>Email:</b> {user['email']}", user_info_style))
+    elements.append(Paragraph(f"<b>País:</b> {user.get('country', 'N/A')}", user_info_style))
+    elements.append(Paragraph(f"<b>Fecha:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}", user_info_style))
+    elements.append(Spacer(1, 16))
+
+    # Resumen general
+    elements.append(Paragraph("RESUMEN GENERAL", styles['Heading2']))
+    elements.append(Spacer(1, 6))
+    elements.append(Paragraph(f"<b>Total de Cultivos:</b> {analysis_data['total_crops']}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Total de Movimientos:</b> {analysis_data['total_movements']}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Ingresos Totales:</b> C$ {analysis_data['overall_income']:.2f}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Egresos Totales:</b> C$ {analysis_data['overall_expense']:.2f}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Utilidad Neta:</b> C$ {analysis_data['overall_profit']:.2f}", styles['Normal']))
+    elements.append(Spacer(1, 16))
+
+    # Tabla de análisis por cultivo
+    elements.append(Paragraph("ANÁLISIS POR CULTIVO", styles['Heading2']))
+    elements.append(Spacer(1, 6))
+
     data = [['Cultivo', 'Tipo', 'Área', 'Ingresos', 'Egresos', 'Utilidad', 'Margen/Unidad', 'ROI']]
     for item in analysis_data['analysis']:
         data.append([
@@ -964,32 +989,38 @@ def export_pdf():
             item['margin_per_unit_formatted'],
             item['roi_formatted']
         ])
-    
-    table = Table(data)
+
+    table = Table(data, colWidths=[80, 60, 50, 60, 60, 60, 80, 50])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#287a50')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('TOPPADDING', (0, 0), (-1, 0), 8),
         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
     ]))
     elements.append(table)
-    
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph(f"Total Ingresos: C$ {analysis_data['overall_income']:.2f}", styles['Normal']))
-    elements.append(Paragraph(f"Total Egresos: C$ {analysis_data['overall_expense']:.2f}", styles['Normal']))
-    elements.append(Paragraph(f"Utilidad Total: C$ {analysis_data['overall_profit']:.2f}", styles['Heading2']))
-    
+
+    # Footer
+    elements.append(Spacer(1, 24))
+    footer_style = styles['Normal']
+    footer_style.alignment = TA_CENTER
+    footer_style.fontSize = 8
+    footer_style.textColor = colors.grey
+    elements.append(Paragraph("Reporte generado por AgroFin - Control Agrícola", footer_style))
+    elements.append(Paragraph("agrofin.onrender.com", footer_style))
+
     doc.build(elements)
     buffer.seek(0)
-    
+
     return send_file(
         buffer,
         as_attachment=True,
-        download_name=f'reporte_agrofin_{datetime.now().strftime("%Y%m%d")}.pdf',
+        download_name=f'AgroFin_Reporte_{user["name"].replace(" ", "_")}_{datetime.now().strftime("%Y%m%d")}.pdf',
         mimetype='application/pdf'
     )
 
@@ -1000,32 +1031,70 @@ def export_excel():
     user = current_user()
     if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
-    
+
     if not EXPORT_AVAILABLE:
         return error('Librerías de exportación no disponibles', 500)
-    
+
     analysis_response = get_premium_analysis()
     if isinstance(analysis_response, tuple):
         return analysis_response
-    
+
     analysis_data = analysis_response.get_json()
-    
+
     wb = Workbook()
     ws = wb.active
-    ws.title = "Análisis de Rentabilidad"
-    
+    ws.title = "Reporte AgroFin"
+
+    # Header branding
+    ws['A1'] = 'AgroFin - Reporte de Rentabilidad'
+    ws['A1'].font = Font(bold=True, size=16, color="287a50")
+    ws.merge_cells('A1:L1')
+
+    # Información del usuario
+    ws['A2'] = f'Usuario: {user["name"]}'
+    ws['A2'].font = Font(bold=True)
+    ws['A3'] = f'Email: {user["email"]}'
+    ws['A4'] = f'País: {user.get("country", "N/A")}'
+    ws['A5'] = f'Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M")}'
+
+    # Resumen general
+    ws['A7'] = 'RESUMEN GENERAL'
+    ws['A7'].font = Font(bold=True, size=12, color="287a50")
+    ws.merge_cells('A7:L7')
+
+    ws['A8'] = 'Total de Cultivos:'
+    ws['B8'] = analysis_data['total_crops']
+    ws['A9'] = 'Total de Movimientos:'
+    ws['B9'] = analysis_data['total_movements']
+    ws['A10'] = 'Ingresos Totales:'
+    ws['B10'] = analysis_data['overall_income']
+    ws['B10'].number_format = '#,##0.00'
+    ws['A11'] = 'Egresos Totales:'
+    ws['B11'] = analysis_data['overall_expense']
+    ws['B11'].number_format = '#,##0.00'
+    ws['A12'] = 'Utilidad Neta:'
+    ws['B12'] = analysis_data['overall_profit']
+    ws['B12'].number_format = '#,##0.00'
+    ws['B12'].font = Font(bold=True, color="287a50" if analysis_data['overall_profit'] >= 0 else "FF0000")
+
+    # Análisis por cultivo
+    ws['A14'] = 'ANÁLISIS POR CULTIVO'
+    ws['A14'].font = Font(bold=True, size=12, color="287a50")
+    ws.merge_cells('A14:L14')
+
     headers = ['Cultivo', 'Tipo', 'Área', 'Unidad Área', 'Ingresos', 'Egresos', 'Utilidad', 'Rendimiento Est.', 'Unidad Rend.', 'Margen/Unidad', 'ROI %', 'Movimientos']
     ws.append(headers)
-    
+
     header_fill = PatternFill(start_color="287a50", end_color="287a50", fill_type="solid")
-    header_font = Font(bold=True, color="FFFFFF")
-    
-    for cell in ws[1]:
+    header_font = Font(bold=True, color="FFFFFF", size=10)
+
+    for cell in ws[15]:
         cell.fill = header_fill
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center")
-    
+
     for item in analysis_data['analysis']:
+        row_num = ws.max_row + 1
         ws.append([
             item['crop_name'],
             item['crop_type'],
@@ -1040,23 +1109,40 @@ def export_excel():
             item['roi_percentage'],
             item['movement_count']
         ])
-    
-    ws.append([])
-    ws.append(['RESUMEN GENERAL'])
-    ws.append(['Total Cultivos', analysis_data['total_crops']])
-    ws.append(['Total Movimientos', analysis_data['total_movements']])
-    ws.append(['Ingresos Totales', analysis_data['overall_income']])
-    ws.append(['Egresos Totales', analysis_data['overall_expense']])
-    ws.append(['Utilidad Total', analysis_data['overall_profit']])
-    
+
+        # Formato numérico
+        ws[f'E{row_num}'].number_format = '#,##0.00'
+        ws[f'F{row_num}'].number_format = '#,##0.00'
+        ws[f'G{row_num}'].number_format = '#,##0.00'
+        ws[f'J{row_num}'].number_format = '#,##0.00'
+        ws[f'K{row_num}'].number_format = '0.00'
+
+        # Colorear utilidad
+        if item['net_profit'] >= 0:
+            ws[f'G{row_num}'].font = Font(color="287a50")
+        else:
+            ws[f'G{row_num}'].font = Font(color="FF0000")
+
+    # Footer
+    row_num = ws.max_row + 2
+    ws[f'A{row_num}'] = 'Reporte generado por AgroFin - Control Agrícola'
+    ws[f'A{row_num}'].font = Font(italic=True, size=8, color="808080")
+    ws[f'A{row_num+1}'] = 'agrofin.onrender.com'
+    ws[f'A{row_num+1}'].font = Font(italic=True, size=8, color="808080")
+
+    # Ajustar ancho de columnas
+    column_widths = [25, 15, 10, 12, 12, 12, 12, 12, 12, 15, 10, 10]
+    for i, width in enumerate(column_widths, 1):
+        ws.column_dimensions[chr(64 + i)].width = width
+
     buffer = io.BytesIO()
     wb.save(buffer)
     buffer.seek(0)
-    
+
     return send_file(
         buffer,
         as_attachment=True,
-        download_name=f'reporte_agrofin_{datetime.now().strftime("%Y%m%d")}.xlsx',
+        download_name=f'AgroFin_Reporte_{user["name"].replace(" ", "_")}_{datetime.now().strftime("%Y%m%d")}.xlsx',
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
