@@ -236,9 +236,9 @@ def clean_number(value, field):
 
 
 def email_configuration():
-    sender = os.getenv('EMAIL_USERNAME') or os.getenv('GMAIL_USERNAME') or os.getenv('MAIL_USERNAME') or 'ruizfatima1p@gmail.com'
+    sender = os.getenv('EMAIL_USERNAME') or os.getenv('GMAIL_USERNAME') or os.getenv('MAIL_USERNAME') or 'soporteagrofinweb26@gmail.com'
     password = os.getenv('EMAIL_PASSWORD') or os.getenv('GMAIL_APP_PASSWORD') or os.getenv('MAIL_PASSWORD')
-    recipient = os.getenv('CONTACT_EMAIL') or os.getenv('ADMIN_EMAIL') or os.getenv('EMAIL_TO') or 'ruizfatima1p@gmail.com'
+    recipient = os.getenv('CONTACT_EMAIL') or os.getenv('ADMIN_EMAIL') or os.getenv('EMAIL_TO') or 'soporteagrofinweb26@gmail.com'
     return {
         'host': os.getenv('EMAIL_HOST', 'smtp.gmail.com'),
         'port': int(os.getenv('EMAIL_PORT', '465')),
