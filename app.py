@@ -299,6 +299,15 @@ def current_user_data():
     return dict(user) if user else {}
 
 
+def is_user_premium(user):
+    """Verifica si un usuario es premium de forma consistente."""
+    if not user:
+        return False
+    premium_value = user.get('es_premium')
+    # Acepta 1, True, '1', 'true' como premium
+    return bool(premium_value) and premium_value not in (0, '0', False, 'false')
+
+
 def login_required(function):
     @wraps(function)
     def secured(*args, **kwargs):
@@ -609,9 +618,10 @@ def create_crop():
     data, problem = payload(['name', 'type', 'date', 'area', 'areaUnit'])
     if problem or data is None:
         return error(problem, 400)
-    
+
     user = current_user()
-    if not user or not user.get('es_premium'):
+    premium = is_user_premium(user)
+    if not premium:
         with get_db() as connection:
             crop_count = connection.execute('SELECT COUNT(*) as count FROM cultivos WHERE user_id=?', (session['user_id'],)).fetchone()['count']
             max_crops = user.get('max_crops', 5) if user else 5
@@ -699,26 +709,28 @@ def get_premium_status():
     user = current_user()
     if not user:
         return error('Usuario no autenticado', 401)
-    
+
+    premium = is_user_premium(user)
+
     with get_db() as connection:
         crop_count = connection.execute('SELECT COUNT(*) as count FROM cultivos WHERE user_id=?', (session['user_id'],)).fetchone()['count']
-        max_crops = user.get('max_crops', 5) if not user.get('es_premium') else float('inf')
-        can_add_more = user.get('es_premium') or crop_count < max_crops
-    
+        max_crops = user.get('max_crops', 5) if not premium else float('inf')
+        can_add_more = premium or crop_count < max_crops
+
     return jsonify({
-        'is_premium': bool(user.get('es_premium')),
+        'is_premium': premium,
         'premium_until': user.get('premium_hasta'),
         'crop_count': crop_count,
-        'max_crops': max_crops if not user.get('es_premium') else 'ilimitado',
+        'max_crops': max_crops if not premium else 'ilimitado',
         'can_add_more_crops': can_add_more,
         'features': {
-            'unlimited_crops': bool(user.get('es_premium')),
-            'margin_calculation': bool(user.get('es_premium')),
-            'export_reports': bool(user.get('es_premium')),
-            'whatsapp_support': bool(user.get('es_premium')),
-            'detailed_analysis': bool(user.get('es_premium')),
-            'cost_alerts': bool(user.get('es_premium')),
-            'new_features': bool(user.get('es_premium'))
+            'unlimited_crops': premium,
+            'margin_calculation': premium,
+            'export_reports': premium,
+            'whatsapp_support': premium,
+            'detailed_analysis': premium,
+            'cost_alerts': premium,
+            'new_features': premium
         }
     })
 
@@ -781,10 +793,10 @@ def create_stripe_checkout():
                 'price_data': {
                     'currency': 'usd',
                     'product_data': {
-                        'name': 'AgroFin Premium - Anual',
+                        'name': 'AgroFin Premium - Mensual',
                         'description': 'Lotes ilimitados, análisis avanzado y soporte prioritario'
                     },
-                    'unit_amount': 19200,
+                    'unit_amount': 1600,
                 },
                 'quantity': 1,
             }],
@@ -850,7 +862,7 @@ def premium_cancel():
 @login_required
 def get_premium_analysis():
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     with get_db() as connection:
@@ -907,7 +919,7 @@ def get_premium_analysis():
 @login_required
 def export_pdf():
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     if not EXPORT_AVAILABLE:
@@ -979,7 +991,7 @@ def export_pdf():
 @login_required
 def export_excel():
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     if not EXPORT_AVAILABLE:
@@ -1046,7 +1058,7 @@ def export_excel():
 @login_required
 def get_alerts():
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     with get_db() as connection:
@@ -1065,7 +1077,7 @@ def get_alerts():
 @login_required
 def create_alert():
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     data, problem = payload(['threshold_amount', 'threshold_type'])
@@ -1099,7 +1111,7 @@ def create_alert():
 @login_required
 def delete_alert(alert_id):
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     with get_db() as connection:
@@ -1115,7 +1127,7 @@ def delete_alert(alert_id):
 @login_required
 def check_alerts():
     user = current_user()
-    if not user or not user.get('es_premium'):
+    if not user or not is_user_premium(user):
         return error('Esta función es exclusiva para usuarios Premium', 403)
     
     with get_db() as connection:
