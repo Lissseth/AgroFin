@@ -717,12 +717,19 @@ def get_premium_status():
         max_crops = user.get('max_crops', 5) if not premium else float('inf')
         can_add_more = premium or crop_count < max_crops
 
+    # Log para depuración
+    logger.info(f'Premium status for user {session["user_id"]}: es_premium={user.get("es_premium")}, premium={premium}, type={type(user.get("es_premium"))}')
+
     return jsonify({
         'is_premium': premium,
         'premium_until': user.get('premium_hasta'),
         'crop_count': crop_count,
         'max_crops': max_crops if not premium else 'ilimitado',
         'can_add_more_crops': can_add_more,
+        'debug': {
+            'es_premium_value': user.get('es_premium'),
+            'es_premium_type': str(type(user.get('es_premium')))
+        },
         'features': {
             'unlimited_crops': premium,
             'margin_calculation': premium,
