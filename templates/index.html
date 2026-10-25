@@ -584,20 +584,25 @@
           if (premiumToolsSection) premiumToolsSection.classList.remove("hidden");
           if (financePremiumTools) financePremiumTools.classList.remove("hidden");
         }
-        // Actualizar modal de planes premium
-        const isPremium = user.es_premium === 1 || user.es_premium === true || user.es_premium === '1' || user.es_premium === 'true';
-        const basicPlanBtn = $("basic-plan-btn");
-        const premiumPlanBtn = $("premium-plan-btn");
-        const premiumPlanActions = $("premium-plan-actions");
+        // Actualizar modal de planes premium (solo si existen los elementos)
+        try {
+          const basicPlanBtn = $("basic-plan-btn");
+          const premiumPlanBtn = $("premium-plan-btn");
+          const premiumPlanActions = $("premium-plan-actions");
 
-        if (isPremium) {
-          if (basicPlanBtn) basicPlanBtn.classList.add("hidden");
-          if (premiumPlanBtn) premiumPlanBtn.classList.remove("hidden");
-          if (premiumPlanActions) premiumPlanActions.classList.add("hidden");
-        } else {
-          if (basicPlanBtn) basicPlanBtn.classList.remove("hidden");
-          if (premiumPlanBtn) premiumPlanBtn.classList.add("hidden");
-          if (premiumPlanActions) premiumPlanActions.classList.remove("hidden");
+          if (basicPlanBtn && premiumPlanBtn && premiumPlanActions) {
+            if (isPremium) {
+              basicPlanBtn.classList.add("hidden");
+              premiumPlanBtn.classList.remove("hidden");
+              premiumPlanActions.classList.add("hidden");
+            } else {
+              basicPlanBtn.classList.remove("hidden");
+              premiumPlanBtn.classList.add("hidden");
+              premiumPlanActions.classList.remove("hidden");
+            }
+          }
+        } catch (e) {
+          console.warn("Error actualizando modal de planes:", e);
         }
         $("dashboard-title").textContent = "Hola, " + user.name;
         window.scrollTo({top:0, behavior:"smooth"});
