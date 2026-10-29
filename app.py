@@ -183,6 +183,15 @@ def init_db():
                 is_active INTEGER DEFAULT 1,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS aceptaciones_legales (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER,
+                email TEXT NOT NULL,
+                tipo_aceptacion TEXT NOT NULL,
+                fecha_aceptacion TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                ip_address TEXT,
+                user_agent TEXT
+            );
         ''')
         
         for table in ('cultivos', 'movimientos'):
@@ -330,10 +339,17 @@ def account_payload():
         return None, 'El nombre debe tener al menos 2 caracteres.'
     if len(password) < 8:
         return None, 'La contraseña debe tener al menos 8 caracteres.'
+    # Verificar aceptación de términos y privacidad
+    terms_accepted = data.get('terms_accepted')
+    privacy_accepted = data.get('privacy_accepted')
+    if not terms_accepted or not privacy_accepted:
+        return None, 'Debes aceptar los términos y condiciones y la política de privacidad para continuar.'
     return {'name': name, 'email': email, 'password': password,
             'phone': clean_text(data.get('phone', ''), 30),
             'country': clean_text(data['country'], 60),
-            'timezone': clean_text(data['timezone'], 80)}, None
+            'timezone': clean_text(data['timezone'], 80),
+            'terms_accepted': terms_accepted,
+            'privacy_accepted': privacy_accepted}, None
 
 
 @app.post('/api/auth/register')
@@ -345,7 +361,16 @@ def register():
         with get_db() as connection:
             cursor = connection.execute('''INSERT INTO usuarios (name,email,phone,country,timezone,password_hash)
                 VALUES (?,?,?,?,?,?) RETURNING id''', (data['name'], data['email'], data['phone'], data['country'], data['timezone'], generate_password_hash(data['password'])))
-            session['user_id'] = cursor.fetchone()['id']
+            user_id = cursor.fetchone()['id']
+            session['user_id'] = user_id
+
+            # Registrar aceptaciones legales
+            ip_address = request.remote_addr
+            user_agent = request.headers.get('User-Agent', '')
+            connection.execute('''INSERT INTO aceptaciones_legales (user_id, email, tipo_aceptacion, ip_address, user_agent)
+                VALUES (?,?,?,?,?)''', (user_id, data['email'], 'terms', ip_address, user_agent))
+            connection.execute('''INSERT INTO aceptaciones_legales (user_id, email, tipo_aceptacion, ip_address, user_agent)
+                VALUES (?,?,?,?,?)''', (user_id, data['email'], 'privacy', ip_address, user_agent))
     except DB_INTEGRITY_ERRORS:
         return error('Ya existe una cuenta con ese correo.', 409)
     send_registration_email(data['name'], data['email'])
@@ -435,6 +460,10 @@ def contact_message():
         return error('Escribe un correo electrónico válido.', 400)
     if len(name) < 2 or len(message) < 10:
         return error('Completa nombre y mensaje con información válida.', 400)
+    # Verificar aceptación de privacidad para el formulario de contacto
+    privacy_accepted = data.get('privacy_accepted')
+    if not privacy_accepted:
+        return error('Debes aceptar la política de privacidad para enviar el mensaje.', 400)
     config = email_configuration()
     logger.info(f'Configuración SMTP - Host: {config["host"]}, Username: {config["username"]}, Recipient: {config["recipient"]}')
     recipient = config['recipient']
@@ -455,6 +484,15 @@ def contact_message():
         logger.error('No se pudo enviar el correo - verificar configuración SMTP')
         return error('No se pudo enviar tu mensaje en este momento. Inténtalo nuevamente más tarde.', 500)
     logger.info('Correo enviado exitosamente')
+    # Registrar aceptación de privacidad para contacto
+    try:
+        with get_db() as connection:
+            ip_address = request.remote_addr
+            user_agent = request.headers.get('User-Agent', '')
+            connection.execute('''INSERT INTO aceptaciones_legales (user_id, email, tipo_aceptacion, ip_address, user_agent)
+                VALUES (?,?,?,?,?)''', (None, email, 'contact_privacy', ip_address, user_agent))
+    except Exception:
+        logger.warning('No se pudo registrar la aceptación de privacidad en contacto')
     return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
 
 @app.post('/api/contacto')
@@ -545,6 +583,36 @@ def robots_txt():
 @app.get('/sitemap.xml')
 def sitemap_xml():
     return send_file('sitemap.xml', mimetype='application/xml')
+
+
+@app.get('/privacy')
+def privacy_page():
+    return render_template('privacy.html')
+
+
+@app.get('/terms')
+def terms_page():
+    return render_template('terms.html')
+
+
+@app.get('/cookies')
+def cookies_page():
+    return render_template('cookies.html')
+
+
+@app.get('/refund')
+def refund_page():
+    return render_template('refund.html')
+
+
+@app.get('/legal')
+def legal_page():
+    return render_template('legal.html')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 def profile_payload():
