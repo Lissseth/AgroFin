@@ -240,7 +240,7 @@ Configurar en `.env` o variables de entorno del sistema.
 
 Para activar suscripciones manualmente o problemas con pagos:
 - WhatsApp: +505 8947 6244
-- Email: ruizfatima1p@gmail.com
+- Email: soporteagrofinweb26@gmail.com
 
 ## Próximas Mejoras (Opcionales)
 
