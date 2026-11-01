@@ -100,11 +100,11 @@
        <div><label class="mb-2 block text-sm font-bold" for="login-password">Contraseña</label><input id="login-password" class="field" type="password" autocomplete="current-password" minlength="8" required></div>
        <div id="legal-checkboxes" class="hidden space-y-3 mt-4">
         <div class="flex items-start gap-2">
-         <input id="terms-accepted" type="checkbox" class="mt-1" required>
+         <input id="terms-accepted" type="checkbox" class="mt-1">
          <label for="terms-accepted" class="text-xs text-slate-600">Acepto los <a href="/terms" target="_blank" class="text-[#216a4b] underline">términos y condiciones</a> de AgroFin.</label>
         </div>
         <div class="flex items-start gap-2">
-         <input id="privacy-accepted" type="checkbox" class="mt-1" required>
+         <input id="privacy-accepted" type="checkbox" class="mt-1">
          <label for="privacy-accepted" class="text-xs text-slate-600">Acepto la <a href="/privacy" target="_blank" class="text-[#216a4b] underline">política de privacidad</a> de AgroFin.</label>
         </div>
        </div>
@@ -865,6 +865,11 @@
         $("login-message").classList.add("hidden");
         const payload = {email:$("login-email").value.trim(), password:$("login-password").value};
         if (registering) {
+          if (!$("terms-accepted").checked || !$("privacy-accepted").checked) {
+            showMessage($("login-message"), "Debes aceptar los términos y condiciones y la política de privacidad para continuar.");
+            $("auth-submit").disabled = false;
+            return;
+          }
           Object.assign(payload, {
             name:$("register-name").value.trim(),
             phone:$("register-phone").value.trim(),
