@@ -406,7 +406,7 @@ def login():
 
 
 @app.post('/api/auth/logout')
-
+@csrf.exempt
 def logout():
     session.clear()
     return '', 204
@@ -515,6 +515,7 @@ def contact_message():
     return jsonify({'message': 'Tu mensaje fue enviado correctamente.'})
 
 @app.post('/api/contacto')
+@csrf.exempt
 def contacto():
     data, problem = payload(['subject', 'message'])
     if problem or data is None:
@@ -710,6 +711,7 @@ def get_profile():
 
 
 @app.put('/api/perfil')
+@csrf.exempt
 @login_required
 def save_profile():
     data, problem = settings_payload()
@@ -724,6 +726,7 @@ def save_profile():
 
 
 @app.get('/api/cultivos')
+@csrf.exempt
 @login_required
 def list_crops():
     with get_db() as connection:
@@ -732,6 +735,7 @@ def list_crops():
 
 
 @app.post('/api/cultivos')
+@csrf.exempt
 @login_required
 def create_crop():
     data, problem = payload(['name', 'type', 'date', 'area', 'areaUnit'])
@@ -759,6 +763,7 @@ def create_crop():
 
 
 @app.put('/api/cultivos/<int:crop_id>')
+@csrf.exempt
 @login_required
 def update_crop(crop_id):
     data, problem = payload(['name', 'type', 'date', 'area', 'areaUnit'])
@@ -777,6 +782,7 @@ def update_crop(crop_id):
 
 
 @app.delete('/api/cultivos/<int:crop_id>')
+@csrf.exempt
 @login_required
 def delete_crop(crop_id):
     with get_db() as connection:
@@ -788,6 +794,7 @@ def delete_crop(crop_id):
 
 
 @app.get('/api/movimientos')
+@csrf.exempt
 @login_required
 def list_movements():
     with get_db() as connection:
@@ -796,6 +803,7 @@ def list_movements():
 
 
 @app.post('/api/movimientos')
+@csrf.exempt
 @login_required
 def create_movement():
     data, problem = payload(['kind', 'crop', 'concept', 'date', 'category', 'amount', 'unit'])
@@ -813,6 +821,7 @@ def create_movement():
 
 
 @app.delete('/api/movimientos/<int:movement_id>')
+@csrf.exempt
 @login_required
 def delete_movement(movement_id):
     with get_db() as connection:
@@ -823,6 +832,7 @@ def delete_movement(movement_id):
 
 
 @app.get('/api/premium/status')
+@csrf.exempt
 @login_required
 def get_premium_status():
     user = current_user()
@@ -855,6 +865,7 @@ def get_premium_status():
 
 
 @app.post('/api/premium/activate')
+@csrf.exempt
 @login_required
 def activate_premium():
     data, problem = payload(['subscription_id', 'payment_method'])
@@ -893,6 +904,7 @@ def activate_premium():
 
 
 @app.post('/api/premium/stripe/create-checkout')
+@csrf.exempt
 @login_required
 def create_stripe_checkout():
     user = current_user()
@@ -1257,6 +1269,7 @@ def export_excel():
 
 
 @app.get('/api/premium/alerts')
+@csrf.exempt
 @login_required
 def get_alerts():
     user = current_user()
@@ -1276,6 +1289,7 @@ def get_alerts():
 
 
 @app.post('/api/premium/alerts')
+@csrf.exempt
 @login_required
 def create_alert():
     user = current_user()
@@ -1310,6 +1324,7 @@ def create_alert():
 
 
 @app.delete('/api/premium/alerts/<int:alert_id>')
+@csrf.exempt
 @login_required
 def delete_alert(alert_id):
     user = current_user()
@@ -1326,6 +1341,7 @@ def delete_alert(alert_id):
 
 
 @app.get('/api/premium/alerts/check')
+@csrf.exempt
 @login_required
 def check_alerts():
     user = current_user()
