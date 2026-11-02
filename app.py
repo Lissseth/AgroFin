@@ -4,6 +4,7 @@ import os
 import re
 import smtplib
 import io
+import secrets
 from datetime import date, datetime, timedelta
 from contextlib import contextmanager
 from email.message import EmailMessage
@@ -14,6 +15,9 @@ from urllib.parse import urlencode
 from flask import Flask, jsonify, redirect, render_template, request, send_file, send_from_directory, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 try:
     from reportlab.lib.pagesizes import letter
@@ -40,6 +44,12 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'agrofin-local-change-this-ke
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('FORCE_HTTPS') == '1'
+csrf = CSRFProtect(app)
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 # Configuración de base de datos: Neon Postgres
 DATABASE_URL = os.getenv('NEON_DATABASE_URL')
 if not DATABASE_URL:
@@ -353,6 +363,8 @@ def account_payload():
 
 
 @app.post('/api/auth/register')
+@csrf.exempt
+@limiter.limit("5 per hour")
 def register():
     data, problem = account_payload()
     if problem or data is None:
@@ -378,6 +390,8 @@ def register():
 
 
 @app.post('/api/auth/login')
+@csrf.exempt
+@limiter.limit("10 per hour")
 def login():
     data, problem = payload(['email', 'password'])
     if problem or data is None:
@@ -403,6 +417,9 @@ def google_login():
     client_id = os.getenv('GOOGLE_CLIENT_ID')
     if not client_id:
         return error('Google OAuth no está configurado. Define GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en el proveedor de despliegue.', 400)
+    # Generar state para prevenir CSRF
+    state = secrets.token_urlsafe(32)
+    session['oauth_state'] = state
     google_auth_url = 'https://accounts.google.com/o/oauth2/v2/auth'
     params = {
         'client_id': client_id,
@@ -411,6 +428,7 @@ def google_login():
         'scope': 'openid email profile',
         'access_type': 'offline',
         'prompt': 'consent',
+        'state': state,
     }
     return redirect(f'{google_auth_url}?{urlencode(params)}')
 
@@ -445,6 +463,8 @@ def google_userinfo(access_token):
 
 
 @app.post('/api/contact')
+@csrf.exempt
+@limiter.limit("10 per hour")
 def contact_message():
     logger.info('=== Iniciando procesamiento de formulario de contacto ===')
     data, problem = payload(['name', 'email', 'reason', 'message'])
@@ -455,7 +475,6 @@ def contact_message():
     email = clean_text(data['email'], 160).lower()
     reason = clean_text(data['reason'], 80)
     message = clean_text(data['message'], 1000)
-    logger.info(f'Datos recibidos - Nombre: {name}, Email: {email}, Razón: {reason}')
     if not re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
         return error('Escribe un correo electrónico válido.', 400)
     if len(name) < 2 or len(message) < 10:
@@ -523,6 +542,12 @@ def google_callback():
         return error('Google OAuth no está configurado. Añade CLIENT_ID y CLIENT_SECRET y luego vuelve a intentar.', 400)
     if request.args.get('error'):
         return error(f"Google rechazó la autorización: {request.args.get('error_description', request.args['error'])}", 400)
+    # Validar state para prevenir CSRF
+    state = request.args.get('state')
+    if not state or state != session.get('oauth_state'):
+        logger.warning('State de OAuth inválido - posible ataque CSRF')
+        return error('Error de validación de seguridad. Por favor intenta nuevamente.', 400)
+    session.pop('oauth_state', None)
     code = request.args.get('code')
     if not code:
         return error('No se recibió el código de autorización de Google.', 400)
@@ -809,21 +834,22 @@ def activate_premium():
     data, problem = payload(['subscription_id', 'payment_method'])
     if problem or data is None:
         return error(problem, 400)
-    
+
     user = current_user()
     if not user:
         return error('Usuario no autenticado', 401)
-    
+
     payment_method = clean_text(data['payment_method'], 20)
     subscription_id = clean_text(data['subscription_id'], 100)
-    
-    if payment_method not in ['stripe', 'paypal', 'manual']:
+
+    # Solo permitir stripe y paypal - remover 'manual' por seguridad
+    if payment_method not in ['stripe', 'paypal']:
         return error('Método de pago no válido', 400)
-    
+
     try:
         with get_db() as connection:
             premium_until = (datetime.now() + timedelta(days=365)).isoformat()
-            
+
             connection.execute('''
                 UPDATE usuarios
                 SET es_premium=1, premium_hasta=?, max_crops=NULL,
