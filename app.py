@@ -640,6 +640,24 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
+@app.errorhandler(500)
+def internal_server_error(e):
+    logger.error(f'Error 500: {str(e)}')
+    return render_template('404.html'), 500
+
+
+@app.errorhandler(502)
+def bad_gateway(e):
+    logger.error(f'Error 502: {str(e)}')
+    return render_template('404.html'), 502
+
+
+@app.errorhandler(503)
+def service_unavailable(e):
+    logger.error(f'Error 503: {str(e)}')
+    return render_template('404.html'), 503
+
+
 def profile_payload():
     data, problem = payload(['name', 'email'])
     if problem or data is None:
