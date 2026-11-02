@@ -637,24 +637,32 @@ def legal_page():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    if request.path.startswith('/api/'):
+        return error('Recurso no encontrado', 404)
     return render_template('404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_server_error(e):
     logger.error(f'Error 500: {str(e)}')
+    if request.path.startswith('/api/'):
+        return error('Error interno del servidor', 500)
     return render_template('404.html'), 500
 
 
 @app.errorhandler(502)
 def bad_gateway(e):
     logger.error(f'Error 502: {str(e)}')
+    if request.path.startswith('/api/'):
+        return error('Error de puerta de enlace', 502)
     return render_template('404.html'), 502
 
 
 @app.errorhandler(503)
 def service_unavailable(e):
     logger.error(f'Error 503: {str(e)}')
+    if request.path.startswith('/api/'):
+        return error('Servicio no disponible', 503)
     return render_template('404.html'), 503
 
 
