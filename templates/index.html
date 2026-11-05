@@ -538,11 +538,11 @@
        <div class="grid gap-3">
         <button id="stripe-payment-btn" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-indigo-700 transition">
          <i data-lucide="credit-card" width="18"></i>
-         Pagar con Tarjeta (Stripe)
+         <span class="btn-label">Pagar con Tarjeta (Stripe)</span>
         </button>
         <button id="paypal-payment-btn" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#ffc439] px-4 py-3 text-sm font-bold text-[#003087] shadow hover:brightness-95 transition">
          <i data-lucide="wallet" width="18"></i>
-         Pagar con PayPal
+         <span class="btn-label">Pagar con PayPal</span>
         </button>
         <a href="https://wa.me/50589476244?text=Hola,%20quiero%20activar%20mi%20suscripción%20Premium%20en%20AgroFin." target="_blank" rel="noopener noreferrer" class="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-green-700 transition">
          <i data-lucide="message-circle" width="18"></i>
@@ -887,13 +887,17 @@
       $("auth-toggle").addEventListener("click", () => setAuthMode(!registering));
       $("login-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        $("auth-submit").disabled = true;
+        const submitBtn = $("auth-submit");
+        const submitLabel = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = registering ? "Creando cuenta..." : "Iniciando sesión...";
         $("login-message").classList.add("hidden");
         const payload = {email:$("login-email").value.trim(), password:$("login-password").value};
         if (registering) {
           if (!$("terms-accepted").checked || !$("privacy-accepted").checked) {
             showMessage($("login-message"), "Debes aceptar los términos y condiciones y la política de privacidad para continuar.");
-            $("auth-submit").disabled = false;
+            submitBtn.disabled = false;
+            submitBtn.textContent = submitLabel;
             return;
           }
           Object.assign(payload, {
@@ -915,7 +919,8 @@
         } catch (error) {
           showMessage($("login-message"), error.message);
         } finally {
-          $("auth-submit").disabled = false;
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitLabel;
         }
       });
       $("logout-button").addEventListener("click", async () => {
@@ -1210,26 +1215,42 @@
         
         $("analysis-upgrade-btn").addEventListener("click", () => premiumModal.classList.add("open"));
         
-        $("stripe-payment-btn").addEventListener("click", async () => {
+        const stripeBtn = $("stripe-payment-btn");
+        const stripeLabel = stripeBtn.querySelector(".btn-label");
+        stripeBtn.addEventListener("click", async () => {
+          const label = stripeLabel.textContent;
+          stripeBtn.disabled = true;
+          stripeLabel.textContent = "Conectando con Stripe...";
           try {
             const response = await api("/api/premium/stripe/create-checkout", {method: "POST"});
             if (response.checkout_url) {
               window.location.href = response.checkout_url;
+              return;
             }
           } catch (error) {
             toast(error.message);
           }
+          stripeBtn.disabled = false;
+          stripeLabel.textContent = label;
         });
 
-        $("paypal-payment-btn").addEventListener("click", async () => {
+        const paypalBtn = $("paypal-payment-btn");
+        const paypalLabel = paypalBtn.querySelector(".btn-label");
+        paypalBtn.addEventListener("click", async () => {
+          const label = paypalLabel.textContent;
+          paypalBtn.disabled = true;
+          paypalLabel.textContent = "Conectando con PayPal...";
           try {
             const response = await api("/api/premium/paypal/create-subscription", {method: "POST"});
             if (response.checkout_url) {
               window.location.href = response.checkout_url;
+              return;
             }
           } catch (error) {
             toast(error.message);
           }
+          paypalBtn.disabled = false;
+          paypalLabel.textContent = label;
         });
         
         document.querySelector('[data-view-target="analysis"]').addEventListener("click", loadAnalysis);

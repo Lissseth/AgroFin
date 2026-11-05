@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import smtplib
+import threading
 import io
 import secrets
 from datetime import date, datetime, timedelta, timezone
@@ -298,7 +299,7 @@ def send_email(to_email, subject, body, reply_to=None):
         if reply_to:
             message['Reply-To'] = reply_to
         message.set_content(body)
-        with smtplib.SMTP_SSL(config['host'], config['port']) as server:
+        with smtplib.SMTP_SSL(config['host'], config['port'], timeout=15) as server:
             server.login(config['username'], config['password'])
             server.send_message(message)
         return True
@@ -416,7 +417,7 @@ def register():
                 VALUES (?,?,?,?,?)''', (user_id, data['email'], 'privacy', ip_address, user_agent))
     except DB_INTEGRITY_ERRORS:
         return error('Ya existe una cuenta con ese correo.', 409)
-    send_registration_email(data['name'], data['email'])
+    threading.Thread(target=send_registration_email, args=(data['name'], data['email']), daemon=True).start()
     return jsonify(current_user_data()), 201
 
 
