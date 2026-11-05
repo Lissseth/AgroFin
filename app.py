@@ -226,6 +226,7 @@ def init_db():
         
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS es_premium INTEGER NOT NULL DEFAULT 0')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS paypal_subscriber_id TEXT DEFAULT \'\'')
+        connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT DEFAULT \'\'')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS premium_hasta TEXT DEFAULT NULL')
         connection.execute('ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS max_crops INTEGER DEFAULT 5')
         connection.execute('ALTER TABLE cultivos ADD COLUMN IF NOT EXISTS estimated_yield REAL DEFAULT 0')
@@ -327,14 +328,14 @@ def current_user():
     if not user_id:
         return None
     with get_db() as connection:
-        return connection.execute('SELECT id, name, email, phone, country, timezone, es_premium, paypal_subscriber_id, premium_hasta FROM usuarios WHERE id=?', (user_id,)).fetchone()
+        return connection.execute('SELECT id, name, email, phone, country, timezone, es_premium, paypal_subscriber_id, stripe_subscription_id, premium_hasta FROM usuarios WHERE id=?', (user_id,)).fetchone()
 
 
 def current_user_data():
     user = current_user()
     if not user:
         return {}
-    maybe_sync_paypal_subscription(user)
+    maybe_sync_paid_subscription(user)
     user = current_user()
     return dict(user) if user else {}
 
@@ -592,7 +593,7 @@ def google_callback():
         if not email or userinfo.get('email_verified') is not True:
             return error('La cuenta de Google no está verificada para iniciar sesión.', 400)
         with get_db() as connection:
-            user = connection.execute('SELECT id, name, email, phone, country, timezone, es_premium, paypal_subscriber_id, premium_hasta FROM usuarios WHERE email=?', (email,)).fetchone()
+            user = connection.execute('SELECT id, name, email, phone, country, timezone, es_premium, paypal_subscriber_id, stripe_subscription_id, premium_hasta FROM usuarios WHERE email=?', (email,)).fetchone()
             if user is None:
                 name = clean_text(userinfo.get('name') or userinfo.get('given_name') or 'Usuario Google', 80)
                 country = clean_text(os.getenv('DEFAULT_COUNTRY', 'Nicaragua'), 60)
@@ -903,33 +904,32 @@ def create_stripe_checkout():
         return error('Usuario no autenticado', 401)
     
     stripe_api_key = os.getenv('STRIPE_SECRET_KEY')
-    if not stripe_api_key:
+    stripe_price_id = os.getenv('STRIPE_PRICE_ID')
+    if not stripe_api_key or not stripe_price_id:
         return error('Stripe no está configurado. Contacta al administrador.', 400)
-    
+
     try:
         import stripe
         stripe.api_key = stripe_api_key
-        
+
         checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
+            mode='subscription',
             line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': 'AgroFin Premium - Mensual',
-                        'description': 'Lotes ilimitados, análisis avanzado y soporte prioritario'
-                    },
-                    'unit_amount': 1600,
-                },
+                'price': stripe_price_id,
                 'quantity': 1,
             }],
-            mode='payment',
             success_url=f"{os.getenv('PUBLIC_URL', 'http://localhost:5000')}/premium/success?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{os.getenv('PUBLIC_URL', 'http://localhost:5000')}/premium/cancel",
             client_reference_id=str(user['id']),
             metadata={
                 'user_id': str(user['id']),
                 'user_email': user['email']
+            },
+            subscription_data={
+                'metadata': {
+                    'user_id': str(user['id']),
+                    'user_email': user['email']
+                }
             }
         )
         
@@ -957,18 +957,28 @@ def premium_success():
         
         checkout_session = stripe.checkout.Session.retrieve(session_id)
         user_id = checkout_session.client_reference_id
-        
+
         if not user_id:
             return redirect('/?error=no_user_id')
-        
+
+        subscription_id = checkout_session.subscription
+        subscription_id_str = subscription_id if isinstance(subscription_id, str) else getattr(subscription_id, 'id', None)
+        if not subscription_id_str:
+            return redirect('/?error=no_subscription')
+
+        subscription = stripe.Subscription.retrieve(subscription_id_str)
+        if subscription.status not in ('active', 'trialing'):
+            return redirect('/?error=stripe_subscription_not_active')
+
+        premium_until = stripe_subscription_period_end(subscription) or (datetime.now() + timedelta(days=30)).isoformat()
+
         with get_db() as connection:
-            premium_until = (datetime.now() + timedelta(days=365)).isoformat()
-            
             connection.execute('''
                 UPDATE usuarios
-                SET es_premium=1, premium_hasta=?, max_crops=NULL
+                SET es_premium=1, premium_hasta=?, max_crops=NULL,
+                    stripe_subscription_id=?
                 WHERE id=?
-            ''', (premium_until, int(user_id)))
+            ''', (premium_until, subscription_id_str, int(user_id)))
 
         return redirect('/?premium=activated')
     except Exception as e:
@@ -1026,44 +1036,78 @@ def parse_paypal_time(value):
     return parsed
 
 
-def maybe_sync_paypal_subscription(user):
-    """Refresca el premium desde PayPal (renovaciones o cancelaciones), máximo cada 6h por sesión."""
-    subscriber_id = user.get('paypal_subscriber_id') if user else None
-    if not subscriber_id:
+def stripe_subscription_period_end(subscription):
+    end = getattr(subscription, 'current_period_end', None)
+    if end is None:
+        items = getattr(subscription, 'items', None)
+        data = getattr(items, 'data', None) or []
+        if data:
+            end = getattr(data[0], 'current_period_end', None)
+    if end:
+        return datetime.fromtimestamp(int(end)).isoformat()
+    return None
+
+
+def maybe_sync_paid_subscription(user):
+    """Refresca el premium desde PayPal/Stripe (renovaciones o cancelaciones), máx. cada 6h por sesión."""
+    paypal_sub = user.get('paypal_subscriber_id') if user else None
+    stripe_sub = user.get('stripe_subscription_id') if user else None
+    if not paypal_sub and not stripe_sub:
         return
-    last_sync = session.get('paypal_synced_at')
+    last_sync = session.get('billing_synced_at')
     if last_sync:
         try:
             if (datetime.now() - datetime.fromisoformat(last_sync)).total_seconds() < 6 * 3600:
                 return
         except ValueError:
             pass
-    session['paypal_synced_at'] = datetime.now().isoformat()
-    token = paypal_access_token()
-    if not token:
-        return
-    try:
-        subscription = paypal_request(f'/v1/billing/subscriptions/{subscriber_id}', token=token)
-    except Exception:
-        logger.exception('No se pudo consultar la suscripción PayPal %s', subscriber_id)
-        return
-    status = subscription.get('status')
+    session['billing_synced_at'] = datetime.now().isoformat()
+
     premium_until = user.get('premium_hasta')
-    if status == 'ACTIVE':
-        next_billing = (subscription.get('billing_info') or {}).get('next_billing_time')
-        if next_billing:
-            premium_until = parse_paypal_time(next_billing).isoformat()
-    try:
-        active = bool(premium_until) and datetime.now() < parse_paypal_time(premium_until)
-    except (ValueError, TypeError):
-        active = status == 'ACTIVE'
+    active = False
+
+    if paypal_sub:
+        token = paypal_access_token()
+        if token:
+            try:
+                subscription = paypal_request(f'/v1/billing/subscriptions/{paypal_sub}', token=token)
+                status = subscription.get('status')
+                if status == 'ACTIVE':
+                    next_billing = (subscription.get('billing_info') or {}).get('next_billing_time')
+                    if next_billing:
+                        premium_until = parse_paypal_time(next_billing).isoformat()
+                try:
+                    active = bool(premium_until) and datetime.now() < parse_paypal_time(premium_until)
+                except (ValueError, TypeError):
+                    active = status == 'ACTIVE'
+            except Exception:
+                logger.exception('No se pudo consultar la suscripción PayPal %s', paypal_sub)
+
+    if stripe_sub and os.getenv('STRIPE_SECRET_KEY'):
+        try:
+            import stripe
+            stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+            subscription = stripe.Subscription.retrieve(stripe_sub)
+            if subscription.status in ('active', 'trialing'):
+                period_end = stripe_subscription_period_end(subscription)
+                if period_end:
+                    premium_until = period_end
+                active = True
+            else:
+                try:
+                    active = bool(premium_until) and datetime.now() < parse_paypal_time(premium_until)
+                except (ValueError, TypeError):
+                    active = False
+        except Exception:
+            logger.exception('No se pudo consultar la suscripción Stripe %s', stripe_sub)
+
     try:
         with get_db() as connection:
             connection.execute(
                 'UPDATE usuarios SET es_premium=?, premium_hasta=? WHERE id=?',
                 (1 if active else 0, premium_until, user['id']))
     except Exception:
-        logger.exception('Error actualizando premium tras sync PayPal')
+        logger.exception('Error actualizando premium tras sync de suscripciones')
 
 
 @app.post('/api/premium/paypal/create-subscription')
