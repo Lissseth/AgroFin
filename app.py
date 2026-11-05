@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 import os
@@ -5,7 +6,7 @@ import re
 import smtplib
 import io
 import secrets
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from contextlib import contextmanager
 from email.message import EmailMessage
 from functools import wraps
@@ -34,6 +35,12 @@ except ImportError:
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 DB_INTEGRITY_ERRORS = (psycopg2.IntegrityError,)
 
@@ -202,6 +209,16 @@ def init_db():
                 ip_address TEXT,
                 user_agent TEXT
             );
+            CREATE TABLE IF NOT EXISTS paypal_checkouts (
+                id SERIAL PRIMARY KEY,
+                token TEXT NOT NULL UNIQUE,
+                user_id INTEGER NOT NULL,
+                subscription_id TEXT DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'created',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                expires_at TEXT NOT NULL,
+                completed_at TEXT DEFAULT NULL
+            );
         ''')
         
         for table in ('cultivos', 'movimientos'):
@@ -315,6 +332,10 @@ def current_user():
 
 def current_user_data():
     user = current_user()
+    if not user:
+        return {}
+    maybe_sync_paypal_subscription(user)
+    user = current_user()
     return dict(user) if user else {}
 
 
@@ -324,7 +345,16 @@ def is_user_premium(user):
         return False
     premium_value = user.get('es_premium')
     # Acepta 1, True, '1', 'true' como premium
-    return bool(premium_value) and premium_value not in (0, '0', False, 'false')
+    if not (bool(premium_value) and premium_value not in (0, '0', False, 'false')):
+        return False
+    premium_until = user.get('premium_hasta')
+    if not premium_until:
+        return True
+    try:
+        until = parse_paypal_time(premium_until)
+    except (ValueError, TypeError):
+        return True
+    return datetime.now() < until
 
 
 def login_required(function):
@@ -864,45 +894,6 @@ def get_premium_status():
     })
 
 
-@app.post('/api/premium/activate')
-@csrf.exempt
-@login_required
-def activate_premium():
-    data, problem = payload(['subscription_id', 'payment_method'])
-    if problem or data is None:
-        return error(problem, 400)
-
-    user = current_user()
-    if not user:
-        return error('Usuario no autenticado', 401)
-
-    payment_method = clean_text(data['payment_method'], 20)
-    subscription_id = clean_text(data['subscription_id'], 100)
-
-    # Solo permitir stripe y paypal - remover 'manual' por seguridad
-    if payment_method not in ['stripe', 'paypal']:
-        return error('Método de pago no válido', 400)
-
-    try:
-        with get_db() as connection:
-            premium_until = (datetime.now() + timedelta(days=365)).isoformat()
-
-            connection.execute('''
-                UPDATE usuarios
-                SET es_premium=1, premium_hasta=?, max_crops=NULL,
-                    paypal_subscriber_id=?
-                WHERE id=?
-            ''', (premium_until, subscription_id if payment_method == 'paypal' else '', session['user_id']))
-
-        return jsonify({
-            'message': 'Suscripción Premium activada correctamente',
-            'premium_until': premium_until
-        })
-    except Exception as e:
-        logger.exception('Error al activar premium')
-        return error(f'Error al activar suscripción: {str(e)}', 500)
-
-
 @app.post('/api/premium/stripe/create-checkout')
 @csrf.exempt
 @login_required
@@ -987,6 +978,161 @@ def premium_success():
 
 @app.get('/premium/cancel')
 def premium_cancel():
+    return redirect('/?premium=cancelled')
+
+
+def paypal_api_base():
+    return os.getenv('PAYPAL_API_BASE', 'https://api-m.sandbox.paypal.com').rstrip('/')
+
+
+def paypal_access_token():
+    client_id = os.getenv('PAYPAL_CLIENT_ID')
+    client_secret = os.getenv('PAYPAL_CLIENT_SECRET')
+    if not client_id or not client_secret:
+        return None
+    credentials = base64.b64encode(f'{client_id}:{client_secret}'.encode('utf-8')).decode('ascii')
+    request_obj = urllib_request.Request(
+        f'{paypal_api_base()}/v1/oauth2/token',
+        data=urlencode({'grant_type': 'client_credentials'}).encode('utf-8'),
+        headers={
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Basic {credentials}',
+        },
+        method='POST',
+    )
+    with urllib_request.urlopen(request_obj, timeout=20) as response:
+        return json.loads(response.read().decode('utf-8'))['access_token']
+
+
+def paypal_request(path, method='GET', body=None, token=None):
+    data = json.dumps(body).encode('utf-8') if body is not None else None
+    request_obj = urllib_request.Request(
+        f'{paypal_api_base()}{path}',
+        data=data,
+        headers={
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {token}',
+        },
+        method=method,
+    )
+    with urllib_request.urlopen(request_obj, timeout=20) as response:
+        return json.loads(response.read().decode('utf-8'))
+
+
+def parse_paypal_time(value):
+    parsed = datetime.fromisoformat(str(value).replace('Z', '+00:00'))
+    if parsed.tzinfo is not None:
+        parsed = parsed.astimezone().replace(tzinfo=None)
+    return parsed
+
+
+def maybe_sync_paypal_subscription(user):
+    """Refresca el premium desde PayPal (renovaciones o cancelaciones), máximo cada 6h por sesión."""
+    subscriber_id = user.get('paypal_subscriber_id') if user else None
+    if not subscriber_id:
+        return
+    last_sync = session.get('paypal_synced_at')
+    if last_sync:
+        try:
+            if (datetime.now() - datetime.fromisoformat(last_sync)).total_seconds() < 6 * 3600:
+                return
+        except ValueError:
+            pass
+    session['paypal_synced_at'] = datetime.now().isoformat()
+    token = paypal_access_token()
+    if not token:
+        return
+    try:
+        subscription = paypal_request(f'/v1/billing/subscriptions/{subscriber_id}', token=token)
+    except Exception:
+        logger.exception('No se pudo consultar la suscripción PayPal %s', subscriber_id)
+        return
+    status = subscription.get('status')
+    premium_until = user.get('premium_hasta')
+    if status == 'ACTIVE':
+        next_billing = (subscription.get('billing_info') or {}).get('next_billing_time')
+        if next_billing:
+            premium_until = parse_paypal_time(next_billing).isoformat()
+    try:
+        active = bool(premium_until) and datetime.now() < parse_paypal_time(premium_until)
+    except (ValueError, TypeError):
+        active = status == 'ACTIVE'
+    try:
+        with get_db() as connection:
+            connection.execute(
+                'UPDATE usuarios SET es_premium=?, premium_hasta=? WHERE id=?',
+                (1 if active else 0, premium_until, user['id']))
+    except Exception:
+        logger.exception('Error actualizando premium tras sync PayPal')
+
+
+@app.post('/api/premium/paypal/create-subscription')
+@csrf.exempt
+@login_required
+def create_paypal_subscription():
+    user = current_user()
+    if not user:
+        return error('Usuario no autenticado', 401)
+    if not (os.getenv('PAYPAL_PLAN_ID') and os.getenv('PAYPAL_CLIENT_ID') and os.getenv('PAYPAL_CLIENT_SECRET')):
+        return error('PayPal no está configurado. Contacta al administrador.', 400)
+    public_url = (os.getenv('PUBLIC_URL') or os.getenv('RENDER_EXTERNAL_URL') or 'http://localhost:5000').rstrip('/')
+    try:
+        token = paypal_access_token()
+        subscription = paypal_request('/v1/billing/subscriptions', method='POST', token=token, body={
+            'plan_id': os.getenv('PAYPAL_PLAN_ID'),
+            'custom_id': str(user['id']),
+            'subscriber': {'email_address': user['email']},
+            'application_context': {
+                'brand_name': 'AgroFin',
+                'user_action': 'SUBSCRIBE_NOW',
+                'return_url': f'{public_url}/premium/paypal/return',
+                'cancel_url': f'{public_url}/premium/paypal/cancel',
+            },
+        })
+        session['paypal_subscription_user'] = user['id']
+        approve_url = next((link['href'] for link in subscription.get('links', []) if link.get('rel') == 'approve'), None)
+        if not approve_url:
+            return error('PayPal no devolvió un enlace de suscripción válido.', 502)
+        return jsonify({'checkout_url': approve_url})
+    except Exception:
+        logger.exception('Error al crear suscripción de PayPal')
+        return error('Error al crear la suscripción en PayPal.', 500)
+
+
+@app.get('/premium/paypal/return')
+def paypal_return():
+    subscription_id = request.args.get('subscription_id')
+    user_id = session.get('user_id')
+    if not subscription_id or not user_id:
+        return redirect('/?error=paypal_session_expired')
+    try:
+        token = paypal_access_token()
+        subscription = paypal_request(f'/v1/billing/subscriptions/{subscription_id}', token=token)
+        if clean_text(subscription.get('custom_id', ''), 20) != str(user_id):
+            logger.warning('PayPal return: custom_id %s no coincide con user_id %s',
+                           subscription.get('custom_id'), user_id)
+            return redirect('/?error=paypal_user_mismatch')
+        if subscription.get('status') != 'ACTIVE':
+            return redirect('/?error=paypal_subscription_not_active')
+        next_billing = (subscription.get('billing_info') or {}).get('next_billing_time')
+        premium_until = parse_paypal_time(next_billing).isoformat() if next_billing else (datetime.now() + timedelta(days=30)).isoformat()
+        with get_db() as connection:
+            connection.execute('''
+                UPDATE usuarios
+                SET es_premium=1, premium_hasta=?, max_crops=NULL,
+                    paypal_subscriber_id=?
+                WHERE id=?
+            ''', (premium_until, subscription_id, user_id))
+        session.pop('paypal_subscription_user', None)
+        return redirect('/?premium=activated')
+    except Exception:
+        logger.exception('Error al activar suscripción PayPal')
+        return redirect('/?error=paypal_activation_failed')
+
+
+@app.get('/premium/paypal/cancel')
+def paypal_cancel():
+    session.pop('paypal_subscription_user', None)
     return redirect('/?premium=cancelled')
 
 

@@ -540,6 +540,10 @@
          <i data-lucide="credit-card" width="18"></i>
          Pagar con Tarjeta (Stripe)
         </button>
+        <button id="paypal-payment-btn" type="button" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#ffc439] px-4 py-3 text-sm font-bold text-[#003087] shadow hover:brightness-95 transition">
+         <i data-lucide="wallet" width="18"></i>
+         Pagar con PayPal
+        </button>
         <a href="https://wa.me/50589476244?text=Hola,%20quiero%20activar%20mi%20suscripción%20Premium%20en%20AgroFin." target="_blank" rel="noopener noreferrer" class="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-green-700 transition">
          <i data-lucide="message-circle" width="18"></i>
          Pagar por WhatsApp
@@ -1209,6 +1213,17 @@
         $("stripe-payment-btn").addEventListener("click", async () => {
           try {
             const response = await api("/api/premium/stripe/create-checkout", {method: "POST"});
+            if (response.checkout_url) {
+              window.location.href = response.checkout_url;
+            }
+          } catch (error) {
+            toast(error.message);
+          }
+        });
+
+        $("paypal-payment-btn").addEventListener("click", async () => {
+          try {
+            const response = await api("/api/premium/paypal/create-subscription", {method: "POST"});
             if (response.checkout_url) {
               window.location.href = response.checkout_url;
             }
