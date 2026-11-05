@@ -529,12 +529,10 @@ def contact_message():
         'Mensaje:\n'
         f'{message}\n'
     )
-    logger.info('Intentando enviar correo...')
-    sent = send_email(recipient, subject, body, reply_to=email)
-    if not sent:
-        logger.error('No se pudo enviar el correo - verificar configuración SMTP')
-        return error('No se pudo enviar tu mensaje en este momento. Inténtalo nuevamente más tarde.', 500)
-    logger.info('Correo enviado exitosamente')
+    if not config['username'] or not config['password']:
+        return error('El servicio de correo no está configurado. Inténtalo más tarde o escríbenos por WhatsApp.', 500)
+    logger.info('Enviando correo de contacto en segundo plano...')
+    threading.Thread(target=send_email, args=(recipient, subject, body), kwargs={'reply_to': email}, daemon=True).start()
     # Registrar aceptación de privacidad para contacto
     try:
         with get_db() as connection:
@@ -564,9 +562,14 @@ def contacto():
     recipient = config['recipient']
     if not recipient:
         return error('No hay destinatario configurado.', 500)
-    sent = send_email(recipient, f'Contacto AgroFin: {subject}', f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}', reply_to=email)
-    if not sent:
-        return error('No se pudo enviar tu mensaje.', 500)
+    if not config['username'] or not config['password']:
+        return error('El servicio de correo no está configurado. Inténtalo más tarde o escríbenos por WhatsApp.', 500)
+    threading.Thread(
+        target=send_email,
+        args=(recipient, f'Contacto AgroFin: {subject}', f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}'),
+        kwargs={'reply_to': email},
+        daemon=True,
+    ).start()
     return jsonify({'message': 'Tu mensaje fue enviado correctamente'})
 
 @app.get('/auth/google/callback')
