@@ -1589,11 +1589,6 @@ def check_alerts():
     })
 
 
-@app.route('/health')
-def health():
-    return '', 200
-
-
 @app.route('/')
 def home():
     return render_template('index.html')

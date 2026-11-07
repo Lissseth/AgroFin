@@ -5,7 +5,6 @@ services:
     plan: free
     branch: main
     autoDeployTrigger: commit
-    healthCheckPath: /health
     envVars:
       - key: SECRET_KEY
         generateValue: true
