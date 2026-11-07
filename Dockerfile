@@ -15,6 +15,6 @@ RUN useradd --create-home --shell /usr/sbin/nologin appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
-EXPOSE 8000
+EXPOSE 10000
 
-CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 1 --threads 2 --timeout 30 --worker-tmp-dir /dev/shm wsgi:app"]
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-10000} --workers 1 --threads 2 --timeout 30 --worker-tmp-dir /dev/shm wsgi:app"]
