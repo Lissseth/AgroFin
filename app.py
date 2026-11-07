@@ -1588,6 +1588,11 @@ def check_alerts():
         'triggered_alerts': triggered_alerts
     })
 
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok'}), 200
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
