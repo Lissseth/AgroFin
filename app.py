@@ -1588,9 +1588,10 @@ def check_alerts():
         'triggered_alerts': triggered_alerts
     })
 
+
 @app.route('/health')
 def health():
-    return jsonify({'status': 'ok'}), 200
+    return '', 200
 
 
 @app.route('/')
@@ -1613,8 +1614,10 @@ def terms():
     return render_template('terms.html')
 
 
+# Inicializar base de datos al iniciar la aplicación
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     app.run(
         host=os.getenv('HOST', '0.0.0.0'),
         port=int(os.getenv('PORT', '5000')),
